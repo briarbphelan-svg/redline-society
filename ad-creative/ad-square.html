@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; background: #0b0b0c; font-family: Anton, sans-serif; color: #f4f4f2; position: relative; }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(11,11,12,.92) 8%, rgba(11,11,12,.25) 45%, rgba(11,11,12,.35)); }
+  .txt { position: absolute; left: 0; right: 0; bottom: 130px; text-align: center; padding: 0 60px; }
+  .kicker { font-family: Inter, sans-serif; font-weight: 800; font-size: 26px; letter-spacing: 8px; color: #ffcc00; }
+  h1 { font-size: 120px; line-height: .95; text-transform: uppercase; margin-top: 18px; }
+  h1 .y { color: #ffcc00; }
+  .sub { font-family: Inter, sans-serif; font-weight: 600; font-size: 34px; color: #d7d7dc; margin-top: 18px; }
+  .cta { display: inline-block; margin-top: 26px; background: #ffcc00; color: #0b0b0c; font-size: 40px; text-transform: uppercase; letter-spacing: 2px; padding: 18px 56px; border-radius: 999px; }
+  .fineprint { position: absolute; bottom: 28px; left: 0; right: 0; text-align: center; font-family: Inter, sans-serif; font-weight: 600; font-size: 17px; color: #9b9ba3; letter-spacing: .5px; }
+  .brand { position: absolute; z-index: 10; text-shadow: 0 2px 12px rgba(0,0,0,.8); top: 44px; left: 0; right: 0; text-align: center; font-size: 40px; letter-spacing: 3px; }
+  .brand .y { color: #ffcc00; }
+
+  /* timeline: 4 scenes x 3s = 12s */
+  @keyframes kb1 { from { transform: scale(1.05) translateX(0); } to { transform: scale(1.18) translateX(-24px); } }
+  @keyframes kb2 { from { transform: scale(1.18) translateY(-10px); } to { transform: scale(1.05) translateY(14px); } }
+  @keyframes fade { 0% { opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { opacity: 0; } }
+  .s1 { animation: fade 3s linear 0s both; } .s1 img { animation: kb1 3s linear 0s both; }
+  .s2 { animation: fade 3s linear 3s both; } .s2 img { animation: kb2 3s linear 3s both; }
+  .s3 { animation: fade 3s linear 6s both; } .s3 img { animation: kb1 3s linear 6s both; }
+  .s4 { animation: fade 3s linear 9s both; } .s4 img { animation: kb2 3s linear 9s both; }
+  @keyframes pop { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .txt > * { animation: pop .5s ease-out both; }
+  .txt > *:nth-child(2) { animation-delay: .15s; } .txt > *:nth-child(3) { animation-delay: .3s; } .txt > *:nth-child(4) { animation-delay: .45s; }
+</style>
+</head>
+<body>
+  <div class="brand">REDLINE<span class="y">SOCIETY</span></div>
+
+  <div class="scene s1">
+    <img src="../public/car/gt3rs-00.jpg" />
+    <div class="shade"></div>
+    <div class="txt">
+      <div class="kicker">GIVEAWAY RS01</div>
+      <h1>Win this <span class="y">GT3 RS</span></h1>
+      <div class="sub">2025 · Ice Grey · 3,129 miles · PCCB</div>
+    </div>
+  </div>
+
+  <div class="scene s2">
+    <img src="../public/car/gt3rs-02.jpg" />
+    <div class="shade"></div>
+    <div class="txt">
+      <div class="kicker">OR TAKE</div>
+      <h1><span class="y">$300,000</span> cash</h1>
+      <div class="sub">$415,000 prize · your choice</div>
+    </div>
+  </div>
+
+  <div class="scene s3">
+    <img src="../public/car/gt3rs-08.jpg" />
+    <div class="shade"></div>
+    <div class="txt">
+      <div class="kicker">SMALL POOL · REAL ODDS</div>
+      <h1>Drawn <span class="y">Sept 5</span></h1>
+      <div class="sub">Verifiable draw · filmed handover</div>
+    </div>
+  </div>
+
+  <div class="scene s4">
+    <img src="../public/car/gt3rs-00.jpg" />
+    <div class="shade"></div>
+    <div class="txt">
+      <div class="kicker">ENTRIES FROM $25</div>
+      <h1>Get in <span class="y">now</span></h1>
+      <div class="cta">redlinesociety.org</div>
+    </div>
+  </div>
+
+  <div class="fineprint">NO PURCHASE NECESSARY. 18+, void in NY, FL, RI &amp; where prohibited. See Official Rules at redlinesociety.org/rules.</div>
+</body>
+</html>
