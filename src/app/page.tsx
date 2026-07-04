@@ -6,6 +6,8 @@ import { formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
 import Countdown from "@/components/Countdown";
 import Gallery from "@/components/Gallery";
 import Accordion from "@/components/Accordion";
+import WinnersCircle from "@/components/WinnersCircle";
+import StickyCTA from "@/components/StickyCTA";
 import { faq } from "@/lib/faq";
 
 export const dynamic = "force-dynamic";
@@ -54,7 +56,7 @@ export default async function HomePage() {
             GIVEAWAY {giveaway.id} · ARV {formatCents(giveaway.arvCents)}
           </p>
           <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl leading-[0.95] mt-6 uppercase">
-            Win my <span className="text-caliper">GT3&nbsp;RS</span>
+            Win this <span className="text-caliper">GT3&nbsp;RS</span>
           </h1>
           <p className="text-mist text-lg mt-4 max-w-xl mx-auto">
             {giveaway.car.headline}. {formatEntries(3129)} miles. PCCB. Or take{" "}
@@ -70,7 +72,7 @@ export default async function HomePage() {
             >
               Get Entries Now
             </Link>
-            <p className="text-xs text-mist mt-3 max-w-md mx-auto">{NPN_DISCLAIMER.split(".")[0]}. <Link href="/free-entry" className="underline hover:text-fog">Free entry here</Link>.</p>
+            <p className="text-xs text-mist mt-3">{NPN_DISCLAIMER.split(".")[0]}. See Official Rules.</p>
           </div>
         </div>
       </section>
@@ -118,6 +120,10 @@ export default async function HomePage() {
               <p className="text-mist text-sm mt-1">
                 <strong className="text-fog">{formatEntries(p.entries)}</strong> entries
               </p>
+              <p className="text-[11px] font-bold mt-1 text-caliper">
+                {((p.priceCents / p.entries)).toFixed(2)}¢ per entry
+                {p.slug === "gold" ? " — cheapest odds on the board" : ""}
+              </p>
               <Link
                 href={`/checkout?package=${p.slug}`}
                 className={`mt-6 text-center font-bold rounded-full py-3 transition-colors ${
@@ -132,7 +138,7 @@ export default async function HomePage() {
           ))}
         </div>
         <p className="text-xs text-mist text-center mt-4">
-          No purchase necessary — <Link href="/free-entry" className="underline hover:text-fog">free entry method</Link> available with equal per-entry odds.
+          No purchase necessary to enter or win — see Official Rules.
         </p>
       </section>
 
@@ -183,6 +189,25 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <WinnersCircle />
+
+      {/* TRACK BAND */}
+      <section className="relative mt-20 h-64 sm:h-80 overflow-hidden">
+        <Image
+          src="/media/track.jpg"
+          alt="Porsche 911 GT3 RS cornering at speed on a race circuit"
+          fill
+          sizes="100vw"
+          className="object-cover opacity-50"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-night via-transparent to-night" />
+        <div className="relative h-full flex items-center justify-center px-4">
+          <p className="font-display text-3xl sm:text-5xl uppercase text-center max-w-3xl">
+            518 hp. 9,000 rpm. <span className="text-caliper">Your name on the title.</span>
+          </p>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="mx-auto max-w-3xl px-4 sm:px-6 mt-20">
         <h2 className="font-display text-4xl uppercase text-center mb-8">
@@ -198,6 +223,8 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+
+      <StickyCTA />
     </div>
   );
 }

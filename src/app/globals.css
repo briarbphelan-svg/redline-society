@@ -55,3 +55,66 @@ h3,
   scrollbar-width: thin;
   scrollbar-color: var(--color-line) transparent;
 }
+
+/* ---- animated logo ---- */
+@keyframes needle-sweep {
+  0% {
+    transform: rotate(-120deg);
+  }
+  60% {
+    transform: rotate(78deg);
+  }
+  75% {
+    transform: rotate(58deg);
+  }
+  90% {
+    transform: rotate(68deg);
+  }
+  100% {
+    transform: rotate(65deg);
+  }
+}
+.logo-needle {
+  transform-origin: 24px 24px;
+  transform: rotate(65deg);
+  animation: needle-sweep 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+@keyframes redzone-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+.logo-redzone {
+  animation: redzone-pulse 2.4s ease-in-out 1.8s 3;
+}
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.logo-word-1 {
+  display: inline-block;
+  animation: word-in 0.5s ease-out 0.3s both;
+}
+.logo-word-2 {
+  display: inline-block;
+  animation: word-in 0.5s ease-out 0.55s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-needle,
+  .logo-redzone,
+  .logo-word-1,
+  .logo-word-2 {
+    animation: none;
+  }
+}

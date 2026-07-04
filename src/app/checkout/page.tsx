@@ -180,9 +180,9 @@ function CheckoutInner() {
           {submitting ? "Processing…" : `Pay ${money(pkg.priceCents * qty)} · Get ${(pkg.entries * qty).toLocaleString()} Entries`}
         </button>
         <p className="text-center text-xs text-mist">
-          No purchase necessary —{" "}
-          <Link href="/free-entry" className="underline hover:text-fog">
-            enter free instead
+          No purchase necessary to enter or win — see{" "}
+          <Link href="/rules" className="underline hover:text-fog" target="_blank">
+            Official Rules
           </Link>
           .
         </p>

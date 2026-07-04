@@ -1,14 +1,26 @@
 // Single source of truth for the giveaway. Update before launch (see LAUNCH.md).
 export const site = {
-  name: "Redline Club",
-  legalName: "Redline Club LLC", // TODO: your real entity — form one before launch
-  domain: "redlineclub.com", // TODO: your domain
-  supportEmail: "support@redlineclub.com",
+  name: "Redline Society",
+  legalName: "Redline Society LLC", // TODO: your real entity — form one before launch
+  domain: "redlinesociety.com", // TODO: your domain
+  supportEmail: "support@redlinesociety.com",
   tagline: "One car. One winner. The best odds in the game.",
 } as const;
 
+/* Winner's Circle — REAL winners only. Add each winner after their draw:
+   { giveawayId: "RS01", name: "First L.", location: "City, ST", prize: "...", photo: "/winners/rs01.jpg", date: "..." }
+   Fabricating winners is FTC fraud — leave empty until you have real ones. */
+export const pastWinners: {
+  giveawayId: string;
+  name: string;
+  location: string;
+  prize: string;
+  photo: string;
+  date: string;
+}[] = [];
+
 export const giveaway = {
-  id: "RC01",
+  id: "RS01",
   title: "Win My Porsche 911 GT3 RS",
   car: {
     name: "Porsche 911 GT3 RS",

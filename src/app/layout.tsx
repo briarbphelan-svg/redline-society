@@ -5,6 +5,7 @@ import Script from "next/script";
 import "./globals.css";
 import { site, giveaway, NPN_DISCLAIMER } from "@/lib/config";
 import { formatCents } from "@/lib/entries";
+import Logo from "@/components/Logo";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const anton = Anton({ variable: "--font-anton", subsets: ["latin"], weight: "400" });
@@ -44,8 +45,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         <header className="sticky top-0 z-40 bg-night/90 backdrop-blur border-b border-line">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-            <Link href="/" className="font-display text-2xl tracking-wide">
-              REDLINE<span className="text-caliper">CLUB</span>
+            <Link href="/" aria-label="Redline Society home">
+              <Logo />
             </Link>
             <nav className="flex items-center gap-5 text-sm font-semibold text-mist">
               <Link href="/#packages" className="hover:text-fog transition-colors">Enter</Link>
