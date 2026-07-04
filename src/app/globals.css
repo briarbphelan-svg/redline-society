@@ -59,24 +59,24 @@ h3,
 /* ---- animated logo ---- */
 @keyframes needle-sweep {
   0% {
-    transform: rotate(-120deg);
+    transform: rotate(-135deg);
   }
   60% {
-    transform: rotate(78deg);
+    transform: rotate(128deg);
   }
   75% {
-    transform: rotate(58deg);
+    transform: rotate(108deg);
   }
   90% {
-    transform: rotate(68deg);
+    transform: rotate(119deg);
   }
   100% {
-    transform: rotate(65deg);
+    transform: rotate(115deg);
   }
 }
 .logo-needle {
-  transform-origin: 24px 24px;
-  transform: rotate(65deg);
+  transform-origin: 60px 60px;
+  transform: rotate(115deg);
   animation: needle-sweep 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 @keyframes redzone-pulse {
