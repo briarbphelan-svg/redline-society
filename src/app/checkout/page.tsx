@@ -1,0 +1,200 @@
+"use client";
+
+import Link from "next/link";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+
+type Pkg = {
+  slug: string;
+  name: string;
+  priceCents: number;
+  entries: number;
+  multiplierLabel: string;
+};
+
+function money(c: number) {
+  return `$${(c / 100).toLocaleString("en-US")}`;
+}
+
+function CheckoutInner() {
+  const params = useSearchParams();
+  const slug = params.get("package") ?? "silver";
+  const [packages, setPackages] = useState<Pkg[]>([]);
+  const [qty, setQty] = useState(1);
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [eligible, setEligible] = useState(false);
+  const [rules, setRules] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/packages")
+      .then((r) => r.json())
+      .then(setPackages)
+      .catch(() => setError("Could not load packages — refresh the page."));
+  }, []);
+
+  const pkg = packages.find((p) => p.slug === slug) ?? packages[0];
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!pkg) return;
+    setError("");
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ packageSlug: pkg.slug, quantity: qty, email, name }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.error ?? "Something went wrong.");
+      window.location.href = data.url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setSubmitting(false);
+    }
+  }
+
+  if (!pkg) {
+    return <p className="text-center text-mist py-24">{error || "Loading packages…"}</p>;
+  }
+
+  return (
+    <div className="mx-auto max-w-lg px-4 sm:px-6 py-12">
+      <h1 className="font-display text-4xl uppercase">Checkout</h1>
+      <p className="text-mist text-sm mt-1">🔒 Secured by Stripe · entries added instantly after payment</p>
+
+      <div className="mt-8 bg-panel border border-line rounded-2xl p-6">
+        <div className="flex items-baseline justify-between">
+          <p className="font-display text-2xl uppercase">{pkg.name}</p>
+          <p className="text-caliper text-xs font-bold tracking-widest">{pkg.multiplierLabel}</p>
+        </div>
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center border border-line rounded-full">
+            <button
+              type="button"
+              className="px-4 py-2 text-mist hover:text-fog"
+              onClick={() => setQty(Math.max(1, qty - 1))}
+              aria-label="Decrease quantity"
+            >
+              −
+            </button>
+            <span className="font-bold w-8 text-center">{qty}</span>
+            <button
+              type="button"
+              className="px-4 py-2 text-mist hover:text-fog"
+              onClick={() => setQty(Math.min(10, qty + 1))}
+              aria-label="Increase quantity"
+            >
+              +
+            </button>
+          </div>
+          <div className="text-right">
+            <p className="font-display text-3xl">{money(pkg.priceCents * qty)}</p>
+            <p className="text-sm text-mist">
+              <strong className="text-caliper">{(pkg.entries * qty).toLocaleString()}</strong> entries
+            </p>
+          </div>
+        </div>
+        {packages.length > 1 && (
+          <div className="flex gap-2 mt-5 flex-wrap">
+            {packages.map((p) => (
+              <Link
+                key={p.slug}
+                href={`/checkout?package=${p.slug}`}
+                className={`text-xs font-bold px-3 py-1.5 rounded-full border ${
+                  p.slug === pkg.slug ? "border-caliper text-caliper" : "border-line text-mist hover:text-fog"
+                }`}
+              >
+                {p.name} {money(p.priceCents)}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <form onSubmit={submit} className="mt-6 space-y-3">
+        <input
+          type="text"
+          required
+          placeholder="Full name"
+          autoComplete="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full bg-panel border border-line rounded-xl px-4 py-3.5 text-sm outline-none focus:border-caliper"
+        />
+        <input
+          type="email"
+          required
+          placeholder="Email — your entries attach to this"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full bg-panel border border-line rounded-xl px-4 py-3.5 text-sm outline-none focus:border-caliper"
+        />
+
+        <label className="flex gap-3 items-start text-sm text-mist cursor-pointer pt-2">
+          <input
+            type="checkbox"
+            required
+            checked={eligible}
+            onChange={(e) => setEligible(e.target.checked)}
+            className="accent-caliper mt-0.5 w-4 h-4"
+          />
+          I am 18+ and a legal resident of an eligible US state (not NY, FL, or RI).
+        </label>
+        <label className="flex gap-3 items-start text-sm text-mist cursor-pointer">
+          <input
+            type="checkbox"
+            required
+            checked={rules}
+            onChange={(e) => setRules(e.target.checked)}
+            className="accent-caliper mt-0.5 w-4 h-4"
+          />
+          <span>
+            I agree to the{" "}
+            <Link href="/rules" className="underline hover:text-fog" target="_blank">
+              Official Rules
+            </Link>{" "}
+            and{" "}
+            <Link href="/terms" className="underline hover:text-fog" target="_blank">
+              Terms
+            </Link>
+            . I understand entries are non-refundable.
+          </span>
+        </label>
+
+        {error && (
+          <p className="bg-danger/10 border border-danger/30 text-danger text-sm font-semibold rounded-xl px-4 py-3">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={submitting || !eligible || !rules}
+          className="w-full bg-caliper hover:bg-caliper-dark disabled:opacity-40 text-night font-display text-xl uppercase tracking-wide rounded-full py-4 transition-colors"
+        >
+          {submitting ? "Processing…" : `Pay ${money(pkg.priceCents * qty)} · Get ${(pkg.entries * qty).toLocaleString()} Entries`}
+        </button>
+        <p className="text-center text-xs text-mist">
+          No purchase necessary —{" "}
+          <Link href="/free-entry" className="underline hover:text-fog">
+            enter free instead
+          </Link>
+          .
+        </p>
+      </form>
+    </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<p className="text-center text-mist py-24">Loading…</p>}>
+      <CheckoutInner />
+    </Suspense>
+  );
+}

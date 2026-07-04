@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Package {
+  id              String  @id @default(cuid())
+  slug            String  @unique
+  name            String
+  priceCents      Int
+  entries         Int
+  multiplierLabel String  @default("") // e.g. "200x ENTRIES"
+  badge           String  @default("") // "MOST POPULAR" | "BEST VALUE" | ""
+  position        Int     @default(0)
+  active          Boolean @default(true)
+  orders          Order[]
+}
+
+model Order {
+  id                    String   @id @default(cuid())
+  number                String   @unique
+  email                 String
+  name                  String   @default("")
+  addressLine1          String   @default("")
+  addressLine2          String   @default("")
+  city                  String   @default("")
+  state                 String   @default("")
+  postalCode            String   @default("")
+  country               String   @default("US")
+  status                String   @default("PENDING") // PENDING|PAID|REFUNDED|CANCELLED
+  packageId             String?
+  package               Package? @relation(fields: [packageId], references: [id])
+  packageName           String
+  quantity              Int      @default(1)
+  entries               Int // total entries granted by this order
+  totalCents            Int
+  stripeSessionId       String   @default("")
+  stripePaymentIntentId String   @default("")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([email])
+}
+
+model AmoeEntry {
+  id           String   @id @default(cuid())
+  email        String
+  name         String
+  addressLine1 String   @default("")
+  city         String   @default("")
+  state        String   @default("")
+  postalCode   String   @default("")
+  entries      Int
+  ip           String   @default("")
+  createdAt    DateTime @default(now())
+
+  @@index([email])
+}
+
+model Draw {
+  id            String   @id @default(cuid())
+  name          String
+  conductedAt   DateTime @default(now())
+  totalEntries  Int
+  totalEntrants Int
+  winnerEmail   String
+  winnerName    String
+  winnerSource  String // PAID | FREE
+  seedHex       String // randomness seed used, for auditability
+  winningTicket Int // 1-based ticket index drawn
+  notes         String   @default("")
+}
+
+model EmailSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   @default("footer")
+  createdAt DateTime @default(now())
+}

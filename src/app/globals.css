@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-night: #0b0b0c;
+  --color-panel: #141416;
+  --color-line: #26262a;
+  --color-fog: #f4f4f2;
+  --color-mist: #9b9ba3;
+  --color-caliper: #ffcc00;
+  --color-caliper-dark: #e6b800;
+  --color-rsblue: #4062b0;
+  --color-danger: #ff3b30;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-anton), var(--font-inter), sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-night);
+  color: var(--color-fog);
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.checker {
+  background-image: repeating-conic-gradient(#1a1a1d 0% 25%, #0b0b0c 0% 50%);
+  background-size: 24px 24px;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-slide-up {
+  animation: slide-up 0.35s ease-out both;
+}
+
+.scroll-row {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
 }
