@@ -1,0 +1,29 @@
+databases:
+  - name: redline-society-db
+    plan: free # upgrade to basic-256mb before real launch (free DBs expire after 30 days)
+    databaseName: redline_society
+    user: redline
+
+services:
+  - type: web
+    name: redline-society
+    runtime: node
+    plan: free # upgrade to starter before real ad traffic (free tier cold-starts)
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npx prisma migrate deploy && npm run seed && npm run start
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: redline-society-db
+          property: connectionString
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://redlinesociety.org
+      - key: ADMIN_PASSCODE
+        generateValue: true
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
