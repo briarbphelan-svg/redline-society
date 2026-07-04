@@ -5,6 +5,8 @@ export const site = {
   domain: "redlinesociety.com", // TODO: your domain
   supportEmail: "support@redlinesociety.com",
   tagline: "One car. One winner. The best odds in the game.",
+  instagramUrl: "https://www.instagram.com/redlinesocietyco/",
+  instagramHandle: "@redlinesocietyco",
 } as const;
 
 /* Winner's Circle — REAL winners only. Add each winner after their draw:

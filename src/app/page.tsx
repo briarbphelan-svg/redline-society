@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { giveaway, NPN_DISCLAIMER, boostActive, effectiveEntries } from "@/lib/config";
+import { site, giveaway, NPN_DISCLAIMER, boostActive, effectiveEntries } from "@/lib/config";
 import { formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
 import Countdown from "@/components/Countdown";
 import Gallery from "@/components/Gallery";
@@ -197,6 +197,29 @@ export default async function HomePage() {
       </section>
 
       <WinnersCircle />
+
+      {/* INSTAGRAM */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 mt-14">
+        <a
+          href={site.instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex flex-col sm:flex-row items-center justify-center gap-3 bg-panel border border-line hover:border-caliper rounded-2xl px-6 py-5 transition-colors"
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-caliper">
+            <rect x="2" y="2" width="20" height="20" rx="5" />
+            <circle cx="12" cy="12" r="4.5" />
+            <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none" />
+          </svg>
+          <p className="text-center sm:text-left">
+            <span className="font-display uppercase text-lg">Follow us on Instagram</span>{" "}
+            <span className="text-mist text-sm block sm:inline">
+              {site.instagramHandle} — car content, entry boosts, and the live draw happen there first.
+            </span>
+          </p>
+          <span className="sm:ml-auto font-bold text-caliper group-hover:translate-x-1 transition-transform">Follow →</span>
+        </a>
+      </section>
 
       {/* TRACK BAND */}
       <section className="relative mt-20 h-64 sm:h-80 overflow-hidden">

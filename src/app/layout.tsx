@@ -68,7 +68,20 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
             <p className="text-xs text-mist leading-relaxed max-w-4xl">{NPN_DISCLAIMER}</p>
             <p className="text-xs text-mist leading-relaxed max-w-4xl mt-2">{giveaway.eligibility}</p>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-6 text-sm text-mist">
+            <a
+              href={site.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-6 text-sm font-bold text-fog hover:text-caliper transition-colors"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <rect x="2" y="2" width="20" height="20" rx="5" />
+                <circle cx="12" cy="12" r="4.5" />
+                <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none" />
+              </svg>
+              Follow us on Instagram — {site.instagramHandle}
+            </a>
+            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm text-mist">
               <Link href="/rules" className="hover:text-fog">Official Rules</Link>
               <Link href="/free-entry" className="hover:text-fog">Free Entry (AMOE)</Link>
               <Link href="/entries" className="hover:text-fog">Check My Entries</Link>
