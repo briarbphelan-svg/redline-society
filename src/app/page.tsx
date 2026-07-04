@@ -9,6 +9,7 @@ import Accordion from "@/components/Accordion";
 import WinnersCircle from "@/components/WinnersCircle";
 import StickyCTA from "@/components/StickyCTA";
 import BoostPopup from "@/components/BoostPopup";
+import SeoJsonLd from "@/components/SeoJsonLd";
 import { faq } from "@/lib/faq";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,7 @@ export default async function HomePage() {
 
   return (
     <div>
+      <SeoJsonLd />
       {/* HERO */}
       <section className="relative overflow-hidden">
         {/* backdrop car only on wider screens — a 4:3 photo cropped into a tall

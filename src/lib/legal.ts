@@ -19,7 +19,7 @@ export const legalPages: Record<string, LegalPage> = {
 > ⚠️ TEMPLATE NOTICE: These rules are a working draft. They MUST be reviewed and finalized by a licensed sweepstakes attorney before this promotion launches. See LAUNCH.md.
 
 ## 1. Sponsor
-${site.legalName}, [ADDRESS — required]. Contact: ${site.supportEmail}.
+${site.legalName}, ${site.address}. Contact: ${site.supportEmail} · ${site.phone}.
 
 ## 2. Eligibility
 Open only to legal residents of the 48 contiguous United States and the District of Columbia who are 18 years of age or older at the time of entry. Void in New York, Florida, Rhode Island, and where prohibited by law. Employees, officers, and directors of the Sponsor, and members of their immediate families or households, are not eligible.
@@ -30,7 +30,7 @@ The promotion begins upon public launch and ends at 11:59 PM ET on the day befor
 ## 4. How to Enter
 **(a) Purchase entry packages.** Entry packages are available on the Sponsor's website. Each package grants the number of sweepstakes entries stated at the time of purchase, recorded automatically against the purchaser's email address.
 
-**(b) Free mail-in entry (AMOE).** Hand-print your full name, email address, mailing address, phone number, and date of birth on a 3"×5" card and mail it in a #10 envelope with proper postage to: ${site.legalName}, Attn: ${giveaway.id} Free Entry, [ADDRESS — required]. Each mailed card received by the entry deadline grants ${giveaway.amoeEntries.toLocaleString()} entries, with the same per-entry odds of winning as purchased entries. Limit one card per envelope, one mail-in entry per person per day. Photocopied or mechanically reproduced cards are void. Mailed entries are recorded within five (5) business days of receipt.
+**(b) Free mail-in entry (AMOE).** Hand-print your full name, email address, mailing address, phone number, and date of birth on a 3"×5" card and mail it in a #10 envelope with proper postage to: ${site.legalName}, Attn: ${giveaway.id} Free Entry, ${site.address}. Each mailed card received by the entry deadline grants ${giveaway.amoeEntries.toLocaleString()} entries, with the same per-entry odds of winning as purchased entries. Limit one card per envelope, one mail-in entry per person per day. Photocopied or mechanically reproduced cards are void. Mailed entries are recorded within five (5) business days of receipt.
 
 ## 5. Prize
 One (1) Grand Prize: a ${giveaway.car.year} ${giveaway.car.name} (approximate retail value ${formatCents(giveaway.arvCents)}) plus ${formatCents(giveaway.taxContributionCents)} cash toward taxes, **or**, at the winner's sole election, ${formatCents(giveaway.cashAlternativeCents)} cash in lieu of the vehicle. Vehicle transport within the 48 contiguous US states is included. Title transfer, registration, insurance, and all taxes are the winner's responsibility. Odds of winning depend on the total number of entries received.

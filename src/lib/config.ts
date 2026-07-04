@@ -7,6 +7,8 @@ export const site = {
   tagline: "One car. One winner. The best odds in the game.",
   instagramUrl: "https://www.instagram.com/redlinesocietyco/",
   instagramHandle: "@redlinesocietyco",
+  address: "580 Jackson St, Archbold, OH 43502",
+  phone: "(419) 265-9389",
 } as const;
 
 /* Winner's Circle — REAL winners only. Add each winner after their draw:

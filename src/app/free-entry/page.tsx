@@ -35,7 +35,7 @@ export default function FreeEntryPage() {
               <br />
               Attn: {giveaway.id} Free Entry
               <br />
-              [SPONSOR ADDRESS — set before launch]
+              {site.address}
             </span>
           </li>
           <li>

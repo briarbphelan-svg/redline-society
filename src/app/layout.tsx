@@ -28,6 +28,16 @@ export const metadata: Metadata = {
     url: siteUrl,
   },
   robots: { index: true, follow: true },
+  alternates: { canonical: "/" },
+  keywords: [
+    "porsche gt3 rs giveaway",
+    "win a porsche 911",
+    "car giveaway 2026",
+    "gt3 rs sweepstakes",
+    "supercar giveaway",
+    "porsche sweepstakes",
+    "redline society",
+  ],
 };
 
 export const viewport: Viewport = { themeColor: "#0b0b0c", width: "device-width", initialScale: 1 };
@@ -51,6 +61,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <nav className="flex items-center gap-5 text-sm font-semibold text-mist">
               <Link href="/#packages" className="hover:text-fog transition-colors">Enter</Link>
               <Link href="/#the-car" className="hover:text-fog transition-colors hidden sm:block">The Car</Link>
+              <Link href="/winner" className="hover:text-fog transition-colors hidden md:block">Winner</Link>
               <Link href="/entries" className="hover:text-fog transition-colors hidden sm:block">My Entries</Link>
               <Link
                 href="/#packages"
@@ -85,10 +96,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <Link href="/rules" className="hover:text-fog">Official Rules</Link>
               <Link href="/free-entry" className="hover:text-fog">Free Entry (AMOE)</Link>
               <Link href="/entries" className="hover:text-fog">Check My Entries</Link>
+              <Link href="/winner" className="hover:text-fog">Winner</Link>
               <Link href="/terms" className="hover:text-fog">Terms</Link>
               <Link href="/privacy" className="hover:text-fog">Privacy</Link>
-              <a href={`mailto:${site.supportEmail}`} className="hover:text-fog">{site.supportEmail}</a>
             </div>
+            <p className="text-sm text-mist mt-4">
+              {site.legalName} · {site.address} ·{" "}
+              <a href={`tel:${site.phone.replace(/[^0-9]/g, "")}`} className="hover:text-fog">{site.phone}</a> ·{" "}
+              <a href={`mailto:${site.supportEmail}`} className="hover:text-fog">{site.supportEmail}</a>
+            </p>
             <p className="text-xs text-mist mt-6">
               © {new Date().getFullYear()} {site.legalName}. Not affiliated with, sponsored by, or endorsed by Dr. Ing. h.c. F. Porsche AG. PORSCHE and 911 are trademarks of their owner, used only to identify the prize vehicle.
             </p>

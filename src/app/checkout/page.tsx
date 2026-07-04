@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import PaymentTrust from "@/components/PaymentTrust";
 
 type Pkg = {
   slug: string;
@@ -198,6 +199,7 @@ function CheckoutInner() {
         >
           {submitting ? "Processing…" : `Pay ${money(pkg.priceCents * qty)} · Get ${(pkg.entries * qty).toLocaleString()} Entries`}
         </button>
+        <PaymentTrust />
         <p className="text-center text-xs text-mist">
           No purchase necessary to enter or win — see{" "}
           <Link href="/rules" className="underline hover:text-fog" target="_blank">
