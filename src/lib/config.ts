@@ -86,5 +86,17 @@ export const ENTRY_PACKAGES = [
   },
 ] as const;
 
+/* Boost enforcement: while the boost is live, packages grant their boosted
+   entries; after boostEndsIso they drop to the base 100x rate ($1 = 100
+   entries, i.e. entries = priceCents). The countdown's claim is enforced
+   here — never advertise a drop that doesn't happen. */
+export function boostActive(now: Date = new Date()): boolean {
+  return now < new Date(giveaway.boostEndsIso);
+}
+
+export function effectiveEntries(pkg: { entries: number; priceCents: number }): number {
+  return boostActive() ? pkg.entries : pkg.priceCents;
+}
+
 export const NPN_DISCLAIMER =
   "NO PURCHASE NECESSARY TO ENTER OR WIN. A purchase will not increase your chances of winning relative to the free entry method's per-entry odds. See Official Rules for the free entry method, eligibility, and complete details.";

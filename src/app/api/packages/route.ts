@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { boostActive, effectiveEntries } from "@/lib/config";
 
 export async function GET() {
   const packages = await db.package.findMany({
@@ -7,5 +8,12 @@ export async function GET() {
     orderBy: { position: "asc" },
     select: { slug: true, name: true, priceCents: true, entries: true, multiplierLabel: true },
   });
-  return NextResponse.json(packages);
+  const boost = boostActive();
+  return NextResponse.json(
+    packages.map((p) => ({
+      ...p,
+      entries: effectiveEntries(p),
+      multiplierLabel: boost ? p.multiplierLabel : "100x ENTRIES",
+    }))
+  );
 }

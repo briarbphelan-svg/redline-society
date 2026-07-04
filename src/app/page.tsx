@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { giveaway, NPN_DISCLAIMER } from "@/lib/config";
+import { giveaway, NPN_DISCLAIMER, boostActive, effectiveEntries } from "@/lib/config";
 import { formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
 import Countdown from "@/components/Countdown";
 import Gallery from "@/components/Gallery";
 import Accordion from "@/components/Accordion";
 import WinnersCircle from "@/components/WinnersCircle";
 import StickyCTA from "@/components/StickyCTA";
+import BoostPopup from "@/components/BoostPopup";
 import { faq } from "@/lib/faq";
 
 export const dynamic = "force-dynamic";
@@ -49,9 +50,9 @@ export default async function HomePage() {
             sizes="100vw"
             className="object-cover opacity-40"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-night via-night/70 to-night/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-night via-night/80 to-night/50" />
         </div>
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-14 text-center">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-10 pb-10 text-center">
           <p className="inline-block border border-caliper/40 text-caliper text-xs font-bold tracking-[0.3em] px-4 py-1.5 rounded-full">
             GIVEAWAY {giveaway.id} · ARV {formatCents(giveaway.arvCents)}
           </p>
@@ -64,6 +65,10 @@ export default async function HomePage() {
           </p>
           <div className="mt-8">
             <Countdown targetIso={giveaway.boostEndsIso} label="HIGHEST ENTRY BOOST ENDS IN" />
+            <p className="text-xs text-mist mt-3">
+              When the timer hits zero, multipliers drop to 100x —{" "}
+              <strong className="text-danger">Gold&apos;s 50,000 entries become 25,000 at the same price.</strong>
+            </p>
           </div>
           <div className="mt-8">
             <Link
@@ -115,13 +120,15 @@ export default async function HomePage() {
                 </span>
               )}
               <p className="font-display text-2xl uppercase">{p.name}</p>
-              <p className="text-caliper text-xs font-bold tracking-widest mt-1">{p.multiplierLabel}</p>
+              <p className="text-caliper text-xs font-bold tracking-widest mt-1">
+                {boostActive() ? p.multiplierLabel : "100x ENTRIES"}
+              </p>
               <p className="font-display text-5xl mt-6">{formatCents(p.priceCents)}</p>
               <p className="text-mist text-sm mt-1">
-                <strong className="text-fog">{formatEntries(p.entries)}</strong> entries
+                <strong className="text-fog">{formatEntries(effectiveEntries(p))}</strong> entries
               </p>
               <p className="text-[11px] font-bold mt-1 text-caliper">
-                {((p.priceCents / p.entries)).toFixed(2)}¢ per entry
+                {(p.priceCents / effectiveEntries(p)).toFixed(2)}¢ per entry
                 {p.slug === "gold" ? " — cheapest odds on the board" : ""}
               </p>
               <Link
@@ -167,7 +174,7 @@ export default async function HomePage() {
           {giveaway.car.year} {giveaway.car.headline} — {formatEntries(3129)} miles, PCCB carbon-ceramics, satin blue
           magnesium-style wheels, GT3 RS livery. Delivered to your door, or take {formatCents(giveaway.cashAlternativeCents)} cash.
         </p>
-        <div className="grid lg:grid-cols-[3fr_2fr] gap-8 mt-10 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 mt-10 items-start max-w-5xl mx-auto">
           <Gallery count={25} />
           <div className="bg-panel border border-line rounded-2xl p-6">
             <p className="font-display text-xl uppercase mb-4">Spec sheet</p>
@@ -225,6 +232,7 @@ export default async function HomePage() {
       </section>
 
       <StickyCTA />
+      <BoostPopup />
     </div>
   );
 }

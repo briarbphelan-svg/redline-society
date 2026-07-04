@@ -38,6 +38,7 @@ model Order {
   quantity              Int      @default(1)
   entries               Int // total entries granted by this order
   totalCents            Int
+  anonymousWinner       Boolean  @default(false)
   stripeSessionId       String   @default("")
   stripePaymentIntentId String   @default("")
   createdAt             DateTime @default(now())

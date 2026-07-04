@@ -25,6 +25,7 @@ function CheckoutInner() {
   const [name, setName] = useState("");
   const [eligible, setEligible] = useState(false);
   const [rules, setRules] = useState(false);
+  const [anonymous, setAnonymous] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -46,7 +47,7 @@ function CheckoutInner() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ packageSlug: pkg.slug, quantity: qty, email, name }),
+        body: JSON.stringify({ packageSlug: pkg.slug, quantity: qty, email, name, anonymousWinner: anonymous }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error ?? "Something went wrong.");
@@ -65,6 +66,9 @@ function CheckoutInner() {
     <div className="mx-auto max-w-lg px-4 sm:px-6 py-12">
       <h1 className="font-display text-4xl uppercase">Checkout</h1>
       <p className="text-mist text-sm mt-1">🔒 Secured by Stripe · entries added instantly after payment</p>
+      <p className="mt-3 bg-caliper/10 border border-caliper/30 text-caliper text-xs font-bold rounded-xl px-4 py-2.5">
+        ⏱ BOOST PRICING LOCKED FOR THIS ORDER — multipliers drop to 100x when the boost timer ends.
+      </p>
 
       <div className="mt-8 bg-panel border border-line rounded-2xl p-6">
         <div className="flex items-baseline justify-between">
@@ -134,6 +138,21 @@ function CheckoutInner() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full bg-panel border border-line rounded-xl px-4 py-3.5 text-sm outline-none focus:border-caliper"
         />
+
+        <label className="flex gap-3 items-start text-sm cursor-pointer pt-2 bg-panel border border-line rounded-xl px-4 py-3.5">
+          <input
+            type="checkbox"
+            checked={anonymous}
+            onChange={(e) => setAnonymous(e.target.checked)}
+            className="accent-caliper mt-0.5 w-4 h-4"
+          />
+          <span>
+            <strong>When I win, I&apos;d like to remain anonymous</strong>
+            <span className="block text-xs text-mist mt-0.5">
+              No public name or photo, where the Official Rules and state law permit.
+            </span>
+          </span>
+        </label>
 
         <label className="flex gap-3 items-start text-sm text-mist cursor-pointer pt-2">
           <input

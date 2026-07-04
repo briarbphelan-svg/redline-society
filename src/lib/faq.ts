@@ -12,7 +12,7 @@ export const faq = [
   },
   {
     q: "Can I enter for free?",
-    a: `Yes — no purchase is ever necessary. The free entry method (${giveaway.amoeEntries.toLocaleString()} entries, once per day) is on the Free Entry page, and a mail-in option is described in the Official Rules. Free entries have exactly the same per-entry odds as paid entries.`,
+    a: "Yes — no purchase is ever necessary. A free mail-in entry method is described in the Official Rules (hand-printed card, one per stamped envelope, one per person per day). Mailed entries carry the same per-entry odds as purchased entries.",
   },
   {
     q: "Who can enter?",

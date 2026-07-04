@@ -9,7 +9,7 @@ export default function Gallery({ count }: { count: number }) {
 
   return (
     <div>
-      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-line bg-panel">
+      <div className="relative aspect-[4/3] max-h-[420px] w-full rounded-2xl overflow-hidden border border-line bg-panel">
         <Image
           src={src(active)}
           alt={`2025 Porsche 911 GT3 RS — photo ${active + 1} of ${count}`}
@@ -28,7 +28,7 @@ export default function Gallery({ count }: { count: number }) {
             key={i}
             onClick={() => setActive(i)}
             aria-label={`View photo ${i + 1}`}
-            className={`relative w-20 h-16 rounded-lg overflow-hidden shrink-0 border-2 transition-colors ${
+            className={`relative w-16 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-colors ${
               i === active ? "border-caliper" : "border-line hover:border-mist"
             }`}
           >

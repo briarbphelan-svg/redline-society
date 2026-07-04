@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
-import { site, giveaway } from "@/lib/config";
+import { site, giveaway, effectiveEntries } from "@/lib/config";
 
 const schema = z.object({
   packageSlug: z.string(),
   quantity: z.number().int().min(1).max(10),
   email: z.string().email(),
   name: z.string().min(1).max(120),
+  anonymousWinner: z.boolean().optional().default(false),
 });
 
 async function nextOrderNumber(): Promise<string> {
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "That entry package is unavailable." }, { status: 400 });
   }
 
-  const entries = pkg.entries * input.quantity;
+  const entries = effectiveEntries(pkg) * input.quantity;
   const totalCents = pkg.priceCents * input.quantity;
   const number = await nextOrderNumber();
 
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
       quantity: input.quantity,
       entries,
       totalCents,
+      anonymousWinner: input.anonymousWinner,
     },
   });
 

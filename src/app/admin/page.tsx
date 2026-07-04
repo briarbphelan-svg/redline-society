@@ -5,6 +5,24 @@ import { conductDraw, formatCents, formatEntries, totalEntriesSold } from "@/lib
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Admin", robots: { index: false } };
 
+async function logMailIn(formData: FormData) {
+  "use server";
+  const email = String(formData.get("email") ?? "").toLowerCase().trim();
+  const name = String(formData.get("name") ?? "").trim();
+  if (!email.includes("@") || !name) return;
+  const { giveaway } = await import("@/lib/config");
+  await db.amoeEntry.create({
+    data: {
+      email,
+      name,
+      addressLine1: String(formData.get("address") ?? ""),
+      entries: giveaway.amoeEntries,
+      ip: "mail-in",
+    },
+  });
+  revalidatePath("/admin");
+}
+
 async function runDraw() {
   "use server";
   const result = await conductDraw();
@@ -79,6 +97,7 @@ export default async function AdminDashboard() {
                   <th className="px-4 py-3">Entries</th>
                   <th className="px-4 py-3">Total</th>
                   <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Anon</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,11 +115,12 @@ export default async function AdminDashboard() {
                         {o.status}
                       </span>
                     </td>
+                    <td className="px-4 py-2.5">{o.anonymousWinner ? "🕶️" : ""}</td>
                   </tr>
                 ))}
                 {recentOrders.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-mist">
+                    <td colSpan={7} className="px-4 py-8 text-center text-mist">
                       No orders yet.
                     </td>
                   </tr>
@@ -130,6 +150,18 @@ export default async function AdminDashboard() {
                 🎲 Conduct Test Draw
               </button>
             </form>
+
+            <div className="mt-6 pt-5 border-t border-line">
+              <p className="font-display text-sm uppercase mb-3">Log a mail-in free entry</p>
+              <form action={logMailIn} className="grid grid-cols-2 gap-2">
+                <input name="name" required placeholder="Name (from card)" className="bg-night border border-line rounded-lg px-3 py-2 text-sm outline-none focus:border-caliper" />
+                <input name="email" required type="email" placeholder="Email (from card)" className="bg-night border border-line rounded-lg px-3 py-2 text-sm outline-none focus:border-caliper" />
+                <input name="address" placeholder="Address (optional)" className="col-span-2 bg-night border border-line rounded-lg px-3 py-2 text-sm outline-none focus:border-caliper" />
+                <button className="col-span-2 border-2 border-line hover:border-caliper rounded-full py-2 text-sm font-bold transition-colors">
+                  Record Mail-In Entry
+                </button>
+              </form>
+            </div>
 
             {draws.length > 0 && (
               <ul className="mt-5 divide-y divide-line text-sm">
