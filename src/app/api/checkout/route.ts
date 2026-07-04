@@ -51,7 +51,15 @@ export async function POST(req: Request) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3100";
 
   if (!stripeConfigured()) {
-    // Demo mode until Stripe keys are set — completes the order so the flow is testable.
+    if (process.env.NODE_ENV === "production" && process.env.ALLOW_DEMO_CHECKOUT !== "true") {
+      // Never grant entries without payment on the live site.
+      await db.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
+      return NextResponse.json(
+        { error: "Checkout opens very soon — follow @redlinesocietyco for the green flag." },
+        { status: 503 }
+      );
+    }
+    // Demo mode (local/testing only) — completes the order so the flow is testable.
     await db.order.update({ where: { id: order.id }, data: { status: "PAID" } });
     return NextResponse.json({ url: `${siteUrl}/checkout/success?order=${order.number}&demo=1` });
   }
