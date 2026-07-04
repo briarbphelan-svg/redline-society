@@ -2,8 +2,8 @@
 export const site = {
   name: "Redline Society",
   legalName: "Redline Society LLC", // TODO: your real entity — form one before launch
-  domain: "redlinesociety.com", // TODO: your domain
-  supportEmail: "support@redlinesociety.com",
+  domain: "redlinesociety.org",
+  supportEmail: "support@redlinesociety.org",
   tagline: "One car. One winner. The best odds in the game.",
   instagramUrl: "https://www.instagram.com/redlinesocietyco/",
   instagramHandle: "@redlinesocietyco",
