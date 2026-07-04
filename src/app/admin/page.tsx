@@ -5,6 +5,13 @@ import { conductDraw, formatCents, formatEntries, totalEntriesSold } from "@/lib
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Admin", robots: { index: false } };
 
+async function deleteOrder(formData: FormData) {
+  "use server";
+  const id = String(formData.get("id"));
+  await db.order.delete({ where: { id } }).catch(() => null);
+  revalidatePath("/admin");
+}
+
 async function logMailIn(formData: FormData) {
   "use server";
   const email = String(formData.get("email") ?? "").toLowerCase().trim();
@@ -116,6 +123,14 @@ export default async function AdminDashboard() {
                       </span>
                     </td>
                     <td className="px-4 py-2.5">{o.anonymousWinner ? "🕶️" : ""}</td>
+                    <td className="px-4 py-2.5">
+                      <form action={deleteOrder}>
+                        <input type="hidden" name="id" value={o.id} />
+                        <button className="text-danger text-xs font-bold hover:underline" title="Delete order (test data cleanup)">
+                          ✕
+                        </button>
+                      </form>
+                    </td>
                   </tr>
                 ))}
                 {recentOrders.length === 0 && (
