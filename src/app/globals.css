@@ -75,7 +75,7 @@ h3,
   }
 }
 .logo-needle {
-  transform-origin: 60px 60px;
+  transform-origin: 50px 50px;
   transform: rotate(115deg);
   animation: needle-sweep 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }

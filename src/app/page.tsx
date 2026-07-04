@@ -41,7 +41,9 @@ export default async function HomePage() {
     <div>
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
+        {/* backdrop car only on wider screens — a 4:3 photo cropped into a tall
+            phone hero reads as zoomed-in mush; mobile gets a contained image below */}
+        <div className="absolute inset-0 hidden sm:block">
           <Image
             src="/car/gt3rs-00.jpg"
             alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
@@ -63,6 +65,17 @@ export default async function HomePage() {
             {giveaway.car.headline}. {formatEntries(3129)} miles. PCCB. Or take{" "}
             <strong className="text-fog">{formatCents(giveaway.cashAlternativeCents)} cash</strong> instead.
           </p>
+          {/* mobile: full car, uncropped */}
+          <div className="relative sm:hidden mt-6 aspect-[4/3] rounded-2xl overflow-hidden border border-line">
+            <Image
+              src="/car/gt3rs-00.jpg"
+              alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+          </div>
           <div className="mt-8">
             <Countdown targetIso={giveaway.boostEndsIso} label="HIGHEST ENTRY BOOST ENDS IN" />
             <p className="text-xs text-mist mt-3">
@@ -175,8 +188,10 @@ export default async function HomePage() {
           magnesium-style wheels, GT3 RS livery. Delivered to your door, or take {formatCents(giveaway.cashAlternativeCents)} cash.
         </p>
         <div className="grid lg:grid-cols-2 gap-8 mt-10 items-start max-w-5xl mx-auto">
-          <Gallery count={25} />
-          <div className="bg-panel border border-line rounded-2xl p-6">
+          <div className="min-w-0">
+            <Gallery count={25} />
+          </div>
+          <div className="bg-panel border border-line rounded-2xl p-6 min-w-0">
             <p className="font-display text-xl uppercase mb-4">Spec sheet</p>
             <dl className="divide-y divide-line">
               {giveaway.car.specs.map((s) => (

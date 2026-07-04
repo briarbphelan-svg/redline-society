@@ -62,9 +62,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </div>
         </header>
 
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 overflow-x-clip">{children}</main>
 
-        <footer className="border-t border-line mt-20">
+        <footer className="border-t border-line mt-20 pb-24 lg:pb-0">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
             <p className="text-xs text-mist leading-relaxed max-w-4xl">{NPN_DISCLAIMER}</p>
             <p className="text-xs text-mist leading-relaxed max-w-4xl mt-2">{giveaway.eligibility}</p>

@@ -17,17 +17,12 @@ export default function BoostPopup() {
       sessionStorage.setItem(KEY, "1");
       setOpen(true);
     }
+    // Desktop exit-intent only — auto-opening over mobile scroll is hostile UX.
     function onMouseOut(e: MouseEvent) {
       if (e.clientY <= 0 && !e.relatedTarget) trigger();
     }
-    const timer = setTimeout(() => {
-      if (window.matchMedia("(max-width: 1024px)").matches) trigger();
-    }, 40000);
     document.addEventListener("mouseout", onMouseOut);
-    return () => {
-      document.removeEventListener("mouseout", onMouseOut);
-      clearTimeout(timer);
-    };
+    return () => document.removeEventListener("mouseout", onMouseOut);
   }, []);
 
   if (!open) return null;
