@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { boostActive, effectiveEntries } from "@/lib/config";
+import { boostActive, effectiveEntries, postersIncludedFor } from "@/lib/config";
 
 export async function GET() {
   const packages = await db.package.findMany({
@@ -13,6 +13,7 @@ export async function GET() {
     packages.map((p) => ({
       ...p,
       entries: effectiveEntries(p),
+      postersIncluded: postersIncludedFor(p.slug),
       multiplierLabel: boost ? p.multiplierLabel : "100x ENTRIES",
     }))
   );

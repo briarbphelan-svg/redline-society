@@ -45,3 +45,6 @@ prisma/dev.db*
 
 # ad render frames
 ad-creative/frames/
+
+# poster render scratch
+poster-lab/

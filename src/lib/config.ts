@@ -57,6 +57,7 @@ export const ENTRY_PACKAGES = [
     name: "Pit Lane",
     priceCents: 2500,
     entries: 3000,
+    postersIncluded: 1,
     multiplierLabel: "120x ENTRIES",
     badge: "",
     position: 1,
@@ -66,6 +67,7 @@ export const ENTRY_PACKAGES = [
     name: "Bronze",
     priceCents: 5000,
     entries: 7500,
+    postersIncluded: 2,
     multiplierLabel: "150x ENTRIES",
     badge: "",
     position: 2,
@@ -75,6 +77,7 @@ export const ENTRY_PACKAGES = [
     name: "Silver",
     priceCents: 10000,
     entries: 17500,
+    postersIncluded: 3,
     multiplierLabel: "175x ENTRIES",
     badge: "MOST POPULAR",
     position: 3,
@@ -84,11 +87,35 @@ export const ENTRY_PACKAGES = [
     name: "Gold",
     priceCents: 25000,
     entries: 50000,
+    postersIncluded: 5,
     multiplierLabel: "200x ENTRIES",
     badge: "BEST ODDS",
     position: 4,
   },
 ] as const;
+
+/* Digital collector posters — the real product each purchase delivers.
+   Higher tiers unlock more designs (spend more = more posters). Files live
+   in /public/posters. The sweepstakes entries are a free bonus on top. */
+export const POSTERS = [
+  { file: "rs-poster-01-icegrey.jpg", title: "Ice Grey — GT3 RS Hero" },
+  { file: "rs-poster-02-wing.jpg", title: "9000 RPM — Swan-Neck Wing" },
+  { file: "rs-poster-03-carbon.jpg", title: "PCCB — Carbon-Ceramic Detail" },
+  { file: "rs-poster-04-collector.jpg", title: "RS01 — Collector Edition Print" },
+  { file: "rs-poster-05-blueprint.jpg", title: "GT3 RS — Blueprint Spec Sheet" },
+] as const;
+
+export function postersIncludedFor(nameOrSlug: string): number {
+  const key = nameOrSlug.toLowerCase().trim();
+  const pkg = ENTRY_PACKAGES.find(
+    (p) => p.slug === key || p.name.toLowerCase() === key
+  );
+  return pkg ? pkg.postersIncluded : 1;
+}
+
+export function postersFor(nameOrSlug: string) {
+  return POSTERS.slice(0, postersIncludedFor(nameOrSlug));
+}
 
 /* Boost enforcement: while the boost is live, packages grant their boosted
    entries; after boostEndsIso they drop to the base 100x rate ($1 = 100

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
 import { entriesForEmail, formatEntries } from "@/lib/entries";
-import { giveaway } from "@/lib/config";
+import { giveaway, postersFor } from "@/lib/config";
+import PosterDownloads from "@/components/PosterDownloads";
 
 export const metadata = { title: "You're In!" };
 
@@ -37,9 +38,10 @@ export default async function SuccessPage({
   }
 
   const totals = await entriesForEmail(order.email);
+  const posters = order.status === "PAID" ? postersFor(order.packageName) : [];
 
   return (
-    <div className="mx-auto max-w-lg px-4 sm:px-6 py-16 text-center">
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 py-16 text-center">
       <p className="text-6xl">🏁</p>
       <h1 className="font-display text-4xl sm:text-5xl uppercase mt-4">
         You&apos;re <span className="text-caliper">in</span>
@@ -63,7 +65,20 @@ export default async function SuccessPage({
         </p>
       </div>
 
-      <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+      {posters.length > 0 && (
+        <div className="mt-10 text-left">
+          <h2 className="font-display text-2xl uppercase text-center">
+            Your <span className="text-caliper">{posters.length}</span> collector{" "}
+            {posters.length === 1 ? "poster" : "posters"}
+          </h2>
+          <p className="text-mist text-sm text-center mt-1 mb-5">
+            High-res GT3 RS prints — download and keep. (Also saved to your order page.)
+          </p>
+          <PosterDownloads posters={posters} />
+        </div>
+      )}
+
+      <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
         <Link
           href="/checkout?package=gold"
           className="bg-caliper hover:bg-caliper-dark text-night font-bold rounded-full px-8 py-3.5 transition-colors"

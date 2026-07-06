@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { site, giveaway, NPN_DISCLAIMER, boostActive, effectiveEntries } from "@/lib/config";
+import { site, giveaway, NPN_DISCLAIMER, boostActive, effectiveEntries, postersIncludedFor } from "@/lib/config";
 import { formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
 import Countdown from "@/components/Countdown";
 import Gallery from "@/components/Gallery";
@@ -17,13 +17,13 @@ export const dynamic = "force-dynamic";
 const steps = [
   {
     n: "01",
-    title: "Pick your entry package",
-    body: "Every package instantly loads entries onto your email address. Bigger packages carry bigger multipliers — up to 200x.",
+    title: "Grab a poster pack",
+    body: "Every pack is an instant high-res GT3 RS poster download — and loads bonus entries onto your email. Bigger packs, more posters and more entries.",
   },
   {
     n: "02",
     title: "Entries stack automatically",
-    body: "Order as many times as you want. Our system records and combines every entry under your email — check your total anytime.",
+    body: "Buy as many packs as you want. Your posters download instantly and your bonus entries combine automatically under your email — check the total anytime.",
   },
   {
     n: "03",
@@ -118,9 +118,12 @@ export default async function HomePage() {
       {/* PACKAGES */}
       <section id="packages" className="mx-auto max-w-7xl px-4 sm:px-6 mt-16 scroll-mt-24">
         <h2 className="font-display text-4xl sm:text-5xl uppercase text-center">
-          Entry <span className="text-caliper">Packages</span>
+          Collector <span className="text-caliper">Poster Packs</span>
         </h2>
-        <p className="text-mist text-center mt-2">Instant digital entries. Stacked automatically. No shipping, no waiting.</p>
+        <p className="text-mist text-center mt-2 max-w-xl mx-auto">
+          Every pack is an instant high-res GT3 RS poster download — and loads bonus entries to win the car.
+          No shipping, no waiting.
+        </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
           {packages.map((p) => (
             <div
@@ -136,15 +139,15 @@ export default async function HomePage() {
               )}
               <p className="font-display text-2xl uppercase">{p.name}</p>
               <p className="text-caliper text-xs font-bold tracking-widest mt-1">
-                {boostActive() ? p.multiplierLabel : "100x ENTRIES"}
+                {postersIncludedFor(p.slug)} COLLECTOR POSTER{postersIncludedFor(p.slug) > 1 ? "S" : ""}
               </p>
               <p className="font-display text-5xl mt-6">{formatCents(p.priceCents)}</p>
               <p className="text-mist text-sm mt-1">
-                <strong className="text-fog">{formatEntries(effectiveEntries(p))}</strong> entries
+                + <strong className="text-fog">{formatEntries(effectiveEntries(p))}</strong> bonus entries
               </p>
               <p className="text-[11px] font-bold mt-1 text-caliper">
-                {(p.priceCents / effectiveEntries(p)).toFixed(2)}¢ per entry
-                {p.slug === "gold" ? " — cheapest odds on the board" : ""}
+                {boostActive() ? p.multiplierLabel : "100x ENTRIES"}
+                {p.slug === "gold" ? " — best odds on the board" : ""}
               </p>
               <Link
                 href={`/checkout?package=${p.slug}`}
@@ -154,7 +157,7 @@ export default async function HomePage() {
                     : "border-2 border-fog/30 hover:border-caliper hover:text-caliper"
                 }`}
               >
-                Enter Now →
+                Get Pack →
               </Link>
             </div>
           ))}

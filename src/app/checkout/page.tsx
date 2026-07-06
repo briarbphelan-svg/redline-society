@@ -10,6 +10,7 @@ type Pkg = {
   name: string;
   priceCents: number;
   entries: number;
+  postersIncluded: number;
   multiplierLabel: string;
 };
 
@@ -99,6 +100,8 @@ function CheckoutInner() {
           <div className="text-right">
             <p className="font-display text-3xl">{money(pkg.priceCents * qty)}</p>
             <p className="text-sm text-mist">
+              <strong className="text-fog">{pkg.postersIncluded * qty}</strong> poster
+              {pkg.postersIncluded * qty > 1 ? "s" : ""} +{" "}
               <strong className="text-caliper">{(pkg.entries * qty).toLocaleString()}</strong> entries
             </p>
           </div>
@@ -133,7 +136,7 @@ function CheckoutInner() {
         <input
           type="email"
           required
-          placeholder="Email — your entries attach to this"
+          placeholder="Email — posters + entries go here"
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -197,7 +200,9 @@ function CheckoutInner() {
           disabled={submitting || !eligible || !rules}
           className="w-full bg-caliper hover:bg-caliper-dark disabled:opacity-40 text-night font-display text-xl uppercase tracking-wide rounded-full py-4 transition-colors"
         >
-          {submitting ? "Processing…" : `Pay ${money(pkg.priceCents * qty)} · Get ${(pkg.entries * qty).toLocaleString()} Entries`}
+          {submitting
+            ? "Processing…"
+            : `Pay ${money(pkg.priceCents * qty)} · Get ${pkg.postersIncluded * qty} Poster${pkg.postersIncluded * qty > 1 ? "s" : ""} + ${(pkg.entries * qty).toLocaleString()} Entries`}
         </button>
         <PaymentTrust />
         <p className="text-center text-xs text-mist">

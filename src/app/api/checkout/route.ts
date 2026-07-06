@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
-import { site, giveaway, effectiveEntries } from "@/lib/config";
+import { site, giveaway, effectiveEntries, postersIncludedFor } from "@/lib/config";
 
 const schema = z.object({
   packageSlug: z.string(),
@@ -73,8 +73,8 @@ export async function POST(req: Request) {
         price_data: {
           currency: "usd",
           product_data: {
-            name: `${site.name} ${giveaway.id} — ${pkg.name} Entry Package (${pkg.entries.toLocaleString()} entries)`,
-            description: `Sweepstakes entries for the ${giveaway.car.year} ${giveaway.car.name} giveaway. No purchase necessary — see Official Rules.`,
+            name: `${site.name} — ${pkg.name} Digital Poster Pack`,
+            description: `${postersIncludedFor(pkg.slug)} high-resolution GT3 RS collector poster download${postersIncludedFor(pkg.slug) > 1 ? "s" : ""}, delivered instantly. Includes ${pkg.entries.toLocaleString()} bonus sweepstakes entries. No purchase necessary to enter — see Official Rules.`,
           },
           unit_amount: pkg.priceCents,
         },
