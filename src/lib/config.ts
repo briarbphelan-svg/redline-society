@@ -44,8 +44,8 @@ export const giveaway = {
   arvCents: 41500000, // ARV $415,000 (listing-verified) — TODO confirm final ARV with appraisal
   cashAlternativeCents: 30000000, // winner may take $300,000 cash instead — TODO decide
   taxContributionCents: 2500000, // $25,000 toward winner's taxes — TODO decide
-  drawDateIso: "2026-09-05T20:00:00-04:00", // TODO set your real draw date
-  boostEndsIso: "2026-07-31T23:59:59-04:00", // entry boost countdown target
+  drawDateIso: "2026-09-06T12:00:00-04:00", // noon ET so the displayed date can't drift a day in UTC — TODO confirm Sept 6 matches Official Rules
+  boostEndsIso: "2026-08-06T23:59:59-04:00", // entry boost countdown target (reset 2026-07-07 → 30-day window)
   amoeEntries: 3000, // entries granted per free (no-purchase) entry — must equal a paid unit's dignity
   eligibility:
     "Open to legal residents of the 48 contiguous United States and D.C., 18+. Void in New York, Florida, Rhode Island, and where prohibited.", // TODO: register+bond in NY/FL to include them (LAUNCH.md)

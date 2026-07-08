@@ -99,11 +99,14 @@ export default async function HomePage() {
 
       {/* STATS STRIP */}
       <section className="border-y border-line bg-panel">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 grid grid-cols-3 text-center">
-          <div>
-            <p className="font-display text-2xl text-caliper">{formatEntries(sold.total)}</p>
-            <p className="text-[11px] text-mist font-bold tracking-widest">ENTRIES ISSUED</p>
-          </div>
+        <div className={`mx-auto max-w-7xl px-4 sm:px-6 py-4 grid ${sold.total > 0 ? "grid-cols-3" : "grid-cols-2"} text-center`}>
+          {/* entries-issued is only shown once real entries exist — no fabricated launch number */}
+          {sold.total > 0 && (
+            <div>
+              <p className="font-display text-2xl text-caliper">{formatEntries(sold.total)}</p>
+              <p className="text-[11px] text-mist font-bold tracking-widest">ENTRIES ISSUED</p>
+            </div>
+          )}
           <div>
             <p className="font-display text-2xl">{new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
             <p className="text-[11px] text-mist font-bold tracking-widest">DRAW DATE</p>
