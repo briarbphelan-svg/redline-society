@@ -9,11 +9,23 @@ export default function Gallery({ count }: { count: number }) {
   const src = (i: number) => `/car/gt3rs-${String(i).padStart(2, "0")}.jpg`;
   const go = (delta: number) => setActive((prev) => (prev + delta + count) % count);
 
-  // keep the active thumbnail scrolled into view so the strip stays in sync
-  // with the arrows (otherwise photos 8–25 sit off-screen and look missing)
+  // keep the active thumbnail centered in the strip as the user navigates.
+  // NOTE: scroll the strip horizontally only (strip.scrollTo left) and skip the
+  // first render — using scrollIntoView here would yank the whole page down to
+  // the gallery on load/reload. This must never move the page vertically.
+  const mounted = useRef(false);
   useEffect(() => {
-    const thumb = stripRef.current?.children[active] as HTMLElement | undefined;
-    thumb?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    const strip = stripRef.current;
+    const thumb = strip?.children[active] as HTMLElement | undefined;
+    if (!strip || !thumb) return;
+    strip.scrollTo({
+      left: thumb.offsetLeft - strip.clientWidth / 2 + thumb.clientWidth / 2,
+      behavior: "smooth",
+    });
   }, [active]);
 
   return (
