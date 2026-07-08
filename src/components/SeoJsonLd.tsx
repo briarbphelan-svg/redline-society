@@ -41,7 +41,7 @@ export default function SeoJsonLd() {
     eventStatus: "https://schema.org/EventScheduled",
     location: { "@type": "VirtualLocation", url: `${siteUrl}/winner` },
     image: [`${siteUrl}/car/gt3rs-00.jpg`],
-    description: `Random drawing for a ${giveaway.car.year} ${giveaway.car.headline} (ARV $415,000) or $300,000 cash. No purchase necessary — see Official Rules.`,
+    description: `Random drawing for a ${giveaway.car.headline} (ARV $415,000) or $300,000 cash. No purchase necessary — see Official Rules.`,
     organizer: { "@type": "Organization", name: site.name, url: siteUrl },
   };
 

@@ -20,7 +20,7 @@ export const faq = [
   },
   {
     q: "What exactly does the winner get?",
-    a: `The ${giveaway.car.year} ${giveaway.car.headline} (ARV ${formatCents(giveaway.arvCents)}) plus ${formatCents(giveaway.taxContributionCents)} toward taxes — or, at the winner's choice, ${formatCents(giveaway.cashAlternativeCents)} in cash instead. Transport of the vehicle within the contiguous US is covered. Taxes beyond the tax contribution are the winner's responsibility (it's real income — plan for it).`,
+    a: `The ${giveaway.car.headline} (ARV ${formatCents(giveaway.arvCents)}) plus ${formatCents(giveaway.taxContributionCents)} toward taxes — or, at the winner's choice, ${formatCents(giveaway.cashAlternativeCents)} in cash instead. Transport of the vehicle within the contiguous US is covered. Taxes beyond the tax contribution are the winner's responsibility (it's real income — plan for it).`,
   },
   {
     q: "How is the winner chosen and notified?",

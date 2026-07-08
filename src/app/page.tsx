@@ -192,7 +192,7 @@ export default async function HomePage() {
           The <span className="text-caliper">prize</span>
         </h2>
         <p className="text-mist text-center mt-2 max-w-2xl mx-auto">
-          {giveaway.car.year} {giveaway.car.headline} — {formatEntries(3129)} miles, PCCB carbon-ceramics, satin blue
+          {giveaway.car.headline} — {formatEntries(3129)} miles, PCCB carbon-ceramics, satin blue
           magnesium-style wheels, GT3 RS livery. Delivered to your door, or take {formatCents(giveaway.cashAlternativeCents)} cash.
         </p>
         <div className="grid lg:grid-cols-2 gap-8 mt-10 items-start max-w-5xl mx-auto">
