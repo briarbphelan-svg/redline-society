@@ -4,6 +4,7 @@ import { getStripe, stripeConfigured } from "@/lib/stripe";
 import { entriesForEmail, formatEntries } from "@/lib/entries";
 import { giveaway, postersFor } from "@/lib/config";
 import PosterDownloads from "@/components/PosterDownloads";
+import { PixelPurchase } from "@/components/PixelEvents";
 
 export const metadata = { title: "You're In!" };
 
@@ -42,6 +43,9 @@ export default async function SuccessPage({
 
   return (
     <div className="mx-auto max-w-2xl px-4 sm:px-6 py-16 text-center">
+      {order.status === "PAID" && (
+        <PixelPurchase value={order.totalCents / 100} orderNumber={order.number} />
+      )}
       <p className="text-6xl">🏁</p>
       <h1 className="font-display text-4xl sm:text-5xl uppercase mt-4">
         You&apos;re <span className="text-caliper">in</span>
