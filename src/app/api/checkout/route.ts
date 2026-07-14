@@ -67,6 +67,7 @@ export async function POST(req: Request) {
   const stripe = getStripe();
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
+    allow_promotion_codes: true,
     customer_email: input.email,
     line_items: [
       {
