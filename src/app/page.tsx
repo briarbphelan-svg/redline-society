@@ -56,50 +56,55 @@ export default async function HomePage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-night via-night/80 to-night/50" />
         </div>
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-8 text-center">
-          <p className="inline-block border border-caliper/40 text-caliper text-xs font-bold tracking-[0.3em] px-4 py-1.5 rounded-full">
-            GIVEAWAY {giveaway.id} · ARV {formatCents(giveaway.arvCents)}
-          </p>
-          <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl leading-[0.95] mt-6 uppercase">
-            Win this <span className="text-caliper">GT3&nbsp;RS</span>
-          </h1>
-          <p className="text-mist text-lg mt-4 max-w-xl mx-auto">
-            {giveaway.car.headline}. {formatEntries(3129)} miles. PCCB. Or take{" "}
-            <strong className="text-fog">{formatCents(giveaway.cashAlternativeCents)} cash</strong> instead.
-          </p>
-          {/* mobile: full car, uncropped */}
-          <div className="relative sm:hidden mt-6 aspect-[4/3] rounded-2xl overflow-hidden border border-line">
-            <Image
-              src="/car/gt3rs-00.jpg"
-              alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-          </div>
-          <div className="mt-6">
-            <Countdown targetIso={giveaway.boostEndsIso} label="HIGHEST ENTRY BOOST ENDS IN" />
-            <p className="text-xs text-mist mt-3">
-              When the timer hits zero, multipliers drop to 100x —{" "}
-              <strong className="text-danger">Gold&apos;s 50,000 entries become 25,000 at the same price.</strong>
+        {/* full-viewport hero (minus the 96px announcement bar + sticky header) so the
+            car photo fills the whole first screen and the scroll cue always lands at the
+            fold — on any window height. Content is vertically centered; cue is pinned bottom. */}
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-8 text-center flex flex-col sm:min-h-[calc(100svh-112px)]">
+          <div className="flex-1 flex flex-col justify-center">
+            <p className="inline-block border border-caliper/40 text-caliper text-xs font-bold tracking-[0.3em] px-4 py-1.5 rounded-full self-center">
+              GIVEAWAY {giveaway.id} · ARV {formatCents(giveaway.arvCents)}
             </p>
+            <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl leading-[0.95] mt-6 uppercase">
+              Win this <span className="text-caliper">GT3&nbsp;RS</span>
+            </h1>
+            <p className="text-mist text-lg mt-4 max-w-xl mx-auto">
+              {giveaway.car.headline}. {formatEntries(3129)} miles. PCCB. Or take{" "}
+              <strong className="text-fog">{formatCents(giveaway.cashAlternativeCents)} cash</strong> instead.
+            </p>
+            {/* mobile: full car, uncropped */}
+            <div className="relative sm:hidden mt-6 aspect-[4/3] rounded-2xl overflow-hidden border border-line">
+              <Image
+                src="/car/gt3rs-00.jpg"
+                alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+            </div>
+            <div className="mt-6">
+              <Countdown targetIso={giveaway.boostEndsIso} label="HIGHEST ENTRY BOOST ENDS IN" />
+              <p className="text-xs text-mist mt-3">
+                When the timer hits zero, multipliers drop to 100x —{" "}
+                <strong className="text-danger">Gold&apos;s 50,000 entries become 25,000 at the same price.</strong>
+              </p>
+            </div>
+            <div className="mt-6">
+              <Link
+                href="#packages"
+                className="inline-block bg-caliper hover:bg-caliper-dark text-night font-display text-xl uppercase tracking-wide rounded-full px-12 py-4 transition-colors shadow-[0_0_40px_rgba(255,204,0,0.25)]"
+              >
+                Get Entries Now
+              </Link>
+              <p className="text-xs text-mist mt-3">{NPN_DISCLAIMER.split(".")[0]}. See Official Rules.</p>
+            </div>
           </div>
-          <div className="mt-6">
-            <Link
-              href="#packages"
-              className="inline-block bg-caliper hover:bg-caliper-dark text-night font-display text-xl uppercase tracking-wide rounded-full px-12 py-4 transition-colors shadow-[0_0_40px_rgba(255,204,0,0.25)]"
-            >
-              Get Entries Now
-            </Link>
-            <p className="text-xs text-mist mt-3">{NPN_DISCLAIMER.split(".")[0]}. See Official Rules.</p>
-          </div>
-          {/* explicit scroll affordance — the hero fills the fold, so cold visitors
-              otherwise read it as a dead one-pager and bounce */}
+          {/* explicit scroll affordance — pinned to the bottom of the full-height hero so
+              cold visitors always see there's more below and don't read it as a dead one-pager */}
           <a
             href="#packages"
             aria-label="Scroll down to entry packs and prize details"
-            className="mt-7 inline-flex flex-col items-center gap-2 text-mist hover:text-caliper transition-colors"
+            className="mt-8 pt-2 inline-flex flex-col items-center gap-2 text-mist hover:text-caliper transition-colors"
           >
             <span className="text-[11px] font-bold tracking-[0.3em]">PACKS · THE CAR · WINNERS BELOW</span>
             <svg
