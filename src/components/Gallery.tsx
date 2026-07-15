@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from "react";
 export default function Gallery({ count }: { count: number }) {
   const [active, setActive] = useState(0);
   const stripRef = useRef<HTMLDivElement>(null);
-  const src = (i: number) => `/car/gt3rs-${String(i).padStart(2, "0")}.jpg`;
+  // photo 0 is the branded hero shot under its own filename (cache-busts the old gt3rs-00)
+  const src = (i: number) => (i === 0 ? "/car/porsche.jpg" : `/car/gt3rs-${String(i).padStart(2, "0")}.jpg`);
   const go = (delta: number) => setActive((prev) => (prev + delta + count) % count);
 
   // keep the active thumbnail centered in the strip as the user navigates.

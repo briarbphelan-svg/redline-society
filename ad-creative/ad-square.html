@@ -1,79 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { width: 1080px; height: 1080px; overflow: hidden; background: #0b0b0c; font-family: Anton, sans-serif; color: #f4f4f2; position: relative; }
   .scene { position: absolute; inset: 0; opacity: 0; }
-  .scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(11,11,12,.92) 8%, rgba(11,11,12,.25) 45%, rgba(11,11,12,.35)); }
-  .txt { position: absolute; left: 0; right: 0; bottom: 130px; text-align: center; padding: 0 60px; }
-  .kicker { font-family: Inter, sans-serif; font-weight: 800; font-size: 26px; letter-spacing: 8px; color: #ffcc00; }
-  h1 { font-size: 120px; line-height: .95; text-transform: uppercase; margin-top: 18px; }
+  .scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(11,11,12,.94) 10%, rgba(11,11,12,.28) 46%, rgba(11,11,12,.4)); }
+  .txt { position: absolute; left: 0; right: 0; bottom: 152px; text-align: center; padding: 0 64px; }
+  .kicker { font-family: Inter, sans-serif; font-weight: 800; font-size: 28px; letter-spacing: 8px; color: #ffcc00; }
+  h1 { font-size: 130px; line-height: .92; text-transform: uppercase; margin-top: 16px; text-shadow: 0 4px 26px rgba(0,0,0,.65); }
   h1 .y { color: #ffcc00; }
-  .sub { font-family: Inter, sans-serif; font-weight: 600; font-size: 34px; color: #d7d7dc; margin-top: 18px; }
-  .cta { display: inline-block; margin-top: 26px; background: #ffcc00; color: #0b0b0c; font-size: 40px; text-transform: uppercase; letter-spacing: 2px; padding: 18px 56px; border-radius: 999px; }
-  .fineprint { position: absolute; bottom: 28px; left: 0; right: 0; text-align: center; font-family: Inter, sans-serif; font-weight: 600; font-size: 17px; color: #9b9ba3; letter-spacing: .5px; }
-  .brand { position: absolute; z-index: 10; text-shadow: 0 2px 12px rgba(0,0,0,.8); top: 44px; left: 0; right: 0; text-align: center; font-size: 40px; letter-spacing: 3px; }
-  .brand .y { color: #ffcc00; }
+  .sub { font-family: Inter, sans-serif; font-weight: 700; font-size: 38px; color: #e2e2e6; margin-top: 20px; }
+  .sub b { color: #f4f4f2; }
+  .cta { display: inline-block; margin-top: 30px; background: #ffcc00; color: #0b0b0c; font-size: 48px; text-transform: uppercase; letter-spacing: 1px; padding: 22px 62px; border-radius: 999px; box-shadow: 0 12px 40px rgba(255,204,0,.32); }
+  .brand { position: absolute; z-index: 10; text-shadow: 0 2px 14px rgba(0,0,0,.85); top: 46px; left: 0; right: 0; text-align: center; font-size: 42px; letter-spacing: 3px; }
+  .brand .y { color: #ffcc00; } .brand .arrows { color: #ff3b30; margin-left: 6px; }
+  .fineprint { position: absolute; bottom: 34px; left: 0; right: 0; text-align: center; font-family: Inter, sans-serif; font-weight: 600; font-size: 18px; color: #8b8b93; padding: 0 60px; }
 
-  /* timeline: 4 scenes x 3s = 12s */
-  @keyframes kb1 { from { transform: scale(1.05) translateX(0); } to { transform: scale(1.18) translateX(-24px); } }
-  @keyframes kb2 { from { transform: scale(1.18) translateY(-10px); } to { transform: scale(1.05) translateY(14px); } }
-  @keyframes fade { 0% { opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { opacity: 0; } }
-  .s1 { animation: fade 3s linear 0s both; } .s1 img { animation: kb1 3s linear 0s both; }
-  .s2 { animation: fade 3s linear 3s both; } .s2 img { animation: kb2 3s linear 3s both; }
-  .s3 { animation: fade 3s linear 6s both; } .s3 img { animation: kb1 3s linear 6s both; }
-  .s4 { animation: fade 3s linear 9s both; } .s4 img { animation: kb2 3s linear 9s both; }
-  @keyframes pop { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .txt > * { animation: pop .5s ease-out both; }
-  .txt > *:nth-child(2) { animation-delay: .15s; } .txt > *:nth-child(3) { animation-delay: .3s; } .txt > *:nth-child(4) { animation-delay: .45s; }
+  /* 4 scenes x 2s = 8s. gentle CONSTANT-scale pan (sharp) + snappy crossfade + text rise. */
+  @keyframes panL { from { transform: scale(1.05) translateX(22px); } to { transform: scale(1.05) translateX(-22px); } }
+  @keyframes panR { from { transform: scale(1.05) translateX(-22px); } to { transform: scale(1.05) translateX(22px); } }
+  @keyframes fade { 0% { opacity: 0; } 11% { opacity: 1; } 89% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes fadeHold { 0% { opacity: 0; } 11% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes rise { 0% { opacity: 0; transform: translateY(26px); } 22% { opacity: 1; transform: translateY(0); } 100% { opacity: 1; transform: translateY(0); } }
+  .s1 { animation: fade 2s linear 0s both; }     .s1 img { animation: panL 2s linear 0s both; }
+  .s2 { animation: fade 2s linear 2s both; }     .s2 img { animation: panR 2s linear 2s both; }
+  .s3 { animation: fade 2s linear 4s both; }     .s3 img { animation: panL 2s linear 4s both; }
+  .s4 { animation: fadeHold 2s linear 6s both; } .s4 img { animation: panR 2s linear 6s both; }
+  .s1 .txt { animation: rise 2s ease-out 0s both; }
+  .s2 .txt { animation: rise 2s ease-out 2s both; }
+  .s3 .txt { animation: rise 2s ease-out 4s both; }
+  .s4 .txt { animation: rise 2s ease-out 6s both; }
 </style>
 </head>
 <body>
-  <div class="brand">REDLINE<span class="y">SOCIETY</span></div>
+  <div class="brand">REDLINE<span class="y">SOCIETY</span><span class="arrows">&#8250;&#8250;&#8250;</span></div>
 
   <div class="scene s1">
-    <img src="../public/car/gt3rs-00.jpg" />
-    <div class="shade"></div>
-    <div class="txt">
-      <div class="kicker">GIVEAWAY RS01</div>
-      <h1>Win this <span class="y">GT3 RS</span></h1>
-      <div class="sub">2025 · Ice Grey · 3,129 miles · PCCB</div>
-    </div>
+    <img src="../public/car/gt3rs-00.jpg" /><div class="shade"></div>
+    <div class="txt"><div class="kicker">GIVEAWAY RS01</div><h1>Win this <span class="y">GT3 RS</span></h1><div class="sub">2025 &middot; Ice Grey &middot; PCCB</div></div>
   </div>
-
   <div class="scene s2">
-    <img src="../public/car/gt3rs-02.jpg" />
-    <div class="shade"></div>
-    <div class="txt">
-      <div class="kicker">OR TAKE</div>
-      <h1><span class="y">$300,000</span> cash</h1>
-      <div class="sub">$415,000 prize · your choice</div>
-    </div>
+    <img src="../public/car/gt3rs-02.jpg" /><div class="shade"></div>
+    <div class="txt"><div class="kicker">OR TAKE</div><h1><span class="y">$300,000</span> cash</h1><div class="sub">$415,000 prize &mdash; winner&rsquo;s choice</div></div>
   </div>
-
   <div class="scene s3">
-    <img src="../public/car/gt3rs-08.jpg" />
-    <div class="shade"></div>
-    <div class="txt">
-      <div class="kicker">SMALL POOL · REAL ODDS</div>
-      <h1>Drawn <span class="y">Sept 5</span></h1>
-      <div class="sub">Verifiable draw · filmed handover</div>
-    </div>
+    <img src="../public/car/gt3rs-08.jpg" /><div class="shade"></div>
+    <div class="txt"><div class="kicker">FROM $25</div><h1>Poster <span class="y">+ entries</span></h1><div class="sub">Instant download, entries stack</div></div>
   </div>
-
   <div class="scene s4">
-    <img src="../public/car/gt3rs-00.jpg" />
-    <div class="shade"></div>
-    <div class="txt">
-      <div class="kicker">ENTRIES FROM $25</div>
-      <h1>Get in <span class="y">now</span></h1>
-      <div class="cta">redlinesociety.org</div>
-    </div>
+    <img src="../public/car/gt3rs-00.jpg" /><div class="shade"></div>
+    <div class="txt"><div class="kicker">LIVE DRAW &middot; SEPT 6</div><h1>Enter <span class="y">now</span></h1><div class="cta">redlinesociety.org</div></div>
   </div>
 
-  <div class="fineprint">NO PURCHASE NECESSARY. 18+, void in NY, FL, RI &amp; where prohibited. See Official Rules at redlinesociety.org/rules.</div>
+  <div class="fineprint">No purchase necessary. US, 18+. Void in NY, FL, RI &amp; where prohibited. See Official Rules at redlinesociety.org/rules.</div>
 </body>
 </html>

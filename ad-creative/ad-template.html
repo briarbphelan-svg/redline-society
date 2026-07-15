@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script>
+  // ?angle=car|cash  &  ?scale=<number>  (set viewport size via the renderer)
+  const p = new URLSearchParams(location.search);
+  document.documentElement.dataset.angle = p.get('angle') || 'car';
+  document.documentElement.style.setProperty('--s', p.get('scale') || '1');
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; }
+  body { background: #0b0b0c; font-family: Anton, sans-serif; color: #f4f4f2; position: relative; }
+
+  .hero { position: absolute; inset: 0; }
+  .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+  .shade { position: absolute; inset: 0;
+    background: linear-gradient(to top, #0b0b0c 19%, rgba(11,11,12,.82) 40%, rgba(11,11,12,.12) 64%, rgba(11,11,12,.55) 100%); }
+
+  .topbar { position: absolute; top: calc(40px * var(--s)); left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 calc(52px * var(--s)); z-index: 5; }
+  .brand { font-size: calc(40px * var(--s)); letter-spacing: 3px; text-shadow: 0 2px 14px rgba(0,0,0,.85); }
+  .brand .y { color: #ffcc00; } .brand .arrows { color: #ff3b30; letter-spacing: 0; margin-left: 6px; }
+  .valuetag { font-family: Inter, sans-serif; font-weight: 800; font-size: calc(22px * var(--s)); letter-spacing: 1px; color: #0b0b0c; background: #ffcc00; padding: calc(9px * var(--s)) calc(18px * var(--s)); border-radius: 999px; box-shadow: 0 6px 24px rgba(0,0,0,.5); }
+
+  .content { position: absolute; left: 0; right: 0; bottom: calc(112px * var(--s)); padding: 0 calc(60px * var(--s)); text-align: center; }
+  .kicker { font-family: Inter, sans-serif; font-weight: 800; font-size: calc(25px * var(--s)); letter-spacing: 6px; color: #ffcc00; }
+  h1 { line-height: .9; text-transform: uppercase; margin-top: calc(14px * var(--s)); text-shadow: 0 4px 30px rgba(0,0,0,.6); }
+  .h-car { font-size: calc(166px * var(--s)); }
+  .h-cash { font-size: calc(150px * var(--s)); }
+  h1 .y { color: #ffcc00; }
+  .value { font-family: Inter, sans-serif; font-weight: 800; font-size: calc(44px * var(--s)); margin-top: calc(22px * var(--s)); letter-spacing: -.5px; }
+  .value .cash { color: #ffcc00; }
+  .offer { font-family: Inter, sans-serif; font-weight: 700; font-size: calc(29px * var(--s)); color: #cfcfd6; margin-top: calc(12px * var(--s)); }
+  .offer b { color: #f4f4f2; }
+  .chips { display: flex; gap: calc(14px * var(--s)); justify-content: center; margin-top: calc(26px * var(--s)); }
+  .chip { font-family: Inter, sans-serif; font-weight: 700; font-size: calc(22px * var(--s)); color: #e7e7ea; border: 1.5px solid #3a3a40; background: rgba(20,20,22,.55); padding: calc(11px * var(--s)) calc(20px * var(--s)); border-radius: 999px; }
+  .chip .dot { color: #ffcc00; }
+  .cta { display: inline-block; margin-top: calc(30px * var(--s)); background: #ffcc00; color: #0b0b0c; font-size: calc(52px * var(--s)); text-transform: uppercase; letter-spacing: 1px; padding: calc(24px * var(--s)) calc(60px * var(--s)); border-radius: 999px; box-shadow: 0 14px 44px rgba(255,204,0,.32); }
+  .fineprint { position: absolute; bottom: calc(38px * var(--s)); left: 0; right: 0; text-align: center; font-family: Inter, sans-serif; font-weight: 600; font-size: calc(17px * var(--s)); color: #83838c; padding: 0 calc(60px * var(--s)); }
+
+  /* angle toggling */
+  :root[data-angle="car"]  .h-cash, :root[data-angle="car"]  .v-cash { display: none; }
+  :root[data-angle="cash"] .h-car,  :root[data-angle="cash"] .v-car  { display: none; }
+</style>
+</head>
+<body>
+  <div class="hero"><img src="../public/car/gt3rs-00.jpg" alt="" /><div class="shade"></div></div>
+
+  <div class="topbar">
+    <div class="brand">REDLINE<span class="y">SOCIETY</span><span class="arrows">&#8250;&#8250;&#8250;</span></div>
+    <div class="valuetag">ARV $415,000</div>
+  </div>
+
+  <div class="content">
+    <div class="kicker">GIVEAWAY RS01 &middot; LIVE DRAW SEPT 6</div>
+    <h1 class="h-car">Win this <span class="y">GT3&nbsp;RS</span></h1>
+    <h1 class="h-cash"><span class="y">$300,000</span> cash</h1>
+    <div class="value v-car">The $415,000 Porsche &mdash; or take <span class="cash">$300,000 cash</span>.</div>
+    <div class="value v-cash">Or drive the <span class="cash">$415,000 GT3 RS</span>. Winner&rsquo;s choice.</div>
+    <div class="offer">Grab a collector poster from <b>$25</b> &mdash; bonus entries drop <b>instantly</b>.</div>
+    <div class="chips">
+      <div class="chip"><span class="dot">&bull;</span> 1 guaranteed winner</div>
+      <div class="chip"><span class="dot">&bull;</span> Filmed live draw</div>
+    </div>
+    <div class="cta">Enter &rarr; redlinesociety.org</div>
+  </div>
+
+  <div class="fineprint">No purchase necessary. Open to US residents 18+. Void in NY, FL, RI &amp; where prohibited. See Official Rules at redlinesociety.org/rules.</div>
+</body>
+</html>

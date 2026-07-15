@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1920px; overflow: hidden; background: #0b0b0c; font-family: Anton, sans-serif; color: #f4f4f2; position: relative; }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  /* car sits in the TOP portion at ~native scale (downscaled = sharp), not stretched to fill 9:16 */
+  .imgwrap { position: absolute; top: 0; left: 0; right: 0; height: 1150px; overflow: hidden; }
+  .imgwrap img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+  .imgwrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0b0b0c 1%, rgba(11,11,12,0) 26%); }
+  .txt { position: absolute; left: 0; right: 0; top: 1150px; bottom: 150px; padding: 0 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .kicker { font-family: Inter, sans-serif; font-weight: 800; font-size: 32px; letter-spacing: 9px; color: #ffcc00; }
+  h1 { font-size: 138px; line-height: .9; text-transform: uppercase; margin-top: 18px; text-shadow: 0 5px 30px rgba(0,0,0,.5); }
+  h1 .y { color: #ffcc00; }
+  .sub { font-family: Inter, sans-serif; font-weight: 700; font-size: 44px; color: #e6e6ea; margin-top: 26px; }
+  .sub b { color: #f4f4f2; }
+  .cta { display: inline-block; margin-top: 38px; background: #ffcc00; color: #0b0b0c; font-size: 56px; text-transform: uppercase; letter-spacing: 1px; padding: 26px 66px; border-radius: 999px; box-shadow: 0 14px 44px rgba(255,204,0,.32); }
+  .brand { position: absolute; z-index: 10; text-shadow: 0 2px 14px rgba(0,0,0,.85); top: 96px; left: 0; right: 0; text-align: center; font-size: 50px; letter-spacing: 3px; }
+  .brand .y { color: #ffcc00; } .brand .arrows { color: #ff3b30; margin-left: 6px; }
+  .fineprint { position: absolute; bottom: 92px; left: 0; right: 0; text-align: center; font-family: Inter, sans-serif; font-weight: 600; font-size: 22px; color: #83838c; padding: 0 72px; }
+
+  @keyframes panL { from { transform: scale(1.04) translateX(20px); } to { transform: scale(1.04) translateX(-20px); } }
+  @keyframes panR { from { transform: scale(1.04) translateX(-20px); } to { transform: scale(1.04) translateX(20px); } }
+  @keyframes fade { 0% { opacity: 0; } 11% { opacity: 1; } 89% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes fadeHold { 0% { opacity: 0; } 11% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes rise { 0% { opacity: 0; transform: translateY(34px); } 22% { opacity: 1; transform: translateY(0); } 100% { opacity: 1; transform: translateY(0); } }
+  .s1 { animation: fade 2s linear 0s both; }     .s1 .imgwrap img { animation: panL 2s linear 0s both; }
+  .s2 { animation: fade 2s linear 2s both; }     .s2 .imgwrap img { animation: panR 2s linear 2s both; }
+  .s3 { animation: fade 2s linear 4s both; }     .s3 .imgwrap img { animation: panL 2s linear 4s both; }
+  .s4 { animation: fadeHold 2s linear 6s both; } .s4 .imgwrap img { animation: panR 2s linear 6s both; }
+  .s1 .txt { animation: rise 2s ease-out 0s both; }
+  .s2 .txt { animation: rise 2s ease-out 2s both; }
+  .s3 .txt { animation: rise 2s ease-out 4s both; }
+  .s4 .txt { animation: rise 2s ease-out 6s both; }
+</style>
+</head>
+<body>
+  <div class="brand">REDLINE<span class="y">SOCIETY</span><span class="arrows">&#8250;&#8250;&#8250;</span></div>
+
+  <div class="scene s1">
+    <div class="imgwrap"><img src="../public/car/gt3rs-00.jpg" /></div>
+    <div class="txt"><div class="kicker">GIVEAWAY RS01</div><h1>Win this <span class="y">GT3&nbsp;RS</span></h1><div class="sub">2025 &middot; Ice Grey &middot; PCCB</div></div>
+  </div>
+  <div class="scene s2">
+    <div class="imgwrap"><img src="../public/car/gt3rs-02.jpg" /></div>
+    <div class="txt"><div class="kicker">OR TAKE</div><h1><span class="y">$300,000</span> cash</h1><div class="sub">$415,000 prize &mdash; winner&rsquo;s choice</div></div>
+  </div>
+  <div class="scene s3">
+    <div class="imgwrap"><img src="../public/car/gt3rs-08.jpg" /></div>
+    <div class="txt"><div class="kicker">FROM $25</div><h1>Poster <span class="y">+ entries</span></h1><div class="sub">Instant download, entries stack</div></div>
+  </div>
+  <div class="scene s4">
+    <div class="imgwrap"><img src="../public/car/gt3rs-00.jpg" /></div>
+    <div class="txt"><div class="kicker">LIVE DRAW &middot; SEPT 6</div><h1>Enter <span class="y">now</span></h1><div class="cta">redlinesociety.org</div></div>
+  </div>
+
+  <div class="fineprint">No purchase necessary. US, 18+. Void in NY, FL, RI &amp; where prohibited. See Official Rules at redlinesociety.org/rules.</div>
+</body>
+</html>

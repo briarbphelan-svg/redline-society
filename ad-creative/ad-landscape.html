@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1200px; height: 628px; overflow: hidden; background: #0b0b0c; font-family: Anton, sans-serif; color: #f4f4f2; position: relative; }
+  .hero { position: absolute; inset: 0; }
+  .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 68% 40%; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(to right, #0b0b0c 28%, rgba(11,11,12,.86) 46%, rgba(11,11,12,.12) 72%, rgba(11,11,12,.45)); }
+  .brand { position: absolute; top: 34px; left: 56px; z-index: 5; font-size: 28px; letter-spacing: 2px; text-shadow: 0 2px 12px rgba(0,0,0,.85); }
+  .brand .y { color: #ffcc00; } .brand .arrows { color: #ff3b30; margin-left: 5px; }
+  .valuetag { position: absolute; top: 34px; right: 56px; z-index: 5; font-family: Inter, sans-serif; font-weight: 800; font-size: 19px; letter-spacing: 1px; color: #0b0b0c; background: #ffcc00; padding: 8px 16px; border-radius: 999px; box-shadow: 0 5px 20px rgba(0,0,0,.5); }
+  .content { position: absolute; left: 56px; top: 50%; transform: translateY(-48%); max-width: 700px; }
+  .kicker { font-family: Inter, sans-serif; font-weight: 800; font-size: 19px; letter-spacing: 5px; color: #ffcc00; }
+  h1 { font-size: 106px; line-height: .9; text-transform: uppercase; margin-top: 10px; text-shadow: 0 4px 24px rgba(0,0,0,.6); }
+  h1 .y { color: #ffcc00; }
+  .value { font-family: Inter, sans-serif; font-weight: 800; font-size: 32px; margin-top: 18px; letter-spacing: -.3px; }
+  .value .cash { color: #ffcc00; }
+  .cta { display: inline-block; margin-top: 22px; background: #ffcc00; color: #0b0b0c; font-size: 30px; text-transform: uppercase; letter-spacing: 1px; padding: 14px 36px; border-radius: 999px; box-shadow: 0 10px 32px rgba(255,204,0,.3); }
+  .fineprint { position: absolute; bottom: 20px; left: 56px; right: 56px; font-family: Inter, sans-serif; font-weight: 600; font-size: 14px; color: #83838c; }
+</style>
+</head>
+<body>
+  <div class="hero"><img src="../public/car/gt3rs-00.jpg" /><div class="shade"></div></div>
+  <div class="brand">REDLINE<span class="y">SOCIETY</span><span class="arrows">&#8250;&#8250;&#8250;</span></div>
+  <div class="valuetag">ARV $415,000</div>
+  <div class="content">
+    <div class="kicker">GIVEAWAY RS01 &middot; LIVE DRAW SEPT 6</div>
+    <h1>Win this <span class="y">GT3&nbsp;RS</span></h1>
+    <div class="value">The $415,000 Porsche &mdash; or take <span class="cash">$300,000 cash</span>.</div>
+    <div class="cta">Enter &rarr; redlinesociety.org</div>
+  </div>
+  <div class="fineprint">No purchase necessary. Open to US residents 18+. Void in NY, FL, RI &amp; where prohibited. See Official Rules at redlinesociety.org/rules.</div>
+</body>
+</html>

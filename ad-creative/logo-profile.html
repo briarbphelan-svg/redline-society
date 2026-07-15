@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; background: #0b0b0c; font-family: Anton, sans-serif; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .bg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 44%, #1b1b20 0%, #0b0b0c 64%); }
+  /* thin ring sits inside the circular crop for polish */
+  .ring { position: absolute; width: 936px; height: 936px; border-radius: 50%; border: 7px solid #ffcc00; box-shadow: inset 0 0 70px rgba(255,204,0,.14), 0 0 40px rgba(0,0,0,.6); }
+  .mark { position: relative; text-align: center; }
+  .rs { font-size: 540px; line-height: .78; letter-spacing: -14px; text-transform: uppercase; text-shadow: 0 6px 40px rgba(0,0,0,.6); }
+  .rs .r { color: #f4f4f2; }
+  .rs .s { color: #ffcc00; }
+  .arrows { font-size: 156px; color: #ff3b30; letter-spacing: 10px; margin-top: 26px; line-height: .6; }
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="ring"></div>
+  <div class="mark">
+    <div class="rs"><span class="r">R</span><span class="s">S</span></div>
+    <div class="arrows">&#8250;&#8250;&#8250;</div>
+  </div>
+</body>
+</html>
