@@ -99,30 +99,45 @@ export default async function HomePage() {
               <p className="text-xs text-mist mt-3">{NPN_DISCLAIMER.split(".")[0]}. See Official Rules.</p>
             </div>
           </div>
-          {/* explicit scroll affordance — pinned to the bottom of the full-height hero so
-              cold visitors always see there's more below and don't read it as a dead one-pager */}
+          {/* mobile scroll affordance — centered under the CTA */}
           <a
-            href="#packages"
-            aria-label="Scroll down to entry packs and prize details"
-            className="mt-8 pt-2 inline-flex flex-col items-center gap-2 text-mist hover:text-caliper transition-colors"
+            href="#the-car"
+            aria-label="Scroll down to see the car"
+            className="sm:hidden mt-8 pt-2 inline-flex flex-col items-center gap-2 text-caliper hover:text-caliper-dark transition-colors"
           >
-            <span className="text-[11px] font-bold tracking-[0.3em]">PACKS · THE CAR · WINNERS BELOW</span>
-            <svg
-              width="26"
-              height="26"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-              className="animate-bounce"
-            >
+            <span className="text-[11px] font-bold tracking-[0.3em]">CHECK OUT THE CAR</span>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
               <path d="M6 9l6 6 6-6" />
             </svg>
           </a>
         </div>
+
+        {/* desktop: yellow diagonal arrows in the bottom corners that scroll to the car —
+            they frame the hero and pull the eye downward so it never reads as a one-pager */}
+        <a
+          href="#the-car"
+          aria-label="Scroll down to see the car"
+          className="hidden sm:flex absolute bottom-7 left-7 z-10 flex-col items-start gap-1.5 text-caliper hover:text-caliper-dark transition-colors"
+        >
+          <span className="text-[11px] font-bold tracking-[0.25em]">CHECK OUT THE CAR</span>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
+            {/* diagonal arrow pointing down-left */}
+            <path d="M17 7 7 17" />
+            <path d="M7 10v7h7" />
+          </svg>
+        </a>
+        <a
+          href="#the-car"
+          aria-label="Scroll down to see the car"
+          className="hidden sm:flex absolute bottom-7 right-7 z-10 flex-col items-end gap-1.5 text-right text-caliper hover:text-caliper-dark transition-colors"
+        >
+          <span className="text-[11px] font-bold tracking-[0.25em]">CHECK OUT THE CAR</span>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
+            {/* diagonal arrow pointing down-right */}
+            <path d="M7 7l10 10" />
+            <path d="M17 10v7h-7" />
+          </svg>
+        </a>
       </section>
 
       {/* STATS STRIP */}

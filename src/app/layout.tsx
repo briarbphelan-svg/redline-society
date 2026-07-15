@@ -47,7 +47,7 @@ const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${anton.variable} antialiased`}>
+    <html lang="en" className={`${inter.variable} ${anton.variable} antialiased scroll-smooth`}>
       <body className="min-h-screen flex flex-col">
         <div className="bg-caliper text-night text-center text-[13px] font-bold tracking-wide py-2 px-3">
           🏁 {giveaway.id} DRAW: {new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} · {formatCents(giveaway.arvCents)} GT3 RS or {formatCents(giveaway.cashAlternativeCents)} cash
