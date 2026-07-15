@@ -94,6 +94,29 @@ export default async function HomePage() {
             </Link>
             <p className="text-xs text-mist mt-3">{NPN_DISCLAIMER.split(".")[0]}. See Official Rules.</p>
           </div>
+          {/* explicit scroll affordance — the hero fills the fold, so cold visitors
+              otherwise read it as a dead one-pager and bounce */}
+          <a
+            href="#packages"
+            aria-label="Scroll down to entry packs and prize details"
+            className="mt-12 inline-flex flex-col items-center gap-2 text-mist hover:text-caliper transition-colors"
+          >
+            <span className="text-[11px] font-bold tracking-[0.3em]">PACKS · THE CAR · WINNERS BELOW</span>
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+              className="animate-bounce"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </a>
         </div>
       </section>
 
