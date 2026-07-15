@@ -161,8 +161,41 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* THE CAR */}
+      <section id="the-car" className="mx-auto max-w-7xl px-4 sm:px-6 mt-16 scroll-mt-24">
+        <h2 className="font-display text-4xl sm:text-5xl uppercase text-center">
+          The <span className="text-caliper">prize</span>
+        </h2>
+        <p className="text-mist text-center mt-2 max-w-2xl mx-auto">
+          {giveaway.car.headline} — {formatEntries(3129)} miles, PCCB carbon-ceramics, satin blue
+          magnesium-style wheels, GT3 RS livery. Delivered to your door, or take {formatCents(giveaway.cashAlternativeCents)} cash.
+        </p>
+        <div className="grid lg:grid-cols-2 gap-8 mt-10 items-start max-w-5xl mx-auto">
+          <div className="min-w-0">
+            <Gallery count={25} />
+          </div>
+          <div className="bg-panel border border-line rounded-2xl p-6 min-w-0">
+            <p className="font-display text-xl uppercase mb-4">Spec sheet</p>
+            <dl className="divide-y divide-line">
+              {giveaway.car.specs.map((s) => (
+                <div key={s.label} className="flex justify-between gap-6 py-2.5 text-sm">
+                  <dt className="text-mist">{s.label}</dt>
+                  <dd className="font-semibold text-right">{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="checker rounded-xl mt-5 p-4 text-center">
+              <p className="font-display text-lg uppercase">
+                + {formatCents(giveaway.taxContributionCents)} toward taxes
+              </p>
+              <p className="text-mist text-xs mt-1">Because winning shouldn&apos;t hurt in April.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PACKAGES */}
-      <section id="packages" className="mx-auto max-w-7xl px-4 sm:px-6 mt-16 scroll-mt-24">
+      <section id="packages" className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 scroll-mt-24">
         <h2 className="font-display text-4xl sm:text-5xl uppercase text-center">
           Collector <span className="text-caliper">Poster Packs</span>
         </h2>
@@ -226,39 +259,6 @@ export default async function HomePage() {
               <p className="text-mist text-sm leading-relaxed mt-2">{s.body}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* THE CAR */}
-      <section id="the-car" className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 scroll-mt-24">
-        <h2 className="font-display text-4xl sm:text-5xl uppercase text-center">
-          The <span className="text-caliper">prize</span>
-        </h2>
-        <p className="text-mist text-center mt-2 max-w-2xl mx-auto">
-          {giveaway.car.headline} — {formatEntries(3129)} miles, PCCB carbon-ceramics, satin blue
-          magnesium-style wheels, GT3 RS livery. Delivered to your door, or take {formatCents(giveaway.cashAlternativeCents)} cash.
-        </p>
-        <div className="grid lg:grid-cols-2 gap-8 mt-10 items-start max-w-5xl mx-auto">
-          <div className="min-w-0">
-            <Gallery count={25} />
-          </div>
-          <div className="bg-panel border border-line rounded-2xl p-6 min-w-0">
-            <p className="font-display text-xl uppercase mb-4">Spec sheet</p>
-            <dl className="divide-y divide-line">
-              {giveaway.car.specs.map((s) => (
-                <div key={s.label} className="flex justify-between gap-6 py-2.5 text-sm">
-                  <dt className="text-mist">{s.label}</dt>
-                  <dd className="font-semibold text-right">{s.value}</dd>
-                </div>
-              ))}
-            </dl>
-            <div className="checker rounded-xl mt-5 p-4 text-center">
-              <p className="font-display text-lg uppercase">
-                + {formatCents(giveaway.taxContributionCents)} toward taxes
-              </p>
-              <p className="text-mist text-xs mt-1">Because winning shouldn&apos;t hurt in April.</p>
-            </div>
-          </div>
         </div>
       </section>
 
