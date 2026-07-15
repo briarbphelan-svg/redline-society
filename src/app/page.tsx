@@ -120,10 +120,12 @@ export default async function HomePage() {
           className="hidden sm:flex absolute bottom-8 left-8 z-10 flex-col items-start gap-2 text-caliper hover:text-caliper-dark transition-colors"
         >
           <span className="text-sm font-bold tracking-[0.25em]">CHECK OUT THE CAR</span>
-          <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
-            {/* diagonal arrow pointing down-right (inward, toward the CTA) */}
-            <path d="M7 7l10 10" />
-            <path d="M17 10v7h-7" />
+          <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
+            {/* arrow angled down-right (inward), steepened toward straight-down */}
+            <g transform="rotate(-28 12 12)">
+              <path d="M12 3v15" />
+              <path d="M5 12l7 7 7-7" />
+            </g>
           </svg>
         </a>
         <a
@@ -132,10 +134,12 @@ export default async function HomePage() {
           className="hidden sm:flex absolute bottom-8 right-8 z-10 flex-col items-end gap-2 text-right text-caliper hover:text-caliper-dark transition-colors"
         >
           <span className="text-sm font-bold tracking-[0.25em]">CHECK OUT THE CAR</span>
-          <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
-            {/* diagonal arrow pointing down-left (inward, toward the CTA) */}
-            <path d="M17 7 7 17" />
-            <path d="M7 10v7h7" />
+          <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
+            {/* arrow angled down-left (inward), steepened toward straight-down */}
+            <g transform="rotate(28 12 12)">
+              <path d="M12 3v15" />
+              <path d="M5 12l7 7 7-7" />
+            </g>
           </svg>
         </a>
       </section>
