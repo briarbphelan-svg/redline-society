@@ -56,7 +56,7 @@ export default async function HomePage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-night via-night/80 to-night/50" />
         </div>
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-10 pb-10 text-center">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-8 text-center">
           <p className="inline-block border border-caliper/40 text-caliper text-xs font-bold tracking-[0.3em] px-4 py-1.5 rounded-full">
             GIVEAWAY {giveaway.id} · ARV {formatCents(giveaway.arvCents)}
           </p>
@@ -78,14 +78,14 @@ export default async function HomePage() {
               className="object-cover"
             />
           </div>
-          <div className="mt-8">
+          <div className="mt-6">
             <Countdown targetIso={giveaway.boostEndsIso} label="HIGHEST ENTRY BOOST ENDS IN" />
             <p className="text-xs text-mist mt-3">
               When the timer hits zero, multipliers drop to 100x —{" "}
               <strong className="text-danger">Gold&apos;s 50,000 entries become 25,000 at the same price.</strong>
             </p>
           </div>
-          <div className="mt-8">
+          <div className="mt-6">
             <Link
               href="#packages"
               className="inline-block bg-caliper hover:bg-caliper-dark text-night font-display text-xl uppercase tracking-wide rounded-full px-12 py-4 transition-colors shadow-[0_0_40px_rgba(255,204,0,0.25)]"
@@ -99,7 +99,7 @@ export default async function HomePage() {
           <a
             href="#packages"
             aria-label="Scroll down to entry packs and prize details"
-            className="mt-12 inline-flex flex-col items-center gap-2 text-mist hover:text-caliper transition-colors"
+            className="mt-7 inline-flex flex-col items-center gap-2 text-mist hover:text-caliper transition-colors"
           >
             <span className="text-[11px] font-bold tracking-[0.3em]">PACKS · THE CAR · WINNERS BELOW</span>
             <svg
