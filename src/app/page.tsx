@@ -8,7 +8,7 @@ import Gallery from "@/components/Gallery";
 import Accordion from "@/components/Accordion";
 import WinnersCircle from "@/components/WinnersCircle";
 import StickyCTA from "@/components/StickyCTA";
-import BoostPopup from "@/components/BoostPopup";
+import LeadPopup from "@/components/LeadPopup";
 import SeoJsonLd from "@/components/SeoJsonLd";
 import { faq } from "@/lib/faq";
 
@@ -37,6 +37,7 @@ export default async function HomePage() {
     db.package.findMany({ where: { active: true }, orderBy: { position: "asc" } }),
     totalEntriesSold(),
   ]);
+  const cheapest = packages.length ? Math.min(...packages.map((p) => p.priceCents)) : 500;
 
   return (
     <div>
@@ -67,9 +68,10 @@ export default async function HomePage() {
             <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl leading-[0.95] mt-6 uppercase">
               Win this <span className="text-caliper">GT3&nbsp;RS</span>
             </h1>
-            <p className="text-mist text-lg mt-4 max-w-xl mx-auto">
-              {giveaway.car.headline}. {formatEntries(3129)} miles. PCCB. Or take{" "}
-              <strong className="text-fog">{formatCents(giveaway.cashAlternativeCents)} cash</strong> instead.
+            <p className="text-fog text-lg sm:text-xl mt-4 max-w-2xl mx-auto">
+              Win the {giveaway.car.year} GT3&nbsp;RS — or take{" "}
+              <strong className="text-caliper">{formatCents(giveaway.cashAlternativeCents)} cash</strong>.
+              {" "}Enter from just <strong className="text-caliper">{formatCents(cheapest)}</strong>.
             </p>
             {/* mobile: full car, uncropped */}
             <div className="relative sm:hidden mt-6 aspect-[4/3] rounded-2xl overflow-hidden border border-line">
@@ -94,7 +96,7 @@ export default async function HomePage() {
                 href="#packages"
                 className="inline-block bg-caliper hover:bg-caliper-dark text-night font-display text-xl uppercase tracking-wide rounded-full px-12 py-4 transition-colors shadow-[0_0_40px_rgba(255,204,0,0.25)]"
               >
-                Get Entries Now
+                Enter Now — From {formatCents(cheapest)}
               </Link>
               <p className="text-xs text-mist mt-3">{NPN_DISCLAIMER.split(".")[0]}. See Official Rules.</p>
             </div>
@@ -162,6 +164,25 @@ export default async function HomePage() {
             <p className="font-display text-2xl">1</p>
             <p className="text-[11px] text-mist font-bold tracking-widest">GUARANTEED WINNER</p>
           </div>
+        </div>
+      </section>
+
+      {/* TRUST BAR — honest signals only (draws are filmed per Official Rules; RS01 paid out) */}
+      <section className="border-b border-line bg-night">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          {[
+            "Every draw filmed & published",
+            "Real winner paid — see RS01",
+            "Secure Stripe checkout",
+            "Delivered anywhere in the lower 48",
+          ].map((t) => (
+            <span key={t} className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold tracking-wide text-mist">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-caliper shrink-0">
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+              {t}
+            </span>
+          ))}
         </div>
       </section>
 
@@ -302,7 +323,7 @@ export default async function HomePage() {
       </section>
 
       <StickyCTA />
-      <BoostPopup />
+      <LeadPopup />
     </div>
   );
 }
