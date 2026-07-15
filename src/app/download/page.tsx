@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
-import { postersFor } from "@/lib/config";
+import { postersFor, giveaway } from "@/lib/config";
 import PosterDownloads from "@/components/PosterDownloads";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +42,7 @@ export default async function DownloadPage({
       </h1>
       <p className="text-mist mt-2">
         {posters.length} high-resolution GT3 RS {posters.length === 1 ? "print" : "prints"} (2800×4200) — yours to
-        download and keep. Thanks for entering RS01. 🏁
+        download and keep. Thanks for entering {giveaway.id}. 🏁
       </p>
       <div className="mt-8">
         <PosterDownloads posters={posters} />

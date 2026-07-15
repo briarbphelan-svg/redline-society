@@ -21,10 +21,19 @@ export const pastWinners: {
   prize: string;
   photo: string;
   date: string;
-}[] = [];
+}[] = [
+  {
+    giveawayId: "RS01",
+    name: "Toby Lei",
+    location: "Little Rock, AR",
+    prize: "Lamborghini Huracán STO",
+    photo: "/winners/rs01-toby-lei.jpg",
+    date: "April 10, 2026",
+  },
+];
 
 export const giveaway = {
-  id: "RS01",
+  id: "RS02",
   title: "Win My Porsche 911 GT3 RS",
   car: {
     name: "Porsche 911 GT3 RS",
@@ -111,7 +120,7 @@ export const POSTERS = [
   { file: "rs-poster-01-icegrey.jpg", title: "Ice Grey — GT3 RS Hero" },
   { file: "rs-poster-02-wing.jpg", title: "9000 RPM — Swan-Neck Wing" },
   { file: "rs-poster-03-carbon.jpg", title: "PCCB — Carbon-Ceramic Detail" },
-  { file: "rs-poster-04-collector.jpg", title: "RS01 — Collector Edition Print" },
+  { file: "rs-poster-04-collector.jpg", title: "RS02 — Collector Edition Print" },
   { file: "rs-poster-05-blueprint.jpg", title: "GT3 RS — Blueprint Spec Sheet" },
 ] as const;
 
