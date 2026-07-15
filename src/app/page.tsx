@@ -207,7 +207,7 @@ export default async function HomePage() {
           Every pack is an instant high-res GT3 RS poster download — and loads bonus entries to win the car.
           No shipping, no waiting.
         </p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-10">
           {packages.map((p) => (
             <div
               key={p.id}

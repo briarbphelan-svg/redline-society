@@ -53,6 +53,16 @@ export const giveaway = {
 
 export const ENTRY_PACKAGES = [
   {
+    slug: "grandstand",
+    name: "Grandstand",
+    priceCents: 500,
+    entries: 500,
+    postersIncluded: 1,
+    multiplierLabel: "100x ENTRIES",
+    badge: "",
+    position: 1,
+  },
+  {
     slug: "pit-lane",
     name: "Pit Lane",
     priceCents: 2500,
@@ -60,7 +70,7 @@ export const ENTRY_PACKAGES = [
     postersIncluded: 1,
     multiplierLabel: "120x ENTRIES",
     badge: "",
-    position: 1,
+    position: 2,
   },
   {
     slug: "bronze",
@@ -70,7 +80,7 @@ export const ENTRY_PACKAGES = [
     postersIncluded: 2,
     multiplierLabel: "150x ENTRIES",
     badge: "",
-    position: 2,
+    position: 3,
   },
   {
     slug: "silver",
@@ -80,7 +90,7 @@ export const ENTRY_PACKAGES = [
     postersIncluded: 3,
     multiplierLabel: "175x ENTRIES",
     badge: "MOST POPULAR",
-    position: 3,
+    position: 4,
   },
   {
     slug: "gold",
@@ -90,7 +100,7 @@ export const ENTRY_PACKAGES = [
     postersIncluded: 5,
     multiplierLabel: "200x ENTRIES",
     badge: "BEST ODDS",
-    position: 4,
+    position: 5,
   },
 ] as const;
 
