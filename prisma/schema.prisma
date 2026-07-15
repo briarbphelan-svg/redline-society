@@ -41,6 +41,8 @@ model Order {
   anonymousWinner       Boolean  @default(false)
   stripeSessionId       String   @default("")
   stripePaymentIntentId String   @default("")
+  referredByCode        String   @default("") // referrer's order number, if this buyer arrived via a referral link
+  referralBonusGranted  Boolean  @default(false) // guards against granting the referral bonus twice
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 

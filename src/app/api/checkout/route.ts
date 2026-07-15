@@ -10,6 +10,7 @@ const schema = z.object({
   email: z.string().email(),
   name: z.string().min(1).max(120),
   anonymousWinner: z.boolean().optional().default(false),
+  ref: z.string().max(40).optional(), // referrer's order number, if arrived via a referral link
 });
 
 async function nextOrderNumber(): Promise<string> {
@@ -45,6 +46,7 @@ export async function POST(req: Request) {
       entries,
       totalCents,
       anonymousWinner: input.anonymousWinner,
+      referredByCode: input.ref?.trim() ?? "",
     },
   });
 

@@ -60,6 +60,10 @@ export const giveaway = {
     "Open to legal residents of the 48 contiguous United States and D.C., 18+. Void in New York, Florida, Rhode Island, and where prohibited.", // TODO: register+bond in NY/FL to include them (LAUNCH.md)
 } as const;
 
+// Referral reward: when someone buys via a referral link, BOTH the referrer and
+// the new buyer get this many bonus entries (granted once, on paid conversion).
+export const REFERRAL_BONUS_ENTRIES = 1000;
+
 export const ENTRY_PACKAGES = [
   {
     slug: "grandstand",

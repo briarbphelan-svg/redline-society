@@ -46,11 +46,19 @@ function CheckoutInner() {
     if (!pkg) return;
     setError("");
     setSubmitting(true);
+    const ref = document.cookie.match(/(?:^|;\s*)rl_ref=([^;]+)/)?.[1];
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ packageSlug: pkg.slug, quantity: qty, email, name, anonymousWinner: anonymous }),
+        body: JSON.stringify({
+          packageSlug: pkg.slug,
+          quantity: qty,
+          email,
+          name,
+          anonymousWinner: anonymous,
+          ref: ref ? decodeURIComponent(ref) : undefined,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error ?? "Something went wrong.");

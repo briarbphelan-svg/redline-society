@@ -6,6 +6,7 @@ import "./globals.css";
 import { site, giveaway, NPN_DISCLAIMER } from "@/lib/config";
 import { formatCents } from "@/lib/entries";
 import Logo from "@/components/Logo";
+import ReferralCapture from "@/components/ReferralCapture";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const anton = Anton({ variable: "--font-anton", subsets: ["latin"], weight: "400" });
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${inter.variable} ${anton.variable} antialiased scroll-smooth`}>
       <body className="min-h-screen flex flex-col">
+        <ReferralCapture />
         <div className="bg-caliper text-night text-center text-[13px] font-bold tracking-wide py-2 px-3">
           🏁 {giveaway.id} DRAW: {new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} · {formatCents(giveaway.arvCents)} GT3 RS or {formatCents(giveaway.cashAlternativeCents)} cash
         </div>

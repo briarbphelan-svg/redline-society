@@ -2,9 +2,12 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
 import { entriesForEmail, formatEntries } from "@/lib/entries";
-import { giveaway, postersFor } from "@/lib/config";
+import { giveaway, postersFor, REFERRAL_BONUS_ENTRIES } from "@/lib/config";
 import PosterDownloads from "@/components/PosterDownloads";
+import ReferralShare from "@/components/ReferralShare";
 import { PixelPurchase } from "@/components/PixelEvents";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redlinesociety.org";
 
 export const metadata = { title: "You're In!" };
 
@@ -68,6 +71,10 @@ export default async function SuccessPage({
           . Good luck. 🍀
         </p>
       </div>
+
+      {order.status === "PAID" && (
+        <ReferralShare link={`${siteUrl}/?ref=${order.number}`} bonus={REFERRAL_BONUS_ENTRIES} />
+      )}
 
       {posters.length > 0 && (
         <div className="mt-10 text-left">
