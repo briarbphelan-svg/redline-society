@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { db } from "@/lib/db";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
 import { REFERRAL_BONUS_ENTRIES } from "@/lib/config";
+import { sendMetaCapiEvent } from "@/lib/meta-capi";
 
 export async function POST(req: Request) {
   if (!stripeConfigured()) {
@@ -62,6 +63,19 @@ export async function POST(req: Request) {
       } catch {
         // referral must never break payment fulfillment
       }
+
+      // Server-side Purchase via Meta Conversions API (recovers browser-lost
+      // conversions). Deduped with the browser pixel by event_id = order number.
+      // sendMetaCapiEvent never throws and no-ops until META_CAPI_TOKEN is set.
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redlinesociety.org";
+      await sendMetaCapiEvent({
+        eventName: "Purchase",
+        eventId: order.number,
+        email: order.email,
+        value: order.totalCents / 100,
+        currency: "USD",
+        sourceUrl: `${siteUrl}/checkout/success?order=${order.number}`,
+      });
     }
   }
 

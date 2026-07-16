@@ -2,6 +2,18 @@
 <html>
 <head>
 <meta charset="utf-8" />
+<script>
+  // Frame-seek hook for the renderer: /ad-reels.html?t=<ms> freezes every animation
+  // at time t (after fonts load) so a static screenshot captures that exact frame.
+  const _t = parseFloat(new URLSearchParams(location.search).get('t'));
+  if (!isNaN(_t)) {
+    window.addEventListener('load', () => {
+      (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+        document.getAnimations().forEach(a => { try { a.currentTime = _t; a.pause(); } catch (e) {} });
+      });
+    });
+  }
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -41,8 +53,8 @@
   <div class="brand">REDLINE<span class="y">SOCIETY</span><span class="arrows">&#8250;&#8250;&#8250;</span></div>
 
   <div class="scene s1">
-    <div class="imgwrap"><img src="../public/car/gt3rs-00.jpg" /></div>
-    <div class="txt"><div class="kicker">GIVEAWAY RS01</div><h1>Win this <span class="y">GT3&nbsp;RS</span></h1><div class="sub">2025 &middot; Ice Grey &middot; PCCB</div></div>
+    <div class="imgwrap"><img src="../public/car/gt3rs-01.jpg" /></div>
+    <div class="txt"><div class="kicker">GIVEAWAY RS02</div><h1>Win this <span class="y">GT3&nbsp;RS</span></h1><div class="sub">2025 &middot; Ice Grey &middot; PCCB</div></div>
   </div>
   <div class="scene s2">
     <div class="imgwrap"><img src="../public/car/gt3rs-02.jpg" /></div>
@@ -50,10 +62,10 @@
   </div>
   <div class="scene s3">
     <div class="imgwrap"><img src="../public/car/gt3rs-08.jpg" /></div>
-    <div class="txt"><div class="kicker">FROM $25</div><h1>Poster <span class="y">+ entries</span></h1><div class="sub">Instant download, entries stack</div></div>
+    <div class="txt"><div class="kicker">FROM $5</div><h1>Poster <span class="y">+ entries</span></h1><div class="sub">Instant download, entries stack</div></div>
   </div>
   <div class="scene s4">
-    <div class="imgwrap"><img src="../public/car/gt3rs-00.jpg" /></div>
+    <div class="imgwrap"><img src="../public/car/gt3rs-05.jpg" /></div>
     <div class="txt"><div class="kicker">LIVE DRAW &middot; SEPT 6</div><h1>Enter <span class="y">now</span></h1><div class="cta">redlinesociety.org</div></div>
   </div>
 

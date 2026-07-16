@@ -18,7 +18,9 @@ export function PixelPurchase({ value, orderNumber }: { value: number; orderNumb
     const key = `fbq_purchase_${orderNumber}`;
     if (sessionStorage.getItem(key)) return; // dedupe across refreshes
     sessionStorage.setItem(key, "1");
-    window.fbq("track", "Purchase", { value, currency: "USD" });
+    // eventID matches the server-side Conversions API event (order number) so
+    // Meta dedupes the browser + server Purchase into one conversion.
+    window.fbq("track", "Purchase", { value, currency: "USD" }, { eventID: orderNumber });
   }, [value, orderNumber]);
   return null;
 }
