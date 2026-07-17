@@ -60,6 +60,27 @@ export const giveaway = {
     "Open to legal residents of the 48 contiguous United States and D.C., 18+. Void in New York, Florida, Rhode Island, and where prohibited.", // TODO: register+bond in NY/FL to include them (LAUNCH.md)
 } as const;
 
+/* Second grand prize (added 2026-07): a real 1969 Dodge Charger the user purchased
+   from Streetside Classics. Every entry is in the running for BOTH cars.
+   photoCount = number of REAL owner-shot photos in /public/charger (charger-00.jpg …).
+   Keep 0 until real photos exist — the gallery shows a placeholder until then.
+   Do NOT use the dealer's watermarked listing photos (their copyright). */
+export const secondPrize = {
+  name: "1969 Dodge Charger R/T",
+  headline: "1969 Dodge Charger R/T HEMI Tribute · Hemi Orange",
+  arvCents: 10499500, // ~$104,995 (Streetside listing / purchase price) — confirm final ARV
+  photoCount: 0,
+  specs: [
+    { label: "Engine", value: "472ci HEMI V8" },
+    { label: "Transmission", value: "4-speed manual" },
+    { label: "Mileage", value: "2,801 miles (since built)" },
+    { label: "Finish", value: "Hemi Orange · black vinyl top & rear stripes" },
+    { label: "Details", value: "Hideaway headlights, hood blinkers, rear spoiler" },
+    { label: "Comfort", value: "Air conditioning · power steering & brakes" },
+    { label: "Wheels", value: 'P215/70R15 front · P295/50R15 staggered rear' },
+  ],
+} as const;
+
 // Referral reward: when someone buys via a referral link, BOTH the referrer and
 // the new buyer get this many bonus entries (granted once, on paid conversion).
 export const REFERRAL_BONUS_ENTRIES = 1000;

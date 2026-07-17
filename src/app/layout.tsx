@@ -52,7 +52,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-screen flex flex-col">
         <ReferralCapture />
         <div className="bg-caliper text-night text-center text-[13px] font-bold tracking-wide py-2 px-3">
-          🏁 {giveaway.id} DRAW: {new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} · {formatCents(giveaway.arvCents)} GT3 RS or {formatCents(giveaway.cashAlternativeCents)} cash
+          🏁 {giveaway.id} · WIN A {formatCents(giveaway.arvCents)} GT3 RS <span className="hidden sm:inline">+ A 1969 DODGE CHARGER</span> · ONE ENTRY, BOTH CARS · DRAW {new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
         </div>
 
         <header className="sticky top-0 z-40 bg-night/90 backdrop-blur border-b border-line">

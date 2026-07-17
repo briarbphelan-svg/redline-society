@@ -7,6 +7,7 @@ import Countdown from "@/components/Countdown";
 import Gallery from "@/components/Gallery";
 import Accordion from "@/components/Accordion";
 import WinnersCircle from "@/components/WinnersCircle";
+import SecondPrize from "@/components/SecondPrize";
 import StickyCTA from "@/components/StickyCTA";
 import LeadPopup from "@/components/LeadPopup";
 import SeoJsonLd from "@/components/SeoJsonLd";
@@ -69,7 +70,8 @@ export default async function HomePage() {
               Win this <span className="text-caliper">GT3&nbsp;RS</span>
             </h1>
             <p className="text-fog text-lg sm:text-xl mt-4 max-w-2xl mx-auto">
-              Win the {giveaway.car.year} GT3&nbsp;RS — or take{" "}
+              Win a {giveaway.car.year} GT3&nbsp;RS{" "}
+              <span className="font-bold" style={{ color: "#ff6a00" }}>+ a 1969 Charger</span> — or take{" "}
               <strong className="text-caliper">{formatCents(giveaway.cashAlternativeCents)} cash</strong>.
               {" "}Enter from just <strong className="text-caliper">{formatCents(cheapest)}</strong>.
             </p>
@@ -218,6 +220,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* SECOND PRIZE — 1969 Dodge Charger */}
+      <SecondPrize />
 
       {/* PACKAGES */}
       <section id="packages" className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 scroll-mt-24">
