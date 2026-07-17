@@ -72,15 +72,15 @@ export default async function HomePage() {
             <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl leading-[0.9] mt-6 uppercase">
               Win this <span className="text-caliper">GT3&nbsp;RS</span>
               <span className="block text-3xl sm:text-5xl lg:text-6xl mt-2">
-                <span className="text-mist">+ a </span>
+                <span className="text-mist">or a </span>
                 <span style={{ color: ORANGE }}>&apos;69 Charger</span>
               </span>
             </h1>
             <p className="text-fog text-lg sm:text-xl mt-4 max-w-2xl mx-auto">
-              Two cars. Two winners.{" "}
-              <span className="text-mist">One entry puts you in both draws.</span> Keep the GT3&nbsp;RS
-              or take <strong className="text-caliper">{formatCents(giveaway.cashAlternativeCents)} cash</strong> —
-              enter from just <strong className="text-caliper">{formatCents(cheapest)}</strong>.
+              Two cars, two winners — <strong className="text-fog">one entry puts you in both draws,
+              and you win one of the two.</strong> Take the GT3&nbsp;RS or{" "}
+              <strong className="text-caliper">{formatCents(giveaway.cashAlternativeCents)} cash</strong>.
+              Enter from just <strong className="text-caliper">{formatCents(cheapest)}</strong>.
             </p>
             {/* mobile: full car, uncropped */}
             <div className="relative sm:hidden mt-6 aspect-[4/3] rounded-2xl overflow-hidden border border-line">
