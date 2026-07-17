@@ -10,6 +10,7 @@ import WinnersCircle from "@/components/WinnersCircle";
 import SecondPrize from "@/components/SecondPrize";
 import StickyCTA from "@/components/StickyCTA";
 import LeadPopup from "@/components/LeadPopup";
+import AutoScrollHint from "@/components/AutoScrollHint";
 import SeoJsonLd from "@/components/SeoJsonLd";
 import { faq } from "@/lib/faq";
 
@@ -458,6 +459,7 @@ export default async function HomePage() {
 
       <StickyCTA />
       <LeadPopup />
+      <AutoScrollHint />
     </div>
   );
 }
