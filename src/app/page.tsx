@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { site, giveaway, NPN_DISCLAIMER, boostActive, effectiveEntries, postersIncludedFor } from "@/lib/config";
+import { site, giveaway, secondPrize, NPN_DISCLAIMER, boostActive, effectiveEntries, postersIncludedFor } from "@/lib/config";
 import { formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
 import Countdown from "@/components/Countdown";
 import Gallery from "@/components/Gallery";
@@ -28,8 +28,8 @@ const steps = [
   },
   {
     n: "03",
-    title: "Watch the live draw",
-    body: `One winning entry is drawn at random on ${new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "long", day: "numeric" })}. Keys or ${formatCents(giveaway.cashAlternativeCents)} cash — winner's choice.`,
+    title: "Watch the live draws",
+    body: `Two winners are drawn at random on ${new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "long", day: "numeric" })} — the GT3 RS first, then the Charger. Keys or ${formatCents(giveaway.cashAlternativeCents)} cash — GT3 winner's choice.`,
   },
 ];
 
@@ -39,6 +39,9 @@ export default async function HomePage() {
     totalEntriesSold(),
   ]);
   const cheapest = packages.length ? Math.min(...packages.map((p) => p.priceCents)) : 500;
+  const combinedArvCents = giveaway.arvCents + secondPrize.arvCents;
+  const chargerHasPhotos = secondPrize.photoCount > 0;
+  const ORANGE = "#ff6a00";
 
   return (
     <div>
@@ -64,16 +67,20 @@ export default async function HomePage() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-8 text-center flex flex-col sm:min-h-[calc(100svh-112px)]">
           <div className="flex-1 flex flex-col justify-center">
             <p className="inline-block border border-caliper/40 text-caliper text-xs font-bold tracking-[0.3em] px-4 py-1.5 rounded-full self-center">
-              GIVEAWAY {giveaway.id} · ARV {formatCents(giveaway.arvCents)}
+              GIVEAWAY {giveaway.id} · TWO GRAND PRIZES · {formatCents(combinedArvCents)} ARV
             </p>
-            <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl leading-[0.95] mt-6 uppercase">
+            <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl leading-[0.9] mt-6 uppercase">
               Win this <span className="text-caliper">GT3&nbsp;RS</span>
+              <span className="block text-3xl sm:text-5xl lg:text-6xl mt-2">
+                <span className="text-mist">+ a </span>
+                <span style={{ color: ORANGE }}>&apos;69 Charger</span>
+              </span>
             </h1>
             <p className="text-fog text-lg sm:text-xl mt-4 max-w-2xl mx-auto">
-              Win a {giveaway.car.year} GT3&nbsp;RS{" "}
-              <span className="font-bold" style={{ color: "#ff6a00" }}>+ a 1969 Charger</span> — or take{" "}
-              <strong className="text-caliper">{formatCents(giveaway.cashAlternativeCents)} cash</strong>.
-              {" "}Enter from just <strong className="text-caliper">{formatCents(cheapest)}</strong>.
+              Two cars. Two winners.{" "}
+              <span className="text-mist">One entry puts you in both draws.</span> Keep the GT3&nbsp;RS
+              or take <strong className="text-caliper">{formatCents(giveaway.cashAlternativeCents)} cash</strong> —
+              enter from just <strong className="text-caliper">{formatCents(cheapest)}</strong>.
             </p>
             {/* mobile: full car, uncropped */}
             <div className="relative sm:hidden mt-6 aspect-[4/3] rounded-2xl overflow-hidden border border-line">
@@ -105,11 +112,11 @@ export default async function HomePage() {
           </div>
           {/* mobile scroll affordance — centered under the CTA */}
           <a
-            href="#the-car"
-            aria-label="Scroll down to see the car"
+            href="#prizes"
+            aria-label="Scroll down to see both prize cars"
             className="sm:hidden mt-8 pt-2 inline-flex flex-col items-center gap-2 text-caliper hover:text-caliper-dark transition-colors"
           >
-            <span className="text-[11px] font-bold tracking-[0.3em]">CHECK OUT THE CAR</span>
+            <span className="text-[11px] font-bold tracking-[0.3em]">SEE BOTH CARS</span>
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
               <path d="M6 9l6 6 6-6" />
             </svg>
@@ -119,11 +126,11 @@ export default async function HomePage() {
         {/* desktop: yellow diagonal arrows in the bottom corners that scroll to the car —
             they frame the hero and pull the eye downward so it never reads as a one-pager */}
         <a
-          href="#the-car"
-          aria-label="Scroll down to see the car"
+          href="#prizes"
+          aria-label="Scroll down to see both prize cars"
           className="hidden sm:flex absolute bottom-8 left-8 z-10 flex-col items-start gap-2 text-caliper hover:text-caliper-dark transition-colors"
         >
-          <span className="text-sm font-bold tracking-[0.25em]">CHECK OUT THE CAR</span>
+          <span className="text-sm font-bold tracking-[0.25em]">SEE BOTH CARS</span>
           <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
             {/* arrow angled down-right (inward), steepened toward straight-down */}
             <g transform="rotate(-28 12 12)">
@@ -133,11 +140,11 @@ export default async function HomePage() {
           </svg>
         </a>
         <a
-          href="#the-car"
-          aria-label="Scroll down to see the car"
+          href="#prizes"
+          aria-label="Scroll down to see both prize cars"
           className="hidden sm:flex absolute bottom-8 right-8 z-10 flex-col items-end gap-2 text-right text-caliper hover:text-caliper-dark transition-colors"
         >
-          <span className="text-sm font-bold tracking-[0.25em]">CHECK OUT THE CAR</span>
+          <span className="text-sm font-bold tracking-[0.25em]">SEE BOTH CARS</span>
           <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
             {/* arrow angled down-left (inward), steepened toward straight-down */}
             <g transform="rotate(28 12 12)">
@@ -163,8 +170,8 @@ export default async function HomePage() {
             <p className="text-[11px] text-mist font-bold tracking-widest">DRAW DATE</p>
           </div>
           <div>
-            <p className="font-display text-2xl">1</p>
-            <p className="text-[11px] text-mist font-bold tracking-widest">GUARANTEED WINNER</p>
+            <p className="font-display text-2xl">2</p>
+            <p className="text-[11px] text-mist font-bold tracking-widest">GUARANTEED WINNERS</p>
           </div>
         </div>
       </section>
@@ -188,10 +195,126 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* DUAL PRIZE SHOWCASE — both cars up top, each drawing interest + its own CTA */}
+      <section id="prizes" className="mx-auto max-w-7xl px-4 sm:px-6 mt-16 scroll-mt-24">
+        <div className="text-center">
+          <h2 className="font-display text-4xl sm:text-5xl uppercase">
+            Two grand prizes. <span className="text-caliper">Two winners.</span>
+          </h2>
+          <p className="text-mist mt-3 max-w-2xl mx-auto">
+            Every entry is in the running for <strong className="text-fog">both</strong> cars — we draw a
+            separate winner for each, so you can win one of the two. One entry, two shots.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 mt-10">
+          {/* Grand Prize 1 — GT3 RS */}
+          <div className="group relative rounded-3xl overflow-hidden border border-line bg-panel flex flex-col">
+            <div className="relative aspect-[16/10] overflow-hidden">
+              <Image
+                src="/car/porsche.jpg"
+                alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-night via-night/20 to-transparent" />
+              <span className="absolute top-4 left-4 bg-caliper text-night text-[11px] font-bold tracking-widest px-3 py-1 rounded-full">
+                GRAND PRIZE 1
+              </span>
+              <span className="absolute bottom-4 right-4 bg-night/80 text-caliper text-xs font-bold tracking-widest px-3 py-1 rounded-full">
+                ARV {formatCents(giveaway.arvCents)}
+              </span>
+            </div>
+            <div className="p-6 flex-1 flex flex-col">
+              <p className="font-display text-2xl sm:text-3xl uppercase">
+                {giveaway.car.year} <span className="text-caliper">GT3 RS</span>
+              </p>
+              <p className="text-mist text-sm mt-2 flex-1">
+                518 hp, 9,000 rpm flat-six, PCCB carbon-ceramics, Ice Grey Metallic — or take{" "}
+                <strong className="text-fog">{formatCents(giveaway.cashAlternativeCents)} cash</strong> instead.
+              </p>
+              <div className="flex items-center gap-3 mt-5">
+                <Link
+                  href="#packages"
+                  className="flex-1 text-center bg-caliper hover:bg-caliper-dark text-night font-bold rounded-full py-3 transition-colors"
+                >
+                  Enter to Win →
+                </Link>
+                <a
+                  href="#the-car"
+                  className="text-sm font-bold text-caliper hover:text-caliper-dark whitespace-nowrap px-2"
+                >
+                  See it ↓
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Grand Prize 2 — '69 Charger */}
+          <div className="group relative rounded-3xl overflow-hidden border flex flex-col" style={{ borderColor: `${ORANGE}44` }}>
+            <div className="relative aspect-[16/10] overflow-hidden" style={{ background: `${ORANGE}0d` }}>
+              {chargerHasPhotos ? (
+                <>
+                  <Image
+                    src="/charger/charger-00.jpg"
+                    alt="1969 Dodge Charger R/T in Hemi Orange"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-night via-night/20 to-transparent" />
+                </>
+              ) : (
+                <div className="absolute inset-0 grid place-items-center text-center px-6">
+                  <div>
+                    <p className="text-5xl">🏁</p>
+                    <p className="font-display text-xl uppercase mt-2" style={{ color: ORANGE }}>
+                      Real photos dropping soon
+                    </p>
+                  </div>
+                </div>
+              )}
+              <span className="absolute top-4 left-4 text-night text-[11px] font-bold tracking-widest px-3 py-1 rounded-full" style={{ background: ORANGE }}>
+                GRAND PRIZE 2
+              </span>
+              <span className="absolute bottom-4 right-4 bg-night/80 text-xs font-bold tracking-widest px-3 py-1 rounded-full" style={{ color: ORANGE }}>
+                ARV {formatCents(secondPrize.arvCents)}
+              </span>
+            </div>
+            <div className="p-6 flex-1 flex flex-col bg-panel">
+              <p className="font-display text-2xl sm:text-3xl uppercase">
+                1969 <span style={{ color: ORANGE }}>Charger R/T</span>
+              </p>
+              <p className="text-mist text-sm mt-2 flex-1">
+                472ci HEMI V8, 4-speed manual, 2,801 miles, Hemi Orange with black stripes — a real
+                muscle-car icon.
+              </p>
+              <div className="flex items-center gap-3 mt-5">
+                <Link
+                  href="#packages"
+                  className="flex-1 text-center font-bold rounded-full py-3 transition-colors text-night hover:brightness-110"
+                  style={{ background: ORANGE }}
+                >
+                  Enter to Win →
+                </Link>
+                <a
+                  href="#second-prize"
+                  className="text-sm font-bold whitespace-nowrap px-2 hover:brightness-110"
+                  style={{ color: ORANGE }}
+                >
+                  See it ↓
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* THE CAR */}
-      <section id="the-car" className="mx-auto max-w-7xl px-4 sm:px-6 mt-16 scroll-mt-24">
+      <section id="the-car" className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 scroll-mt-24">
         <h2 className="font-display text-4xl sm:text-5xl uppercase text-center">
-          The <span className="text-caliper">prize</span>
+          Grand Prize 1 · The <span className="text-caliper">GT3 RS</span>
         </h2>
         <p className="text-mist text-center mt-2 max-w-2xl mx-auto">
           {giveaway.car.headline} — {formatEntries(3129)} miles, PCCB carbon-ceramics, satin blue
@@ -217,6 +340,12 @@ export default async function HomePage() {
               </p>
               <p className="text-mist text-xs mt-1">Because winning shouldn&apos;t hurt in April.</p>
             </div>
+            <Link
+              href="#packages"
+              className="mt-4 block text-center bg-caliper hover:bg-caliper-dark text-night font-display uppercase tracking-wide rounded-full py-3 transition-colors"
+            >
+              Enter to Win the GT3 RS →
+            </Link>
           </div>
         </div>
       </section>

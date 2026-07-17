@@ -21,8 +21,8 @@ export default function SecondPrize() {
           🔥 SECOND GRAND PRIZE · ARV {formatCents(secondPrize.arvCents)}
         </p>
         <h2 className="font-display text-4xl sm:text-6xl uppercase mt-6 leading-[0.95]">
-          Now win a{" "}
-          <span style={{ color: ORANGE }}>&apos;69 Charger</span> too
+          Grand Prize 2 · The{" "}
+          <span style={{ color: ORANGE }}>&apos;69 Charger</span>
         </h2>
         <p className="text-mist mt-3 max-w-2xl mx-auto">
           We just added a second grand prize — a real {secondPrize.headline}. Every entry is
@@ -88,6 +88,13 @@ export default function SecondPrize() {
               for each car, so you can win one of the two.
             </p>
           </div>
+          <a
+            href="#packages"
+            className="mt-4 block text-center font-display uppercase tracking-wide rounded-full py-3 text-night transition hover:brightness-110"
+            style={{ background: ORANGE }}
+          >
+            Enter to Win the Charger →
+          </a>
         </div>
       </div>
     </section>
