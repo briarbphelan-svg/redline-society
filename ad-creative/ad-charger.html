@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script>
+  // ?fmt=portrait|story|square|landscape  — sets canvas size + layout.
+  // Render each at a matching Chrome --window-size (see render-charger.sh).
+  const fmt = new URLSearchParams(location.search).get('fmt') || 'portrait';
+  document.documentElement.dataset.fmt = fmt;
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { overflow: hidden; }
+  body { background: #0b0b0c; font-family: Anton, sans-serif; color: #f4f4f2; position: relative; }
+  .orange { color: #ff6a00; }
+
+  /* ---- canvas sizes (must match the render window-size) ---- */
+  :root[data-fmt="portrait"]  body { width: 1080px; height: 1350px; }
+  :root[data-fmt="story"]     body { width: 1080px; height: 1920px; }
+  :root[data-fmt="square"]    body { width: 1080px; height: 1080px; }
+  :root[data-fmt="landscape"] body { width: 1200px; height: 628px; }
+
+  .photo { position: absolute; overflow: hidden; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 46%; }
+  .shade { position: absolute; inset: 0; }
+
+  .brand { position: absolute; z-index: 6; font-size: 40px; letter-spacing: 3px; text-shadow: 0 2px 14px rgba(0,0,0,.85); white-space: nowrap; }
+  .brand .y { color: #ff6a00; } .brand .arrows { color: #ff3b30; letter-spacing: 0; margin-left: 6px; }
+  .valuetag { position: absolute; z-index: 6; font-family: Inter, sans-serif; font-weight: 800; font-size: 22px; letter-spacing: 1px; color: #0b0b0c; background: #ff6a00; padding: 9px 18px; border-radius: 999px; box-shadow: 0 6px 24px rgba(0,0,0,.5); white-space: nowrap; }
+
+  .content { position: absolute; z-index: 6; }
+  .kicker { font-family: Inter, sans-serif; font-weight: 800; font-size: 25px; letter-spacing: 5px; color: #ff6a00; }
+  h1 { line-height: .9; text-transform: uppercase; margin-top: 12px; text-shadow: 0 4px 30px rgba(0,0,0,.6); }
+  .spec { font-family: Inter, sans-serif; font-weight: 800; font-size: 30px; margin-top: 20px; letter-spacing: .3px; color: #f4f4f2; }
+  .offer { font-family: Inter, sans-serif; font-weight: 700; font-size: 27px; color: #cfcfd6; margin-top: 12px; }
+  .offer b { color: #fff; }
+  .chips { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+  .chip { font-family: Inter, sans-serif; font-weight: 700; font-size: 21px; color: #e7e7ea; border: 1.5px solid #4a3a2f; background: rgba(20,20,22,.55); padding: 10px 18px; border-radius: 999px; white-space: nowrap; }
+  .chip .dot { color: #ff6a00; }
+  .cta { display: inline-block; margin-top: 26px; background: #ff6a00; color: #0b0b0c; text-transform: uppercase; letter-spacing: 1px; border-radius: 999px; box-shadow: 0 14px 44px rgba(255,106,0,.35); font-size: 46px; padding: 22px 52px; }
+  .fine { position: absolute; z-index: 6; font-family: Inter, sans-serif; font-weight: 600; color: #83838c; }
+
+  /* ===================== VERTICAL (portrait / story): photo band up top, copy below ===================== */
+  :root[data-fmt="portrait"] .brand,
+  :root[data-fmt="story"]    .brand { top: 40px; left: 52px; }
+  :root[data-fmt="portrait"] .valuetag,
+  :root[data-fmt="story"]    .valuetag { top: 40px; right: 52px; }
+
+  :root[data-fmt="portrait"] .photo { top: 0; left: 0; right: 0; height: 620px; }
+  :root[data-fmt="story"]    .photo { top: 0; left: 0; right: 0; height: 1000px; }
+  :root[data-fmt="portrait"] .shade,
+  :root[data-fmt="story"]    .shade { background: linear-gradient(to bottom, rgba(11,11,12,.45) 0%, rgba(11,11,12,0) 26%, rgba(11,11,12,0) 62%, #0b0b0c 100%); }
+
+  :root[data-fmt="portrait"] .content { left: 60px; right: 60px; top: 660px; text-align: center; }
+  :root[data-fmt="story"]    .content { left: 64px; right: 64px; top: 1030px; text-align: center; }
+  :root[data-fmt="portrait"] .chips,
+  :root[data-fmt="story"]    .chips { justify-content: center; }
+  :root[data-fmt="portrait"] h1 { font-size: 128px; }
+  :root[data-fmt="story"]    h1 { font-size: 140px; }
+
+  :root[data-fmt="portrait"] .fine { bottom: 34px; left: 60px; right: 60px; text-align: center; font-size: 17px; }
+  :root[data-fmt="story"]    .fine { bottom: 60px; left: 64px; right: 64px; text-align: center; font-size: 18px; }
+  :root[data-fmt="story"]    .cta { font-size: 50px; }
+
+  /* ===================== SQUARE: full-bleed photo, copy anchored bottom-center ===================== */
+  :root[data-fmt="square"] .brand { top: 38px; left: 46px; font-size: 36px; }
+  :root[data-fmt="square"] .valuetag { top: 38px; right: 46px; }
+  :root[data-fmt="square"] .photo { inset: 0; }
+  :root[data-fmt="square"] .photo img { object-position: 50% 34%; }
+  :root[data-fmt="square"] .shade { background: linear-gradient(to top, #0b0b0c 30%, rgba(11,11,12,.94) 50%, rgba(11,11,12,.35) 72%, rgba(11,11,12,.5) 100%); }
+  :root[data-fmt="square"] .content { left: 56px; right: 56px; bottom: 66px; text-align: center; }
+  :root[data-fmt="square"] .content .chips { justify-content: center; }
+  :root[data-fmt="square"] h1 { font-size: 118px; text-shadow: 0 3px 10px rgba(0,0,0,.85), 0 6px 40px rgba(0,0,0,.7); }
+  :root[data-fmt="square"] .spec { font-size: 27px; margin-top: 16px; }
+  :root[data-fmt="square"] .offer { font-size: 25px; }
+  :root[data-fmt="square"] .cta { font-size: 40px; padding: 18px 44px; margin-top: 22px; }
+  :root[data-fmt="square"] .fine { display: none; }
+
+  /* ===================== LANDSCAPE: photo right, copy left column ===================== */
+  :root[data-fmt="landscape"] .photo { top: 0; right: 0; bottom: 0; width: 1200px; left: 0; }
+  :root[data-fmt="landscape"] .photo img { object-position: 62% 44%; }
+  :root[data-fmt="landscape"] .shade { background: linear-gradient(to right, #0b0b0c 30%, rgba(11,11,12,.72) 52%, rgba(11,11,12,.05) 82%); }
+  :root[data-fmt="landscape"] .brand { top: 30px; left: 48px; font-size: 30px; }
+  :root[data-fmt="landscape"] .valuetag { top: 30px; right: 40px; font-size: 19px; padding: 8px 15px; }
+  :root[data-fmt="landscape"] .content { left: 48px; top: 50%; transform: translateY(-46%); max-width: 660px; text-align: left; }
+  :root[data-fmt="landscape"] .kicker { font-size: 20px; letter-spacing: 4px; }
+  :root[data-fmt="landscape"] h1 { font-size: 92px; }
+  :root[data-fmt="landscape"] .spec { font-size: 23px; margin-top: 12px; }
+  :root[data-fmt="landscape"] .offer { font-size: 21px; margin-top: 8px; }
+  :root[data-fmt="landscape"] .chips { margin-top: 16px; }
+  :root[data-fmt="landscape"] .chip { font-size: 17px; padding: 8px 14px; }
+  :root[data-fmt="landscape"] .cta { font-size: 32px; padding: 15px 36px; margin-top: 20px; }
+  :root[data-fmt="landscape"] .fine { display: none; }
+</style>
+</head>
+<body>
+  <div class="photo"><img src="../public/charger/charger-00.jpg" alt="1969 Dodge Charger R/T" /><div class="shade"></div></div>
+
+  <div class="brand">REDLINE<span class="y">SOCIETY</span><span class="arrows">&#8250;&#8250;&#8250;</span></div>
+  <div class="valuetag">ARV $104,995</div>
+
+  <div class="content">
+    <div class="kicker">GIVEAWAY RS02 &middot; LIVE DRAW SEPT 6</div>
+    <h1>Win this <span class="orange">&rsquo;69&nbsp;Charger</span></h1>
+    <div class="spec">472ci HEMI V8 &middot; 4-Speed &middot; 2,801 Miles</div>
+    <div class="offer">Enter from just <b>$5</b> &mdash; one entry runs for <b>both</b> cars.</div>
+    <div class="chips">
+      <div class="chip"><span class="dot">&bull;</span> 2 grand prizes, 2 winners</div>
+      <div class="chip"><span class="dot">&bull;</span> Filmed live draw</div>
+    </div>
+    <div class="cta">Enter &rarr; redlinesociety.org</div>
+  </div>
+
+  <div class="fine">No purchase necessary. Open to US residents 18+. Void in NY, FL, RI &amp; where prohibited. One entry, two draws &mdash; win one of two cars. See Official Rules at redlinesociety.org/rules.</div>
+</body>
+</html>
