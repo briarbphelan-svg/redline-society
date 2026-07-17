@@ -61,7 +61,9 @@ export const giveaway = {
 } as const;
 
 /* Second grand prize (added 2026-07): a real 1969 Dodge Charger the user purchased
-   from Streetside Classics. Every entry is in the running for BOTH cars.
+   from Streetside Classics. Every entry is in the running for BOTH cars, but an
+   entrant can win only ONE: the GT3 RS is drawn first, then the Charger from all
+   remaining entrants (see conductBothDraws() and Official Rules §5–6).
    photoCount = number of REAL owner-shot photos in /public/charger (charger-00.jpg …).
    Keep 0 until real photos exist — the gallery shows a placeholder until then.
    Do NOT use the dealer's watermarked listing photos (their copyright). */

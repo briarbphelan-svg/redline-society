@@ -26,8 +26,9 @@ export default function SecondPrize() {
         </h2>
         <p className="text-mist mt-3 max-w-2xl mx-auto">
           We just added a second grand prize — a real {secondPrize.headline}. Every entry is
-          automatically in the running for <strong className="text-fog">both cars</strong>. One entry.
-          Two dream machines.
+          automatically in the running for <strong className="text-fog">both cars</strong> — one entry,
+          two shots to win. We draw a separate winner for each car, so you can win{" "}
+          <strong className="text-fog">one of the two</strong>.
         </p>
       </div>
 
@@ -80,10 +81,11 @@ export default function SecondPrize() {
             style={{ borderColor: `${ORANGE}4d`, background: `${ORANGE}0d` }}
           >
             <p className="font-display text-lg uppercase" style={{ color: ORANGE }}>
-              One entry. Both cars.
+              One entry. Two shots.
             </p>
             <p className="text-mist text-xs mt-1">
-              Your entries are in the running for the Charger <em>and</em> the GT3 RS.
+              Your entries are in both draws — the Charger <em>and</em> the GT3 RS. Separate winner
+              for each car, so you can win one of the two.
             </p>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { conductDraw, formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
+import { conductBothDraws, formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Admin", robots: { index: false } };
@@ -32,22 +32,25 @@ async function logMailIn(formData: FormData) {
 
 async function runDraw() {
   "use server";
-  const result = await conductDraw();
-  if (!result) return;
-  await db.draw.create({
-    data: {
-      name: "Test draw (admin tool)",
-      totalEntries: result.totalEntries,
-      totalEntrants: result.entrants,
-      winnerEmail: result.winner.email,
-      winnerName: result.winner.name,
-      winnerSource: result.winner.source,
-      seedHex: result.seedHex,
-      winningTicket: result.ticket,
-      notes:
-        "Conducted with the built-in crypto draw tool. The official drawing must be run by your bonded sweepstakes administrator per the Official Rules.",
-    },
-  });
+  const both = await conductBothDraws();
+  if (!both) return;
+  for (const { prize, result } of both.prizes) {
+    if (!result) continue; // second draw only null if the first winner was the sole entrant
+    await db.draw.create({
+      data: {
+        name: `Test draw (admin tool) — ${prize}`,
+        totalEntries: result.totalEntries,
+        totalEntrants: result.entrants,
+        winnerEmail: result.winner.email,
+        winnerName: result.winner.name,
+        winnerSource: result.winner.source,
+        seedHex: result.seedHex,
+        winningTicket: result.ticket,
+        notes:
+          "Conducted with the built-in crypto draw tool. Two winners are drawn — the GT3 RS first, then the Charger from all remaining entrants (the first winner is excluded so no one can win both). The official drawing must be run by your bonded sweepstakes administrator per the Official Rules.",
+      },
+    });
+  }
   revalidatePath("/admin");
 }
 
@@ -149,9 +152,11 @@ export default async function AdminDashboard() {
           <h2 className="font-display text-xl uppercase mb-4">Draw tool</h2>
           <div className="bg-panel border border-line rounded-2xl p-6">
             <p className="text-sm text-mist leading-relaxed">
-              Draws one winning ticket from <strong className="text-fog">{formatEntries(sold.total)}</strong> total
-              entries (paid + free, equal per-entry odds) using crypto-secure randomness. The seed and winning
-              ticket number are stored for auditability.{" "}
+              Draws <strong className="text-fog">two winners</strong> from{" "}
+              <strong className="text-fog">{formatEntries(sold.total)}</strong> total entries (paid + free, equal
+              per-entry odds) using crypto-secure randomness: the GT3 RS first, then the Charger from all remaining
+              entrants — the first winner is excluded so <strong className="text-fog">no one can win both cars</strong>.
+              Each draw&apos;s seed and winning ticket number are stored for auditability.{" "}
               <strong className="text-fog">
                 The official drawing must be conducted by your bonded sweepstakes administrator
               </strong>{" "}
@@ -162,7 +167,7 @@ export default async function AdminDashboard() {
                 disabled={sold.total === 0}
                 className="bg-caliper hover:bg-caliper-dark disabled:opacity-40 text-night font-display uppercase tracking-wide rounded-full px-8 py-3 transition-colors"
               >
-                🎲 Conduct Test Draw
+                🎲 Conduct Test Draw (both cars)
               </button>
             </form>
 

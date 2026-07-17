@@ -35,17 +35,24 @@ export async function entriesForEmail(email: string) {
 /* Weighted random draw across ALL entries (paid + free, equal per-entry odds).
    Uses rejection-sampled crypto randomness — no modulo bias. Returns winner +
    audit info. The real drawing should be run by your bonded administrator;
-   this tool exists for testing and transparency. */
-export async function conductDraw() {
+   this tool exists for testing and transparency.
+
+   `excludeEmails` removes those entrants entirely before drawing — used to run
+   the second car's draw excluding whoever already won the first, so one entrant
+   can win at most one of the two cars (see Official Rules §5–6). */
+export async function conductDraw(excludeEmails: string[] = []) {
   type Bucket = { email: string; name: string; entries: number; source: "PAID" | "FREE" };
+  const excluded = new Set(excludeEmails.map((e) => e.toLowerCase().trim()));
   const buckets: Bucket[] = [];
 
   const orders = await db.order.findMany({ where: { status: "PAID" } });
   for (const o of orders) {
+    if (excluded.has(o.email.toLowerCase().trim())) continue;
     buckets.push({ email: o.email, name: o.name, entries: o.entries, source: "PAID" });
   }
   const amoe = await db.amoeEntry.findMany();
   for (const a of amoe) {
+    if (excluded.has(a.email.toLowerCase().trim())) continue;
     buckets.push({ email: a.email, name: a.name, entries: a.entries, source: "FREE" });
   }
 
@@ -81,4 +88,22 @@ export async function conductDraw() {
 
   const entrants = new Set(buckets.map((b) => b.email)).size;
   return { winner, totalEntries, entrants, seedHex, ticket };
+}
+
+/* Two-car draw: pick the GT3 RS winner from all entries, then pick the Charger
+   winner from all entries EXCEPT the GT3 RS winner. Every entry is in the running
+   for both cars, but a single entrant can win only one — so the two winners are
+   always different people. Returns each draw (the second may be null only if the
+   first winner was the sole entrant). */
+export async function conductBothDraws() {
+  const { giveaway, secondPrize } = await import("@/lib/config");
+  const first = await conductDraw();
+  if (!first) return null;
+  const second = await conductDraw([first.winner.email]);
+  return {
+    prizes: [
+      { prize: `${giveaway.car.year} ${giveaway.car.name}`, result: first },
+      { prize: secondPrize.name, result: second },
+    ] as const,
+  };
 }

@@ -1,4 +1,4 @@
-import { site, giveaway } from "@/lib/config";
+import { site, giveaway, secondPrize } from "@/lib/config";
 import { formatCents } from "@/lib/entries";
 
 const drawDate = new Date(giveaway.drawDateIso).toLocaleDateString("en-US", {
@@ -32,11 +32,19 @@ The promotion begins upon public launch and ends at 11:59 PM ET on the day befor
 
 **(b) Free mail-in entry (AMOE).** Hand-print your full name, email address, mailing address, phone number, and date of birth on a 3"×5" card and mail it in a #10 envelope with proper postage to: ${site.legalName}, Attn: ${giveaway.id} Free Entry, ${site.address}. Each mailed card received by the entry deadline grants ${giveaway.amoeEntries.toLocaleString()} entries, with the same per-entry odds of winning as purchased entries. Limit one card per envelope, one mail-in entry per person per day. Photocopied or mechanically reproduced cards are void. Mailed entries are recorded within five (5) business days of receipt.
 
-## 5. Prize
-One (1) Grand Prize: a ${giveaway.car.year} ${giveaway.car.name} (approximate retail value ${formatCents(giveaway.arvCents)}) plus ${formatCents(giveaway.taxContributionCents)} cash toward taxes, **or**, at the winner's sole election, ${formatCents(giveaway.cashAlternativeCents)} cash in lieu of the vehicle. Vehicle transport within the 48 contiguous US states is included. Title transfer, registration, insurance, and all taxes are the winner's responsibility. Odds of winning depend on the total number of entries received.
+## 5. Prizes
+There are two (2) Grand Prizes in this promotion:
+
+**Grand Prize A:** a ${giveaway.car.year} ${giveaway.car.name} (approximate retail value ${formatCents(giveaway.arvCents)}) plus ${formatCents(giveaway.taxContributionCents)} cash toward taxes, **or**, at the winner's sole election, ${formatCents(giveaway.cashAlternativeCents)} cash in lieu of the vehicle.
+
+**Grand Prize B:** a ${secondPrize.name} (approximate retail value ${formatCents(secondPrize.arvCents)}).
+
+Every valid entry is automatically entered into the drawing for **both** Grand Prizes. However, **no entrant may win more than one Grand Prize.** Grand Prize A is drawn first; the confirmed Grand Prize A winner and all of their entries are then removed before Grand Prize B is drawn. As a result, the two Grand Prizes are awarded to two different persons.
+
+For each vehicle prize, transport within the 48 contiguous US states is included, and title transfer, registration, insurance, and all taxes are the winner's responsibility. Odds of winning depend on the total number of entries received.
 
 ## 6. Winner Selection & Notification
-One potential winner will be selected in a random drawing from all valid entries received, conducted by [SWEEPSTAKES ADMINISTRATOR — required, e.g. a bonded independent administrator] on or about ${drawDate}. The potential winner will be notified by email and/or phone within 48 hours and must respond within seven (7) days and complete an affidavit of eligibility, liability release, and (where lawful) publicity release, plus IRS Form W-9. If a potential winner does not respond, is ineligible, or declines, an alternate will be drawn.
+Two potential winners will be selected in random drawings from all valid entries received, conducted by [SWEEPSTAKES ADMINISTRATOR — required, e.g. a bonded independent administrator] on or about ${drawDate}. The Grand Prize A winner is drawn first from all valid entries; the Grand Prize B winner is then drawn from all valid entries **excluding** the Grand Prize A winner and their entries, so that no entrant wins both prizes. Each potential winner will be notified by email and/or phone within 48 hours and must respond within seven (7) days and complete an affidavit of eligibility, liability release, and (where lawful) publicity release, plus IRS Form W-9. If a potential winner does not respond, is ineligible, or declines, an alternate will be drawn for that prize (an alternate for Grand Prize B is likewise drawn from entries excluding any confirmed winner).
 
 ## 7. Taxes
 The prize's fair market value is taxable income to the winner. Sponsor will issue IRS Form 1099-MISC. The ${formatCents(giveaway.taxContributionCents)} tax contribution is itself taxable.
