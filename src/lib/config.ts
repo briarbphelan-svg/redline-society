@@ -71,7 +71,8 @@ export const secondPrize = {
   name: "1969 Dodge Charger R/T",
   headline: "1969 Dodge Charger R/T HEMI Tribute · Hemi Orange",
   arvCents: 10499500, // ~$104,995 (Streetside listing / purchase price) — confirm final ARV
-  photoCount: 0,
+  photoCount: 1, // owner-shot photos in /public/charger (charger-00.jpg …) — user confirmed they took it
+
   specs: [
     { label: "Engine", value: "472ci HEMI V8" },
     { label: "Transmission", value: "4-speed manual" },

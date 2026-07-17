@@ -35,14 +35,14 @@ export default function SecondPrize() {
       <div className="grid lg:grid-cols-2 gap-8 mt-10 items-start max-w-5xl mx-auto">
         <div className="min-w-0">
           {hasPhotos ? (
-            <div className="grid grid-cols-2 gap-3">
+            <div className={secondPrize.photoCount === 1 ? "" : "grid grid-cols-2 gap-3"}>
               {Array.from({ length: secondPrize.photoCount }, (_, i) => (
                 <div key={i} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-line">
                   <Image
                     src={`/charger/charger-${String(i).padStart(2, "0")}.jpg`}
                     alt={`1969 Dodge Charger R/T — photo ${i + 1}`}
                     fill
-                    sizes="(max-width: 1024px) 50vw, 30vw"
+                    sizes={secondPrize.photoCount === 1 ? "(max-width: 1024px) 100vw, 45vw" : "(max-width: 1024px) 50vw, 30vw"}
                     className="object-cover"
                   />
                 </div>
