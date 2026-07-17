@@ -2,9 +2,12 @@
 
 import { useEffect } from "react";
 
-/* Casual one-time "reveal" on landing: after a short beat, gently glides the page
-   down to the two-prize showcase (#prizes) so first-time visitors see BOTH cars —
-   the GT3 RS and the Charger — without having to scroll. Deliberately unobtrusive:
+/* Casual one-time "reveal" on landing. Two deliberate beats:
+   1. hold on the hero (the original landing page) long enough to read it, then
+   2. an accelerating scroll — slow to start, then quick — down to the two-prize
+      showcase (#prizes) so first-time visitors land on BOTH cars, the GT3 RS and
+      the Charger, side by side.
+   Deliberately unobtrusive:
    - fires once per browser session (sessionStorage guard)
    - only when the visitor lands at the very top with no #hash target
    - bails for prefers-reduced-motion
@@ -29,8 +32,16 @@ export default function AutoScrollHint() {
     let startTs = 0;
     let cancelled = false;
 
-    // easeInOutSine — soft start, soft stop, reads as "casual" not mechanical
-    const ease = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
+    // easeInCubic — starts slow, then accelerates ("slower then fast"). A tiny
+    // ease-out over the final stretch just softens the stop so it doesn't jolt.
+    const ease = (t: number) => {
+      if (t > 0.92) {
+        const base = 0.92 * 0.92 * 0.92;
+        const k = (t - 0.92) / 0.08; // 0→1 across the last 8%
+        return base + (1 - base) * (1 - Math.pow(1 - k, 2));
+      }
+      return t * t * t;
+    };
 
     const cancel = () => {
       cancelled = true;
@@ -54,7 +65,7 @@ export default function AutoScrollHint() {
     };
 
     const startY = window.scrollY;
-    const DURATION = 2200; // ms — slow, unhurried glide
+    const DURATION = 2000; // ms — accelerating glide (slow start, quick finish)
 
     const step = (ts: number) => {
       if (cancelled) return;
@@ -71,12 +82,12 @@ export default function AutoScrollHint() {
       }
     };
 
-    // let the hero land first, then glide
+    // beat 1: hold on the hero long enough to actually read it, then glide
     const startTimer = window.setTimeout(() => {
       if (cancelled || window.scrollY > 12) return;
       addListeners();
       raf = requestAnimationFrame(step);
-    }, 1300);
+    }, 2200);
 
     return () => {
       cancelled = true;
