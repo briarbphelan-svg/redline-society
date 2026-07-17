@@ -100,15 +100,23 @@ Real prior winner: **Toby Lei, Little Rock AR, RS01 Lamborghini Huracán STO, Ap
   **We intentionally do NOT host the dealer's watermarked listing photos (their copyright).**
 
 ## OPEN / NEXT (what we're mid-stream on)
-1. **Charger photos:** user to send OWN photos → drop in `public/charger/charger-00.jpg…`,
-   bump `secondPrize.photoCount`, gallery goes live.
-2. **Draw mechanic (user just confirmed):** entries enter you into BOTH car draws, but **you can
-   only win ONE car** (win one → removed from the other draw; effectively two winners). NEEDS:
-   update Official Rules (`src/app/rules` / `src/lib/legal.ts`) + tweak the "one entry, both
-   cars" site copy to say "win one of two cars", + draw tooling to run two draws excluding the
-   first winner. NOT DONE YET.
+1. ✅ **DONE 2026-07-17 — Charger photos:** user's OWN photo (they took it) is live at
+   `public/charger/charger-00.jpg`; `secondPrize.photoCount = 1`; dual-prize card + Charger
+   gallery show the real car. Single-photo gallery renders full-width. More angles → add
+   `charger-01.jpg…` and bump photoCount.
+2. ✅ **DONE 2026-07-17 — Draw mechanic (win 1 of 2):** every entry is in BOTH draws but an
+   entrant can win only ONE car. `conductDraw(excludeEmails)` + `conductBothDraws()` in
+   `entries.ts` draw the GT3 RS first, then the Charger excluding that winner; admin tool runs
+   both & stores two audit rows. Official Rules §5–6 rewritten (two Grand Prizes, no double-win).
+   Landing reframed as TWO grand prizes with a dual-prize showcase band, per-car "Enter" CTAs,
+   "2 guaranteed winners", and copy that says "win one of the two" (hero, announcement bar,
+   both detail sections). All LIVE on Render.
 3. **Finish + publish the manual Meta campaign** (creative + publish + pause old ad set).
 4. **Add `META_CAPI_TOKEN`** to Render (user) to activate server-side conversions.
+
+_Deploy note: Manual Deploy via the Render dashboard over the Chrome extension works but the
+dashboard tab often hangs on screenshots — verify deploys by polling the live site
+(`curl -s https://redline-society.onrender.com | grep <marker>`) rather than trusting the UI._
 
 ## Standing constraints / user prefs
 - Keep replies SHORT (ALL chats). Act over ask; only pause for real decisions/actions I can't do.
