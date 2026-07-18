@@ -179,13 +179,15 @@ function CheckoutInner() {
             className="accent-caliper mt-0.5 w-4 h-4"
           />
           <span>
-            Join the <strong>⭐ {VIP_CLUB.name}</strong> for <strong>{VIP_CLUB.monthlyEntries.toLocaleString()} extra
-            entries</strong> every month.
-            <span className="block text-xs text-mist mt-0.5">
-              ${(VIP_CLUB.priceCents / 100).toFixed(2)}/month, charged today and auto-renewing monthly until you
-              cancel. Cancel anytime in one click from your confirmation page or{" "}
-              <Link href="/terms" className="underline hover:text-fog" target="_blank">Terms</Link>. Optional — leave
-              unchecked to skip.
+            <span className="block font-display text-3xl sm:text-4xl uppercase text-caliper leading-none">
+              +{VIP_CLUB.monthlyEntries.toLocaleString()} entries
+              <span className="text-fog"> / month</span>
+            </span>
+            <span className="block text-sm mt-2">
+              Join the ⭐ {VIP_CLUB.name} — <strong>${(VIP_CLUB.priceCents / 100).toFixed(2)}/month</strong>, charged
+              today and auto-renewing monthly until you cancel. Cancel anytime in one click from your confirmation
+              page or <Link href="/terms" className="underline hover:text-fog" target="_blank">Terms</Link>. Optional
+              — leave unchecked to skip.
             </span>
           </span>
         </label>
