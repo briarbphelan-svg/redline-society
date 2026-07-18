@@ -1,4 +1,4 @@
-import { site, giveaway, secondPrize } from "@/lib/config";
+import { site, giveaway, secondPrize, VIP_CLUB } from "@/lib/config";
 import { formatCents } from "@/lib/entries";
 
 const drawDate = new Date(giveaway.drawDateIso).toLocaleDateString("en-US", {
@@ -68,6 +68,9 @@ Entry package purchases are payments for sweepstakes entries in the active ${sit
 
 ## No purchase necessary
 Purchasing does not improve per-entry odds. Free entry methods with identical per-entry odds are described in the Official Rules.
+
+## ${VIP_CLUB.name} (optional recurring membership)
+The ${VIP_CLUB.name} is an **optional** paid membership you may add at checkout. It is **off by default** — you only join if you check the box yourself. If you join, you are charged **$${(VIP_CLUB.priceCents / 100).toFixed(2)} per month**, beginning on the day you join and **automatically renewing every month until you cancel**. Each month your membership is active, ${VIP_CLUB.monthlyEntries.toLocaleString()} bonus sweepstakes entries are added to the then-current ${site.name} promotion. Membership entries carry the same per-entry odds and are subject to the Official Rules. **Cancel anytime** with one click from your order confirmation page (which opens a self-serve billing portal), or by emailing ${site.supportEmail} — cancellation stops all future monthly charges; the current month is not prorated. Membership is separate from any single sweepstakes and continues across promotions until cancelled.
 
 ## Eligibility & accuracy
 You are responsible for the accuracy of the name and email on your order — entries attach to that email. Entries made ineligible by false eligibility statements are void without refund.

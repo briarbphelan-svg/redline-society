@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
-import { site, giveaway, effectiveEntries, postersIncludedFor } from "@/lib/config";
+import { site, giveaway, effectiveEntries, postersIncludedFor, VIP_CLUB } from "@/lib/config";
 
 const schema = z.object({
   packageSlug: z.string(),
@@ -10,6 +10,7 @@ const schema = z.object({
   email: z.string().email(),
   name: z.string().min(1).max(120),
   anonymousWinner: z.boolean().optional().default(false),
+  vipClub: z.boolean().optional().default(false), // OPT-IN recurring membership — never defaulted true on the client
   ref: z.string().max(40).optional(), // referrer's order number, if arrived via a referral link
 });
 
@@ -67,27 +68,57 @@ export async function POST(req: Request) {
   }
 
   const stripe = getStripe();
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    allow_promotion_codes: true,
-    customer_email: input.email,
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: `${site.name} — ${pkg.name} Digital Poster Pack`,
-            description: `${postersIncludedFor(pkg.slug)} high-resolution GT3 RS collector poster download${postersIncludedFor(pkg.slug) > 1 ? "s" : ""}, delivered instantly. Includes ${pkg.entries.toLocaleString()} bonus sweepstakes entries. No purchase necessary to enter — see Official Rules.`,
-          },
-          unit_amount: pkg.priceCents,
-        },
-        quantity: input.quantity,
+
+  // The one-time poster pack (also the only line item unless VIP is opted into).
+  const posterLineItem = {
+    price_data: {
+      currency: "usd",
+      product_data: {
+        name: `${site.name} — ${pkg.name} Digital Poster Pack`,
+        description: `${postersIncludedFor(pkg.slug)} high-resolution GT3 RS collector poster download${postersIncludedFor(pkg.slug) > 1 ? "s" : ""}, delivered instantly. Includes ${pkg.entries.toLocaleString()} bonus sweepstakes entries. No purchase necessary to enter — see Official Rules.`,
       },
-    ],
-    metadata: { orderId: order.id, orderNumber: order.number },
-    success_url: `${siteUrl}/checkout/success?order=${order.number}&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${siteUrl}/checkout?package=${pkg.slug}`,
-  });
+      unit_amount: pkg.priceCents,
+    },
+    quantity: input.quantity,
+  };
+
+  // VIP Club: only when the customer AFFIRMATIVELY opted in (unchecked by default).
+  // Switches the session to subscription mode; the one-time pack rides the first
+  // invoice, and the $26.99/mo membership recurs (Stripe supports mixed carts).
+  const session = input.vipClub
+    ? await stripe.checkout.sessions.create({
+        mode: "subscription",
+        allow_promotion_codes: true,
+        customer_email: input.email,
+        line_items: [
+          posterLineItem,
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: `${VIP_CLUB.name} — membership`,
+                description: `$${(VIP_CLUB.priceCents / 100).toFixed(2)}/month. ${VIP_CLUB.monthlyEntries.toLocaleString()} bonus sweepstakes entries every month you're a member. Cancel anytime.`,
+              },
+              unit_amount: VIP_CLUB.priceCents,
+              recurring: { interval: VIP_CLUB.interval },
+            },
+            quantity: 1,
+          },
+        ],
+        subscription_data: { metadata: { vip: "1", email: input.email.toLowerCase(), name: input.name } },
+        metadata: { orderId: order.id, orderNumber: order.number, vipClub: "1" },
+        success_url: `${siteUrl}/checkout/success?order=${order.number}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${siteUrl}/checkout?package=${pkg.slug}`,
+      })
+    : await stripe.checkout.sessions.create({
+        mode: "payment",
+        allow_promotion_codes: true,
+        customer_email: input.email,
+        line_items: [posterLineItem],
+        metadata: { orderId: order.id, orderNumber: order.number },
+        success_url: `${siteUrl}/checkout/success?order=${order.number}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${siteUrl}/checkout?package=${pkg.slug}`,
+      });
 
   await db.order.update({ where: { id: order.id }, data: { stripeSessionId: session.id } });
   return NextResponse.json({ url: session.url });

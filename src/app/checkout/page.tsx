@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import PaymentTrust from "@/components/PaymentTrust";
 import { PixelInitiateCheckout } from "@/components/PixelEvents";
+import { VIP_CLUB } from "@/lib/config";
 
 type Pkg = {
   slug: string;
@@ -29,6 +30,7 @@ function CheckoutInner() {
   const [eligible, setEligible] = useState(false);
   const [rules, setRules] = useState(false);
   const [anonymous, setAnonymous] = useState(false);
+  const [vipClub, setVipClub] = useState(false); // OPT-IN, unchecked by default (never pre-checked)
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -57,6 +59,7 @@ function CheckoutInner() {
           email,
           name,
           anonymousWinner: anonymous,
+          vipClub,
           ref: ref ? decodeURIComponent(ref) : undefined,
         }),
       });
@@ -168,6 +171,25 @@ function CheckoutInner() {
           </span>
         </label>
 
+        <label className="flex gap-3 items-start text-sm cursor-pointer bg-panel border border-line rounded-xl px-4 py-3.5">
+          <input
+            type="checkbox"
+            checked={vipClub}
+            onChange={(e) => setVipClub(e.target.checked)}
+            className="accent-caliper mt-0.5 w-4 h-4"
+          />
+          <span>
+            Join the <strong>⭐ {VIP_CLUB.name}</strong> for <strong>{VIP_CLUB.monthlyEntries.toLocaleString()} extra
+            entries</strong> every month.
+            <span className="block text-xs text-mist mt-0.5">
+              ${(VIP_CLUB.priceCents / 100).toFixed(2)}/month, charged today and auto-renewing monthly until you
+              cancel. Cancel anytime in one click from your confirmation page or{" "}
+              <Link href="/terms" className="underline hover:text-fog" target="_blank">Terms</Link>. Optional — leave
+              unchecked to skip.
+            </span>
+          </span>
+        </label>
+
         <label className="flex gap-3 items-start text-sm text-mist cursor-pointer pt-2">
           <input
             type="checkbox"
@@ -212,8 +234,15 @@ function CheckoutInner() {
         >
           {submitting
             ? "Processing…"
-            : `Pay ${money(pkg.priceCents * qty)} · Get ${pkg.postersIncluded * qty} Poster${pkg.postersIncluded * qty > 1 ? "s" : ""} + ${(pkg.entries * qty).toLocaleString()} Entries`}
+            : vipClub
+              ? `Pay ${money(pkg.priceCents * qty + VIP_CLUB.priceCents)} today · then ${money(VIP_CLUB.priceCents)}/mo`
+              : `Pay ${money(pkg.priceCents * qty)} · Get ${pkg.postersIncluded * qty} Poster${pkg.postersIncluded * qty > 1 ? "s" : ""} + ${(pkg.entries * qty).toLocaleString()} Entries`}
         </button>
+        {vipClub && (
+          <p className="text-center text-xs text-mist -mt-1">
+            Includes {VIP_CLUB.name}: {money(VIP_CLUB.priceCents)}/month, auto-renews until cancelled.
+          </p>
+        )}
         <PaymentTrust />
         <p className="text-center text-xs text-mist">
           No purchase necessary to enter or win — see{" "}

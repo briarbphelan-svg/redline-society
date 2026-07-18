@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { db } from "@/lib/db";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
-import { REFERRAL_BONUS_ENTRIES } from "@/lib/config";
+import { REFERRAL_BONUS_ENTRIES, VIP_CLUB } from "@/lib/config";
 import { sendMetaCapiEvent } from "@/lib/meta-capi";
 
 export async function POST(req: Request) {
@@ -76,6 +76,42 @@ export async function POST(req: Request) {
         currency: "USD",
         sourceUrl: `${siteUrl}/checkout/success?order=${order.number}`,
       });
+    }
+  }
+
+  // VIP Club: grant the monthly bonus entries on every PAID invoice for a VIP
+  // subscription (including the first). Idempotent — keyed on the invoice id stored
+  // in AmoeEntry.ip, so Stripe retries never double-grant. Wrapped so any hiccup
+  // can't 500 the webhook (which would make Stripe retry endlessly).
+  if (event.type === "invoice.paid" || event.type === "invoice.payment_succeeded") {
+    try {
+      const invoice = event.data.object as Stripe.Invoice;
+      const subId =
+        typeof (invoice as { subscription?: unknown }).subscription === "string"
+          ? ((invoice as { subscription?: string }).subscription as string)
+          : "";
+      if (subId && (invoice.amount_paid ?? 0) > 0) {
+        const sub = await stripe.subscriptions.retrieve(subId);
+        if (sub.metadata?.vip === "1") {
+          const marker = `vip:${invoice.id}`;
+          const already = await db.amoeEntry.findFirst({ where: { ip: marker } });
+          if (!already) {
+            const email = (sub.metadata?.email ?? invoice.customer_email ?? "").toLowerCase().trim();
+            if (email.includes("@")) {
+              await db.amoeEntry.create({
+                data: {
+                  email,
+                  name: sub.metadata?.name?.trim() || "VIP Member",
+                  entries: VIP_CLUB.monthlyEntries,
+                  ip: marker, // idempotency key + provenance ("vip:<invoiceId>")
+                },
+              });
+            }
+          }
+        }
+      }
+    } catch {
+      // never break the webhook on a VIP-grant hiccup
     }
   }
 

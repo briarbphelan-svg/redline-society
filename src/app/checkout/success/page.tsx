@@ -5,6 +5,7 @@ import { entriesForEmail, formatEntries } from "@/lib/entries";
 import { giveaway, postersFor, REFERRAL_BONUS_ENTRIES } from "@/lib/config";
 import PosterDownloads from "@/components/PosterDownloads";
 import ReferralShare from "@/components/ReferralShare";
+import VipManage from "@/components/VipManage";
 import { PixelPurchase } from "@/components/PixelEvents";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redlinesociety.org";
@@ -19,11 +20,13 @@ export default async function SuccessPage({
   const { order: orderNumber, session_id: sessionId } = await searchParams;
 
   let order = orderNumber ? await db.order.findUnique({ where: { number: orderNumber } }) : null;
+  let isVip = false;
 
-  if (order && order.status === "PENDING" && sessionId && stripeConfigured()) {
+  if (order && sessionId && stripeConfigured()) {
     try {
       const session = await getStripe().checkout.sessions.retrieve(sessionId);
-      if (session.metadata?.orderId === order.id && session.payment_status === "paid") {
+      isVip = session.metadata?.vipClub === "1" || session.mode === "subscription";
+      if (order.status === "PENDING" && session.metadata?.orderId === order.id && session.payment_status === "paid") {
         order = await db.order.update({
           where: { id: order.id },
           data: { status: "PAID", stripePaymentIntentId: String(session.payment_intent ?? "") },
@@ -71,6 +74,8 @@ export default async function SuccessPage({
           . Good luck. 🍀
         </p>
       </div>
+
+      {isVip && <VipManage orderNumber={order.number} />}
 
       {order.status === "PAID" && (
         <ReferralShare link={`${siteUrl}/?ref=${order.number}`} bonus={REFERRAL_BONUS_ENTRIES} />

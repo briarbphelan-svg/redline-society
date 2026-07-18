@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script>
+  // Frame-seek hook for the renderer: /ad-tiktok.html?t=<ms> freezes every animation
+  // at time t (after fonts load) so a static screenshot captures that exact frame.
+  const _t = parseFloat(new URLSearchParams(location.search).get('t'));
+  if (!isNaN(_t)) {
+    window.addEventListener('load', () => {
+      (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+        document.getAnimations().forEach(a => { try { a.currentTime = _t; a.pause(); } catch (e) {} });
+      });
+    });
+  }
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1920px; overflow: hidden; background: #0b0b0c; font-family: Anton, sans-serif; color: #f4f4f2; position: relative; }
+  .orange { color: #ff6a00; } .y { color: #ffcc00; }
+
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .imgwrap { position: absolute; top: 0; left: 0; right: 0; height: 1180px; overflow: hidden; }
+  .imgwrap img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+  .imgwrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0b0b0c 1%, rgba(11,11,12,0) 24%); }
+  .txt { position: absolute; left: 0; right: 0; top: 1140px; bottom: 150px; padding: 0 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .kicker { font-family: Inter, sans-serif; font-weight: 900; font-size: 34px; letter-spacing: 6px; color: #ffcc00; }
+  h1 { font-size: 150px; line-height: .88; text-transform: uppercase; margin-top: 16px; text-shadow: 0 5px 30px rgba(0,0,0,.6); }
+  .sub { font-family: Inter, sans-serif; font-weight: 800; font-size: 48px; color: #f0f0f2; margin-top: 26px; }
+  .sub b { color: #fff; }
+  .cta { display: inline-block; margin-top: 36px; background: #ffcc00; color: #0b0b0c; font-size: 58px; text-transform: uppercase; letter-spacing: 1px; padding: 26px 62px; border-radius: 999px; box-shadow: 0 14px 44px rgba(255,204,0,.35); }
+  .brand { position: absolute; z-index: 10; text-shadow: 0 2px 14px rgba(0,0,0,.9); top: 88px; left: 0; right: 0; text-align: center; font-size: 52px; letter-spacing: 3px; }
+  .brand .yb { color: #ffcc00; } .brand .arrows { color: #ff3b30; margin-left: 6px; }
+  .fineprint { position: absolute; bottom: 84px; left: 0; right: 0; text-align: center; font-family: Inter, sans-serif; font-weight: 600; font-size: 22px; color: #83838c; padding: 0 64px; z-index: 10; }
+
+  /* Ken Burns pans + fast fades + text rise. 5 scenes, 1.7s each. */
+  @keyframes panL { from { transform: scale(1.06) translateX(24px); } to { transform: scale(1.06) translateX(-24px); } }
+  @keyframes panR { from { transform: scale(1.06) translateX(-24px); } to { transform: scale(1.06) translateX(24px); } }
+  @keyframes zoom { from { transform: scale(1.02); } to { transform: scale(1.12); } }
+  @keyframes fade { 0% { opacity: 0; } 9% { opacity: 1; } 91% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes fadeHold { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes pop { 0% { opacity: 0; transform: translateY(40px) scale(.92); } 26% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+
+  .s1 { animation: fade 1.7s linear 0s both; }     .s1 .imgwrap img { animation: zoom 1.7s linear 0s both; }
+  .s2 { animation: fade 1.7s linear 1.7s both; }   .s2 .imgwrap img { animation: panL 1.7s linear 1.7s both; }
+  .s3 { animation: fade 1.7s linear 3.4s both; }   .s3 .imgwrap img { animation: panR 1.7s linear 3.4s both; }
+  .s4 { animation: fade 1.7s linear 5.1s both; }   .s4 .imgwrap img { animation: zoom 1.7s linear 5.1s both; }
+  .s5 { animation: fadeHold 1.7s linear 6.8s both; } .s5 .imgwrap img { animation: panL 1.9s linear 6.8s both; }
+  .s1 .txt { animation: pop 1.7s ease-out 0s both; }
+  .s2 .txt { animation: pop 1.7s ease-out 1.7s both; }
+  .s3 .txt { animation: pop 1.7s ease-out 3.4s both; }
+  .s4 .txt { animation: pop 1.7s ease-out 5.1s both; }
+  .s5 .txt { animation: pop 1.7s ease-out 6.8s both; }
+</style>
+</head>
+<body>
+  <div class="brand">REDLINE<span class="yb">SOCIETY</span><span class="arrows">&#8250;&#8250;&#8250;</span></div>
+
+  <div class="scene s1">
+    <div class="imgwrap"><img src="../public/car/both-cars.jpg" /></div>
+    <div class="txt"><div class="kicker">TWO GRAND PRIZES</div><h1><span class="y">$520K</span> in cars</h1><div class="sub">Somebody wins &mdash; entry from <b>$5</b></div></div>
+  </div>
+  <div class="scene s2">
+    <div class="imgwrap"><img src="../public/car/gt3rs-01.jpg" /></div>
+    <div class="txt"><div class="kicker">GRAND PRIZE 1</div><h1>Win a <span class="y">GT3&nbsp;RS</span></h1><div class="sub">$415,000 &mdash; or take <b>$300K cash</b></div></div>
+  </div>
+  <div class="scene s3">
+    <div class="imgwrap"><img src="../public/charger/charger-00.jpg" /></div>
+    <div class="txt"><div class="kicker">GRAND PRIZE 2</div><h1>Or a <span class="orange">&rsquo;69 Charger</span></h1><div class="sub">472ci HEMI V8 &middot; <b>$105K</b></div></div>
+  </div>
+  <div class="scene s4">
+    <div class="imgwrap"><img src="../public/car/both-cars.jpg" /></div>
+    <div class="txt"><div class="kicker">ONE ENTRY &middot; BOTH DRAWS</div><h1>Win <span class="y">1 of 2</span></h1><div class="sub">Two winners &mdash; from just <b>$5</b></div></div>
+  </div>
+  <div class="scene s5">
+    <div class="imgwrap"><img src="../public/car/gt3rs-05.jpg" /></div>
+    <div class="txt"><div class="kicker">LIVE DRAW &middot; SEPT 6</div><h1>Enter <span class="y">now</span></h1><div class="cta">redlinesociety.org</div></div>
+  </div>
+
+  <div class="fineprint">No purchase necessary. US, 18+. Void in NY, FL, RI &amp; where prohibited. One entry, two draws &mdash; win one of two. See Official Rules at redlinesociety.org/rules.</div>
+</body>
+</html>

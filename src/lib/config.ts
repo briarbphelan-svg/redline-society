@@ -96,6 +96,18 @@ export const EXTERNAL_ENTRIES_ISSUED = 10000;
 // the new buyer get this many bonus entries (granted once, on paid conversion).
 export const REFERRAL_BONUS_ENTRIES = 1000;
 
+/* Redline VIP Club — an OPT-IN (never pre-checked) recurring membership offered at
+   checkout. Legal note: this is a negative-option/recurring charge, so under ROSCA
+   it MUST be affirmatively opted into (unchecked by default), clearly disclosed
+   before payment, and cancellable via a simple mechanism (Stripe billing portal).
+   Members get real value each month (monthlyEntries) so the charge is honest. */
+export const VIP_CLUB = {
+  name: "Redline VIP Club",
+  priceCents: 2699, // $26.99 / month
+  interval: "month" as const,
+  monthlyEntries: 10000, // bonus sweepstakes entries granted on every paid invoice
+} as const;
+
 export const ENTRY_PACKAGES = [
   {
     slug: "grandstand",
