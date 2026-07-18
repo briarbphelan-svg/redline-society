@@ -156,6 +156,10 @@ function CheckoutInner() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full bg-panel border border-line rounded-xl px-4 py-3.5 text-sm outline-none focus:border-caliper"
         />
+        <p className="text-xs text-mist px-1">
+          If you win, we&apos;ll contact you at this name and email to arrange delivery and collect the details we need
+          to get your prize to you.
+        </p>
 
         <label className="flex gap-3 items-start text-sm cursor-pointer pt-2 bg-panel border border-line rounded-xl px-4 py-3.5">
           <input
