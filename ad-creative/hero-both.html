@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { overflow: hidden; }
+  /* 4:3 master — cover-crops cleanly into the tall desktop hero AND the 4:3 mobile
+     container. No text: this is a photo backdrop, the page supplies the headline. */
+  body { width: 1600px; height: 1200px; background: #0b0b0c; position: relative; }
+  .pane { position: absolute; left: 0; right: 0; overflow: hidden; }
+  .pane img { width: 100%; height: 100%; object-fit: cover; }
+  .gt3 { top: 0; height: 600px; }
+  .gt3 img { object-position: 50% 40%; }
+  .charger { top: 600px; height: 600px; }
+  .charger img { object-position: 50% 46%; }
+  .seam { position: absolute; left: 0; right: 0; top: 597px; height: 6px; z-index: 3;
+    background: linear-gradient(90deg, #ffcc00, #ff6a00); }
+  /* soft vignette so overlaid white hero text always has contrast */
+  .vig { position: absolute; inset: 0; z-index: 2;
+    background: radial-gradient(120% 80% at 50% 50%, rgba(11,11,12,0) 40%, rgba(11,11,12,.35) 100%); }
+</style>
+</head>
+<body>
+  <div class="pane gt3"><img src="../public/car/gt3rs-01.jpg" alt="" /></div>
+  <div class="pane charger"><img src="../public/charger/charger-00.jpg" alt="" /></div>
+  <div class="seam"></div>
+  <div class="vig"></div>
+</body>
+</html>

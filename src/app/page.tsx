@@ -53,8 +53,8 @@ export default async function HomePage() {
             phone hero reads as zoomed-in mush; mobile gets a contained image below */}
         <div className="absolute inset-0 hidden sm:block">
           <Image
-            src="/car/porsche.jpg"
-            alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
+            src="/car/both-cars.jpg"
+            alt="2025 Porsche 911 GT3 RS and 1969 Dodge Charger R/T — both grand prizes"
             fill
             priority
             sizes="100vw"
@@ -86,8 +86,8 @@ export default async function HomePage() {
             {/* mobile: full car, uncropped */}
             <div className="relative sm:hidden mt-6 aspect-[4/3] rounded-2xl overflow-hidden border border-line">
               <Image
-                src="/car/porsche.jpg"
-                alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
+                src="/car/both-cars.jpg"
+                alt="2025 Porsche 911 GT3 RS and 1969 Dodge Charger R/T — both grand prizes"
                 fill
                 priority
                 sizes="100vw"
@@ -354,14 +354,51 @@ export default async function HomePage() {
       {/* SECOND PRIZE — 1969 Dodge Charger */}
       <SecondPrize />
 
+      {/* CONVERSION BAND — value anchor + objection knockdown, right before the packages */}
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 mt-20">
+        <div className="rounded-3xl border border-line bg-panel p-8 sm:p-12 text-center">
+          <p className="text-caliper text-xs font-bold tracking-[0.3em]">DO THE MATH</p>
+          <h2 className="font-display text-3xl sm:text-5xl uppercase mt-4 leading-[1.02]">
+            <span className="text-caliper">{formatCents(combinedArvCents)}</span> in dream cars.<br />
+            Your way in: from <span className="text-caliper">{formatCents(cheapest)}</span>.
+          </h2>
+          <p className="text-mist mt-4 max-w-2xl mx-auto">
+            Two cars, <strong className="text-fog">two guaranteed winners</strong> — every entry runs for both
+            draws. Somebody drives these home on {new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "long", day: "numeric" })}. It might as well be you.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8 text-left">
+            {[
+              { t: "2 winners guaranteed", s: "Someone WILL win each car." },
+              { t: "Drawn live on film", s: "Every draw published — see RS01." },
+              { t: `Or take ${formatCents(giveaway.cashAlternativeCents)} cash`, s: "GT3 winner's choice." },
+              { t: "Free entry too", s: "No purchase necessary to win." },
+            ].map((r) => (
+              <div key={r.t} className="rounded-2xl border border-line bg-night p-4">
+                <p className="flex items-start gap-2 font-bold text-sm text-fog">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-caliper shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5" /></svg>
+                  {r.t}
+                </p>
+                <p className="text-mist text-xs mt-1.5 leading-relaxed">{r.s}</p>
+              </div>
+            ))}
+          </div>
+          <Link
+            href="#packages"
+            className="inline-block mt-8 bg-caliper hover:bg-caliper-dark text-night font-display text-lg sm:text-xl uppercase tracking-wide rounded-full px-10 py-4 transition-colors shadow-[0_0_40px_rgba(255,204,0,0.22)]"
+          >
+            Pick Your Pack — From {formatCents(cheapest)}
+          </Link>
+        </div>
+      </section>
+
       {/* PACKAGES */}
       <section id="packages" className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 scroll-mt-24">
         <h2 className="font-display text-4xl sm:text-5xl uppercase text-center">
           Collector <span className="text-caliper">Poster Packs</span>
         </h2>
         <p className="text-mist text-center mt-2 max-w-xl mx-auto">
-          Every pack is an instant high-res GT3 RS poster download — and loads bonus entries to win the car.
-          No shipping, no waiting.
+          Every pack is an instant high-res collector poster download — and loads bonus entries into
+          <strong className="text-fog"> both car draws</strong>. No shipping, no waiting.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-10">
           {packages.map((p) => (
