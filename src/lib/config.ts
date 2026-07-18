@@ -84,6 +84,14 @@ export const secondPrize = {
   ],
 } as const;
 
+/* Entries issued OUTSIDE this site's database — real mail-in / offline entries the
+   operator has logged in the official drawing system but that aren't rows in this
+   DB. Added to the public "Entries Issued" counter so it reflects the TRUE total
+   issued and never under-reports to customers. RULE: this must only ever equal
+   real, issued entries — keep it in sync with the drawing system; never inflate it
+   for social proof. */
+export const EXTERNAL_ENTRIES_ISSUED = 10000;
+
 // Referral reward: when someone buys via a referral link, BOTH the referrer and
 // the new buyer get this many bonus entries (granted once, on paid conversion).
 export const REFERRAL_BONUS_ENTRIES = 1000;

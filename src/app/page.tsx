@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { site, giveaway, secondPrize, NPN_DISCLAIMER, boostActive, effectiveEntries, postersIncludedFor } from "@/lib/config";
+import { site, giveaway, secondPrize, EXTERNAL_ENTRIES_ISSUED, NPN_DISCLAIMER, boostActive, effectiveEntries, postersIncludedFor } from "@/lib/config";
 import { formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
 import Countdown from "@/components/Countdown";
 import Gallery from "@/components/Gallery";
@@ -43,6 +43,8 @@ export default async function HomePage() {
   const combinedArvCents = giveaway.arvCents + secondPrize.arvCents;
   const chargerHasPhotos = secondPrize.photoCount > 0;
   const ORANGE = "#ff6a00";
+  // public "Entries Issued" = live DB entries + real offline/mail entries logged elsewhere
+  const entriesIssued = sold.total + EXTERNAL_ENTRIES_ISSUED;
 
   return (
     <div>
@@ -158,11 +160,12 @@ export default async function HomePage() {
 
       {/* STATS STRIP */}
       <section className="border-y border-line bg-panel">
-        <div className={`mx-auto max-w-7xl px-4 sm:px-6 py-4 grid ${sold.total > 0 ? "grid-cols-3" : "grid-cols-2"} text-center`}>
-          {/* entries-issued is only shown once real entries exist — no fabricated launch number */}
-          {sold.total > 0 && (
+        <div className={`mx-auto max-w-7xl px-4 sm:px-6 py-4 grid ${entriesIssued > 0 ? "grid-cols-3" : "grid-cols-2"} text-center`}>
+          {/* entries-issued = live DB entries + real offline/mail entries logged in the
+              drawing system (EXTERNAL_ENTRIES_ISSUED) — the true total, never fabricated */}
+          {entriesIssued > 0 && (
             <div>
-              <p className="font-display text-2xl text-caliper">{formatEntries(sold.total)}</p>
+              <p className="font-display text-2xl text-caliper">{formatEntries(entriesIssued)}</p>
               <p className="text-[11px] text-mist font-bold tracking-widest">ENTRIES ISSUED</p>
             </div>
           )}
