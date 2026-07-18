@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import PaymentTrust from "@/components/PaymentTrust";
@@ -171,26 +172,33 @@ function CheckoutInner() {
           </span>
         </label>
 
-        <label className="flex gap-3 items-start text-sm cursor-pointer bg-panel border border-line rounded-xl px-4 py-3.5">
-          <input
-            type="checkbox"
-            checked={vipClub}
-            onChange={(e) => setVipClub(e.target.checked)}
-            className="accent-caliper mt-0.5 w-4 h-4"
+        <div className="bg-panel border border-caliper/40 rounded-2xl overflow-hidden">
+          <Image
+            src="/vipclub.png"
+            alt={`${VIP_CLUB.name} — +${VIP_CLUB.monthlyEntries.toLocaleString()} entries every month`}
+            width={1000}
+            height={666}
+            className="w-full h-auto block"
           />
-          <span>
-            <span className="block font-display text-3xl sm:text-4xl uppercase text-caliper leading-none">
-              +{VIP_CLUB.monthlyEntries.toLocaleString()} entries
-              <span className="text-fog"> / month</span>
+          <label className="flex gap-3 items-start text-sm cursor-pointer p-4">
+            <input
+              type="checkbox"
+              checked={vipClub}
+              onChange={(e) => setVipClub(e.target.checked)}
+              className="accent-caliper mt-0.5 w-4 h-4"
+            />
+            <span>
+              <strong>Join the ⭐ {VIP_CLUB.name}</strong> — {VIP_CLUB.monthlyEntries.toLocaleString()} bonus entries
+              every month. <span className="text-caliper font-bold">More entries means a higher chance of winning.</span>
+              <span className="block text-sm text-mist mt-1">
+                <strong className="text-fog">${(VIP_CLUB.priceCents / 100).toFixed(2)}/month</strong>, charged today and
+                auto-renewing monthly until you cancel. Cancel anytime in one click from your confirmation page or{" "}
+                <Link href="/terms" className="underline hover:text-fog" target="_blank">Terms</Link>. Optional — leave
+                unchecked to skip.
+              </span>
             </span>
-            <span className="block text-sm mt-2">
-              Join the ⭐ {VIP_CLUB.name} — <strong>${(VIP_CLUB.priceCents / 100).toFixed(2)}/month</strong>, charged
-              today and auto-renewing monthly until you cancel. Cancel anytime in one click from your confirmation
-              page or <Link href="/terms" className="underline hover:text-fog" target="_blank">Terms</Link>. Optional
-              — leave unchecked to skip.
-            </span>
-          </span>
-        </label>
+          </label>
+        </div>
 
         <label className="flex gap-3 items-start text-sm text-mist cursor-pointer pt-2">
           <input
