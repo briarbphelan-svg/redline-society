@@ -184,17 +184,19 @@ function CheckoutInner() {
             height={666}
             className="w-full h-auto block"
           />
-          <label className="flex gap-3 items-start text-xs cursor-pointer p-4">
+          <label className="flex gap-3 items-start cursor-pointer p-4">
             <input
               type="checkbox"
               checked={vipClub}
               onChange={(e) => setVipClub(e.target.checked)}
-              className="accent-caliper mt-0.5 w-9 h-9 shrink-0 cursor-pointer"
+              className="accent-caliper mt-1 w-9 h-9 shrink-0 cursor-pointer"
             />
             <span>
-              <strong>Join the ⭐ {VIP_CLUB.name}</strong> — {VIP_CLUB.monthlyEntries.toLocaleString()} bonus entries
-              every month. <span className="text-caliper font-semibold">More entries = a higher chance of winning.</span>
-              <span className="block text-xs text-mist mt-1 leading-relaxed">
+              <span className="block text-base sm:text-lg font-bold leading-snug">
+                Join the ⭐ {VIP_CLUB.name} — {VIP_CLUB.monthlyEntries.toLocaleString()} bonus entries every month.{" "}
+                <span className="text-caliper">More entries means a higher chance of winning.</span>
+              </span>
+              <span className="block text-xs text-mist mt-2 leading-relaxed">
                 <strong className="text-fog">${(VIP_CLUB.priceCents / 100).toFixed(2)}/month</strong>, charged today and
                 auto-renewing monthly until you cancel. Cancel anytime in one click from your confirmation page or{" "}
                 <Link href="/terms" className="underline hover:text-fog" target="_blank">Terms</Link>. Optional — leave
