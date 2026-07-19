@@ -81,7 +81,7 @@ function CheckoutInner() {
     <div className="mx-auto max-w-lg px-4 sm:px-6 py-12">
       <PixelInitiateCheckout />
       <h1 className="font-display text-4xl uppercase">Checkout</h1>
-      <p className="text-mist text-sm mt-1">🔒 Secured by Stripe · entries added instantly after payment</p>
+      <p className="text-mist text-sm mt-1">Secured by Stripe · entries added instantly after payment</p>
       <p className="mt-3 bg-caliper/10 border border-caliper/30 text-caliper text-xs font-bold rounded-xl px-4 py-2.5">
         ⏱ BOOST PRICING LOCKED FOR THIS ORDER — multipliers drop to 100x when the boost timer ends.
       </p>
