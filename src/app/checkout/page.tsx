@@ -184,12 +184,12 @@ function CheckoutInner() {
             height={666}
             className="w-full h-auto block"
           />
-          <label className="flex gap-3 items-start text-sm cursor-pointer p-4">
+          <label className="flex gap-4 items-start text-sm cursor-pointer p-4">
             <input
               type="checkbox"
               checked={vipClub}
               onChange={(e) => setVipClub(e.target.checked)}
-              className="accent-caliper mt-0.5 w-4 h-4"
+              className="accent-caliper mt-0.5 w-9 h-9 shrink-0 cursor-pointer"
             />
             <span>
               <strong>Join the ⭐ {VIP_CLUB.name}</strong> — {VIP_CLUB.monthlyEntries.toLocaleString()} bonus entries
