@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { db } from "@/lib/db";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
 import { REFERRAL_BONUS_ENTRIES, VIP_CLUB } from "@/lib/config";
+import { sendMetaCapiEvent } from "@/lib/meta-capi";
 
 export async function POST(req: Request) {
   if (!stripeConfigured()) {
@@ -63,6 +64,27 @@ export async function POST(req: Request) {
         // referral must never break payment fulfillment
       }
 
+      // Server-side Purchase via Meta Conversions API — recovers conversions the
+      // browser pixel loses to iOS/ad-blockers/privacy, so ads attribute + optimize
+      // correctly. Deduped with the browser pixel by event_id = order number. Match
+      // signals (fbp/fbc/IP/UA) were captured in the browser at checkout and passed
+      // through the session metadata. sendMetaCapiEvent never throws and no-ops until
+      // META_CAPI_TOKEN is set, so it can't break payment fulfillment.
+      const m = session.metadata ?? {};
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redlinesociety.org";
+      await sendMetaCapiEvent({
+        eventName: "Purchase",
+        eventId: order.number,
+        email: order.email,
+        name: order.name,
+        value: order.totalCents / 100,
+        currency: "USD",
+        sourceUrl: `${siteUrl}/checkout/success?order=${order.number}`,
+        clientIp: m.cip || undefined,
+        userAgent: m.cua || undefined,
+        fbp: m.fbp || undefined,
+        fbc: m.fbc || undefined,
+      });
     }
   }
 

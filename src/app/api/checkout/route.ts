@@ -19,6 +19,27 @@ async function nextOrderNumber(): Promise<string> {
   return String(10001 + count);
 }
 
+/* Capture the Meta match signals present on this browser request so the
+   server-side Conversions API Purchase (fired later from the Stripe webhook)
+   can be attributed and deduped. _fbp/_fbc are Meta's first-party cookies; IP
+   and user-agent come from the request. These ride through Stripe session
+   metadata to the webhook. All values are optional — absent ones are omitted. */
+function metaSignals(req: Request): Record<string, string> {
+  const cookie = req.headers.get("cookie") ?? "";
+  const read = (name: string) =>
+    cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`))?.[1] ?? "";
+  const fbp = read("_fbp");
+  const fbc = read("_fbc");
+  const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim();
+  const ua = req.headers.get("user-agent") ?? "";
+  const out: Record<string, string> = {};
+  if (fbp) out.fbp = fbp.slice(0, 500);
+  if (fbc) out.fbc = fbc.slice(0, 500);
+  if (ip) out.cip = ip.slice(0, 500);
+  if (ua) out.cua = ua.slice(0, 500);
+  return out;
+}
+
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   const parsed = schema.safeParse(body);
@@ -68,6 +89,7 @@ export async function POST(req: Request) {
   }
 
   const stripe = getStripe();
+  const meta = metaSignals(req); // fbp/fbc/cip/cua for the server-side CAPI Purchase
 
   // The one-time poster pack (also the only line item unless VIP is opted into).
   const posterLineItem = {
@@ -106,7 +128,7 @@ export async function POST(req: Request) {
           },
         ],
         subscription_data: { metadata: { vip: "1", email: input.email.toLowerCase(), name: input.name } },
-        metadata: { orderId: order.id, orderNumber: order.number, vipClub: "1" },
+        metadata: { orderId: order.id, orderNumber: order.number, vipClub: "1", ...meta },
         success_url: `${siteUrl}/checkout/success?order=${order.number}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${siteUrl}/checkout?package=${pkg.slug}`,
       })
@@ -115,7 +137,7 @@ export async function POST(req: Request) {
         allow_promotion_codes: true,
         customer_email: input.email,
         line_items: [posterLineItem],
-        metadata: { orderId: order.id, orderNumber: order.number },
+        metadata: { orderId: order.id, orderNumber: order.number, ...meta },
         success_url: `${siteUrl}/checkout/success?order=${order.number}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${siteUrl}/checkout?package=${pkg.slug}`,
       });
