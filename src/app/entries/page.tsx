@@ -44,12 +44,12 @@ export default function EntriesPage() {
           placeholder="you@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="flex-1 bg-panel border border-line rounded-xl px-4 py-3.5 text-sm outline-none focus:border-caliper"
+          className="flex-1 bg-panel border border-line rounded-md px-4 py-3.5 text-sm outline-none focus:border-caliper"
         />
         <button
           type="submit"
           disabled={state === "loading"}
-          className="bg-caliper hover:bg-caliper-dark disabled:opacity-40 text-night font-bold rounded-xl px-6 transition-colors"
+          className="bg-caliper hover:bg-caliper-dark disabled:opacity-40 text-night font-bold rounded-md px-6 transition-colors"
         >
           {state === "loading" ? "…" : "Check"}
         </button>
@@ -58,7 +58,7 @@ export default function EntriesPage() {
 
       {data && (
         <div className="mt-8 animate-slide-up">
-          <div className="bg-panel border border-caliper/40 rounded-2xl p-8 text-center">
+          <div className="bg-panel border border-caliper/40 rounded-md p-8 text-center">
             <p className="text-xs text-mist font-bold tracking-widest">TOTAL ENTRIES</p>
             <p className="font-display text-6xl text-caliper mt-2">{data.total.toLocaleString()}</p>
             <p className="text-mist text-sm mt-2">
@@ -67,7 +67,7 @@ export default function EntriesPage() {
           </div>
 
           {data.orders.length > 0 && (
-            <ul className="mt-6 divide-y divide-line border border-line rounded-2xl bg-panel text-sm">
+            <ul className="mt-6 divide-y divide-line border border-line rounded-md bg-panel text-sm">
               {data.orders.map((o) => (
                 <li key={o.number} className="flex justify-between px-5 py-3">
                   <span>

@@ -6,7 +6,7 @@ import { formatCents } from "@/lib/entries";
    it apart from the GT3 RS (caliper yellow). Gallery shows a placeholder until
    real owner-shot photos exist (secondPrize.photoCount > 0 → /charger/charger-NN.jpg).
    We intentionally do NOT host the dealer's watermarked listing photos. */
-const ORANGE = "#ff6a00";
+const ORANGE = "#ff5b23";
 
 export default function SecondPrize() {
   const hasPhotos = secondPrize.photoCount > 0;
@@ -15,10 +15,10 @@ export default function SecondPrize() {
     <section id="second-prize" className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 scroll-mt-24">
       <div className="text-center">
         <p
-          className="inline-block border text-xs font-bold tracking-[0.3em] px-4 py-1.5 rounded-full"
+          className="inline-block border telemetry text-[10px] px-3 py-1.5 rounded-sm"
           style={{ color: ORANGE, borderColor: `${ORANGE}66` }}
         >
-          🔥 SECOND GRAND PRIZE · ARV {formatCents(secondPrize.arvCents)}
+          SECOND GRAND PRIZE · ARV {formatCents(secondPrize.arvCents)}
         </p>
         <h2 className="font-display text-4xl sm:text-6xl uppercase mt-6 leading-[0.95]">
           Grand Prize 2 · The{" "}
@@ -37,7 +37,7 @@ export default function SecondPrize() {
           {hasPhotos ? (
             <div className={secondPrize.photoCount === 1 ? "" : "grid grid-cols-2 gap-3"}>
               {Array.from({ length: secondPrize.photoCount }, (_, i) => (
-                <div key={i} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-line">
+                <div key={i} className="relative aspect-[4/3] rounded-md overflow-hidden border border-line">
                   <Image
                     src={`/charger/charger-${String(i).padStart(2, "0")}.jpg`}
                     alt={`1969 Dodge Charger R/T — photo ${i + 1}`}
@@ -50,12 +50,11 @@ export default function SecondPrize() {
             </div>
           ) : (
             <div
-              className="relative aspect-[4/3] rounded-2xl border-2 border-dashed grid place-items-center text-center px-6"
+              className="relative aspect-[4/3] rounded-md border-2 border-dashed grid place-items-center text-center px-6"
               style={{ borderColor: `${ORANGE}55`, background: `${ORANGE}0d` }}
             >
               <div>
-                <p className="text-5xl">🏁</p>
-                <p className="font-display text-2xl uppercase mt-3" style={{ color: ORANGE }}>
+                <p className="font-display text-2xl uppercase" style={{ color: ORANGE }}>
                   Real photos dropping soon
                 </p>
                 <p className="text-mist text-sm mt-2 max-w-xs mx-auto">
@@ -66,7 +65,7 @@ export default function SecondPrize() {
           )}
         </div>
 
-        <div className="bg-panel border border-line rounded-2xl p-6 min-w-0">
+        <div className="bg-panel border border-line rounded-md p-6 min-w-0">
           <p className="font-display text-xl uppercase mb-4">Spec sheet</p>
           <dl className="divide-y divide-line">
             {secondPrize.specs.map((s) => (
@@ -77,7 +76,7 @@ export default function SecondPrize() {
             ))}
           </dl>
           <div
-            className="rounded-xl mt-5 p-4 text-center border"
+            className="rounded-md mt-5 p-4 text-center border"
             style={{ borderColor: `${ORANGE}4d`, background: `${ORANGE}0d` }}
           >
             <p className="font-display text-lg uppercase" style={{ color: ORANGE }}>
@@ -90,7 +89,7 @@ export default function SecondPrize() {
           </div>
           <a
             href="#packages"
-            className="mt-4 block text-center font-display uppercase tracking-wide rounded-full py-3 text-night transition hover:brightness-110"
+            className="mt-4 block text-center font-display uppercase tracking-tight rounded-md py-3 text-ink transition hover:brightness-110"
             style={{ background: ORANGE }}
           >
             Enter to Win the Charger →

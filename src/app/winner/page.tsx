@@ -50,9 +50,9 @@ export default async function WinnerPage() {
             <h1 className="font-display text-5xl sm:text-7xl uppercase mt-6">
               We have a <span className="text-caliper">winner</span>
             </h1>
-            <div className="bg-panel border border-caliper/40 rounded-3xl p-10 mt-10">
+            <div className="bg-panel border border-caliper/40 rounded-md p-10 mt-10">
               <p className="font-display text-4xl sm:text-5xl uppercase">
-                {anonymous ? "Anonymous Winner 🕶️" : draw.winnerName || "Winner"}
+                {anonymous ? "Anonymous Winner" : draw.winnerName || "Winner"}
               </p>
               <p className="text-mist mt-3">
                 Drawn {draw.conductedAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} — winning
@@ -67,7 +67,7 @@ export default async function WinnerPage() {
               <a href="https://www.instagram.com/redlinesocietyco/" target="_blank" rel="noopener noreferrer" className="text-caliper underline">
                 @redlinesocietyco
               </a>
-              . RS02 announcement follows. 🏁
+              . RS02 announcement follows.
             </p>
           </>
         ) : (
@@ -86,13 +86,13 @@ export default async function WinnerPage() {
             <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/#packages"
-                className="bg-caliper hover:bg-caliper-dark text-night font-display text-lg uppercase tracking-wide rounded-full px-10 py-3.5 transition-colors"
+                className="bg-caliper hover:bg-caliper-dark text-night font-display text-lg uppercase tracking-wide rounded-md px-10 py-3.5 transition-colors"
               >
                 Make It Your Name
               </Link>
               <Link
                 href="/entries"
-                className="border-2 border-line hover:border-caliper rounded-full px-10 py-3.5 font-bold transition-colors"
+                className="border-2 border-line hover:border-caliper rounded-md px-10 py-3.5 font-bold transition-colors"
               >
                 Check My Entries
               </Link>

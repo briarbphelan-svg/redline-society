@@ -41,12 +41,12 @@ export default function Countdown({
 
   return (
     <div>
-      <p className="text-caliper text-xs font-bold tracking-[0.25em] text-center mb-3">{label}</p>
-      <div className="flex justify-center gap-3">
+      <p className="telemetry text-[10px] text-ash text-center mb-3">{label}</p>
+      <div className="flex justify-center gap-2.5">
         {cells.map((c) => (
-          <div key={c.l} className="bg-panel border border-line rounded-xl w-20 sm:w-24 py-3 text-center">
-            <p className="font-display text-3xl sm:text-4xl tabular-nums">{String(c.v).padStart(2, "0")}</p>
-            <p className="text-[10px] text-mist font-bold tracking-widest mt-1">{c.l}</p>
+          <div key={c.l} className="bg-panel border border-line rounded-md w-20 sm:w-24 py-3 text-center">
+            <p className="tnum text-3xl sm:text-4xl text-chalk">{String(c.v).padStart(2, "0")}</p>
+            <p className="telemetry text-[9px] text-dim mt-1.5">{c.l}</p>
           </div>
         ))}
       </div>

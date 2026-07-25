@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Inter } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, Inter } from "next/font/google";
 import Link from "next/link";
 import Script from "next/script";
 import "./globals.css";
@@ -9,7 +9,14 @@ import Logo from "@/components/Logo";
 import ReferralCapture from "@/components/ReferralCapture";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
-const anton = Anton({ variable: "--font-anton", subsets: ["latin"], weight: "400" });
+const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], weight: ["600", "700", "800", "900"] });
+const plexMono = IBM_Plex_Mono({ variable: "--font-plex-mono", subsets: ["latin"], weight: ["400", "500", "600"] });
+
+// Whole days until the draw — powers the live "DRAW IN Nd" telemetry chip.
+function daysToDraw(): number {
+  const ms = new Date(giveaway.drawDateIso).getTime() - Date.now();
+  return Math.max(0, Math.ceil(ms / 86_400_000));
+}
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3100";
 
@@ -48,27 +55,39 @@ const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const TIKTOK_PIXEL_ID = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const days = daysToDraw();
   return (
-    <html lang="en" className={`${inter.variable} ${anton.variable} antialiased scroll-smooth`}>
+    <html lang="en" className={`${inter.variable} ${archivo.variable} ${plexMono.variable} antialiased scroll-smooth`}>
       <body className="min-h-screen flex flex-col">
         <ReferralCapture />
-        <div className="bg-caliper text-night text-center text-[13px] font-bold tracking-wide py-2 px-3">
-          🏁 {giveaway.id} · WIN A {formatCents(giveaway.arvCents)} GT3 RS <span className="hidden sm:inline">OR A 1969 DODGE CHARGER</span> · WIN 1 OF 2 · DRAW {new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+        {/* Telemetry ticker — broadcast lower-third feel */}
+        <div className="bg-ink border-b border-line">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 h-9 flex items-center justify-center gap-3 telemetry text-[10px] text-ash overflow-hidden whitespace-nowrap">
+            <span className="text-signal">● </span>
+            <span className="text-chalk">{giveaway.id} LIVE</span>
+            <span className="text-dim">/</span>
+            <span>WIN 1 OF 2 · GT3 RS <span className="hidden sm:inline">+ &apos;69 CHARGER</span></span>
+            <span className="text-dim hidden sm:inline">/</span>
+            <span className="hidden sm:inline text-signal">DRAW IN {days}D</span>
+          </div>
         </div>
 
-        <header className="sticky top-0 z-40 bg-night/90 backdrop-blur border-b border-line">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-            <Link href="/" aria-label="Redline Society home">
+        <header className="sticky top-0 z-40 bg-ink/80 backdrop-blur-md border-b border-line">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            <Link href="/" aria-label="Redline Society home" className="shrink-0">
               <Logo />
             </Link>
-            <nav className="flex items-center gap-5 text-sm font-semibold text-mist">
-              <Link href="/#packages" className="hover:text-fog transition-colors">Enter</Link>
-              <Link href="/#the-car" className="hover:text-fog transition-colors hidden sm:block">The Car</Link>
-              <Link href="/winner" className="hover:text-fog transition-colors hidden md:block">Winner</Link>
-              <Link href="/entries" className="hover:text-fog transition-colors hidden sm:block">My Entries</Link>
+            <nav className="flex items-center gap-6 text-[13px] font-semibold text-ash">
+              <Link href="/#packages" className="hover:text-chalk transition-colors hidden sm:block">Enter</Link>
+              <Link href="/#prizes" className="hover:text-chalk transition-colors hidden md:block">The Cars</Link>
+              <Link href="/winner" className="hover:text-chalk transition-colors hidden lg:block">Winner</Link>
+              <Link href="/entries" className="hover:text-chalk transition-colors hidden lg:block">My Entries</Link>
+              <span className="hidden md:flex items-center gap-2 telemetry text-[10px] text-ash border border-line rounded-full px-3 py-1.5">
+                <span className="live-dot text-signal">●</span> DRAW IN {days}D
+              </span>
               <Link
                 href="/#packages"
-                className="bg-caliper hover:bg-caliper-dark text-night font-bold rounded-full px-5 py-2.5 transition-colors"
+                className="bg-signal hover:bg-signal-dark text-ink font-bold rounded-md px-5 py-2.5 transition-colors text-sm"
               >
                 Get Entries
               </Link>
@@ -78,18 +97,21 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         <main className="flex-1 overflow-x-clip">{children}</main>
 
-        <footer className="border-t border-line mt-20 pb-24 lg:pb-0">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
-            <p className="text-xs text-mist leading-relaxed max-w-4xl">{NPN_DISCLAIMER}</p>
-            <p className="text-xs text-mist leading-relaxed max-w-4xl mt-2">{giveaway.eligibility}</p>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm text-mist">
-              <Link href="/rules" className="hover:text-fog">Official Rules</Link>
-              <Link href="/free-entry" className="hover:text-fog">Free Entry (AMOE)</Link>
-              <Link href="/entries" className="hover:text-fog">Check My Entries</Link>
-              <Link href="/winner" className="hover:text-fog">Winner</Link>
-              <Link href="/terms" className="hover:text-fog">Terms</Link>
-              <Link href="/privacy" className="hover:text-fog">Privacy</Link>
+        <footer className="border-t border-line mt-24 pb-24 lg:pb-0 grid-field">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+            <div className="flex flex-wrap items-center justify-between gap-6 border-b border-line pb-8 mb-8">
+              <Logo />
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] font-semibold text-ash">
+                <Link href="/rules" className="hover:text-signal transition-colors">Official Rules</Link>
+                <Link href="/free-entry" className="hover:text-signal transition-colors">Free Entry (AMOE)</Link>
+                <Link href="/entries" className="hover:text-signal transition-colors">My Entries</Link>
+                <Link href="/winner" className="hover:text-signal transition-colors">Winner</Link>
+                <Link href="/terms" className="hover:text-signal transition-colors">Terms</Link>
+                <Link href="/privacy" className="hover:text-signal transition-colors">Privacy</Link>
+              </div>
             </div>
+            <p className="text-xs text-dim leading-relaxed max-w-4xl">{NPN_DISCLAIMER}</p>
+            <p className="text-xs text-dim leading-relaxed max-w-4xl mt-2">{giveaway.eligibility}</p>
             <p className="text-sm text-mist mt-4">
               {site.legalName} · {site.address} ·{" "}
               <a href={`tel:${site.phone.replace(/[^0-9]/g, "")}`} className="hover:text-fog">{site.phone}</a> ·{" "}

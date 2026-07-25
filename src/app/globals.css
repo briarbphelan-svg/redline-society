@@ -1,78 +1,166 @@
 @import "tailwindcss";
 
 @theme {
-  --color-night: #0b0b0c;
-  --color-panel: #141416;
-  --color-line: #26262a;
-  --color-fog: #f4f4f2;
-  --color-mist: #9b9ba3;
-  --color-caliper: #ffcc00;
-  --color-caliper-dark: #e6b800;
-  --color-rsblue: #4062b0;
-  --color-danger: #ff3b30;
+  /* Carbon base — cool, deep, not flat black */
+  --color-ink: #07080b;
+  --color-carbon: #0d0f14;
+  --color-panel: #12151c;
+  --color-raised: #171b24;
+  --color-line: #242935;
+  --color-line-soft: #1a1e27;
+
+  /* Text */
+  --color-chalk: #f3f5f8;
+  --color-fog: #f3f5f8;
+  --color-ash: #8b93a1;
+  --color-mist: #8b93a1;
+  --color-dim: #565d6b;
+
+  /* Accents — content-driven: signal = Porsche caliper, flame = Charger */
+  --color-signal: #ffd21e;
+  --color-signal-dark: #d9b011;
+  --color-caliper: #ffd21e;
+  --color-caliper-dark: #d9b011;
+  --color-flame: #ff5b23;
+  --color-ice: #86d7e8;
+  --color-danger: #ff453a;
+  --color-night: #07080b;
+
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-anton), var(--font-inter), sans-serif;
+  --font-display: var(--font-archivo), var(--font-inter), sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
 html {
   scroll-behavior: smooth;
+  background: var(--color-ink);
 }
 
 body {
-  background: var(--color-night);
-  color: var(--color-fog);
+  background: var(--color-ink);
+  color: var(--color-chalk);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Display face: wide, tight, industrial */
 h1,
 h2,
 h3,
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: 0.01em;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
 }
 
+/* ---- Telemetry: the signature typographic system ---- */
+.telemetry {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-weight: 500;
+}
+.tnum {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.01em;
+}
+
+/* Hairline timing-screen grid backdrop */
+.grid-field {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* HUD corner brackets — the broadcast-overlay framing */
+.brackets {
+  position: relative;
+}
+.brackets::before,
+.brackets::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--color-signal);
+  pointer-events: none;
+}
+.brackets::before {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.brackets::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* Live pulse dot */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.live-dot {
+  animation: live-pulse 1.8s ease-in-out infinite;
+}
+
+/* Checker (kept for tax band) */
 .checker {
-  background-image: repeating-conic-gradient(#1a1a1d 0% 25%, #0b0b0c 0% 50%);
-  background-size: 24px 24px;
+  background-image: repeating-conic-gradient(#161922 0% 25%, #0d0f14 0% 50%);
+  background-size: 22px 22px;
 }
 
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* CTA glow */
+.glow-signal {
+  box-shadow: 0 0 0 1px rgba(255, 210, 30, 0.35), 0 14px 44px -12px rgba(255, 210, 30, 0.5);
 }
-.animate-slide-up {
-  animation: slide-up 0.35s ease-out both;
+
+/* Diagonal speed hazard stripes (used sparingly on accents) */
+.hazard {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-signal) 0 10px,
+    #07080b 10px 20px
+  );
 }
+
+/* Entry-fork connector lines — draw in when scrolled into view */
+.fork-line {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  transition: stroke-dashoffset 0.9s ease;
+}
+.fork-line.lit {
+  stroke-dashoffset: 0;
+}
+
+/* Reveal on load / scroll */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-up { animation: rise 0.35s ease-out both; }
 
 .scroll-row {
   scrollbar-width: thin;
   scrollbar-color: var(--color-line) transparent;
 }
 
-/* ---- animated logo ---- */
+/* ---- animated logo (kept from original) ---- */
 @keyframes needle-sweep {
-  0% {
-    transform: rotate(-135deg);
-  }
-  60% {
-    transform: rotate(128deg);
-  }
-  75% {
-    transform: rotate(108deg);
-  }
-  90% {
-    transform: rotate(119deg);
-  }
-  100% {
-    transform: rotate(115deg);
-  }
+  0% { transform: rotate(-135deg); }
+  60% { transform: rotate(128deg); }
+  75% { transform: rotate(108deg); }
+  90% { transform: rotate(119deg); }
+  100% { transform: rotate(115deg); }
 }
 .logo-needle {
   transform-origin: 50px 50px;
@@ -80,41 +168,22 @@ h3,
   animation: needle-sweep 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 @keyframes redzone-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.45;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }
-.logo-redzone {
-  animation: redzone-pulse 2.4s ease-in-out 1.8s 3;
-}
+.logo-redzone { animation: redzone-pulse 2.4s ease-in-out 1.8s 3; }
 @keyframes word-in {
-  from {
-    opacity: 0;
-    transform: translateX(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: translateX(0); }
 }
-.logo-word-1 {
-  display: inline-block;
-  animation: word-in 0.5s ease-out 0.3s both;
-}
-.logo-word-2 {
-  display: inline-block;
-  animation: word-in 0.5s ease-out 0.55s both;
-}
+.logo-word-1 { display: inline-block; animation: word-in 0.5s ease-out 0.3s both; }
+.logo-word-2 { display: inline-block; animation: word-in 0.5s ease-out 0.55s both; }
 
 @media (prefers-reduced-motion: reduce) {
-  .logo-needle,
-  .logo-redzone,
-  .logo-word-1,
-  .logo-word-2 {
+  .logo-needle, .logo-redzone, .logo-word-1, .logo-word-2,
+  .rise, .animate-slide-up, .live-dot {
     animation: none;
   }
+  .fork-line { transition: none; }
+  html { scroll-behavior: auto; }
 }

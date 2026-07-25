@@ -8,7 +8,7 @@ export default function Accordion({ items }: { items: AccordionItem[] }) {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <div className="divide-y divide-line border border-line rounded-2xl bg-panel">
+    <div className="divide-y divide-line border border-line rounded-md bg-panel">
       {items.map((item, i) => (
         <div key={i}>
           <button
@@ -17,7 +17,7 @@ export default function Accordion({ items }: { items: AccordionItem[] }) {
             aria-expanded={open === i}
           >
             {item.q}
-            <span className={`text-caliper text-xl leading-none transition-transform ${open === i ? "rotate-45" : ""}`}>
+            <span className={`text-signal text-xl leading-none transition-transform ${open === i ? "rotate-45" : ""}`}>
               +
             </span>
           </button>

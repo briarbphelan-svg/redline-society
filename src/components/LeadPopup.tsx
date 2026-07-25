@@ -80,7 +80,7 @@ export default function LeadPopup() {
       onClick={close}
     >
       <div
-        className="relative w-full max-w-md bg-panel border border-caliper/40 rounded-2xl p-7 shadow-[0_0_60px_rgba(255,204,0,0.15)]"
+        className="relative w-full max-w-md bg-panel border border-caliper/40 rounded-md p-7 shadow-[0_0_60px_rgba(255,210,30,0.15)]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -94,14 +94,14 @@ export default function LeadPopup() {
 
         {status === "done" ? (
           <div className="text-center">
-            <p className="font-display text-3xl uppercase">You&apos;re in 🏁</p>
+            <p className="font-display text-3xl uppercase">You&apos;re in</p>
             <p className="text-mist mt-3">
               We&apos;ll ping you before the entry boost ends. Ready to lock your entries now?
             </p>
             <Link
               href="/#packages"
               onClick={close}
-              className="inline-block mt-5 bg-caliper hover:bg-caliper-dark text-night font-display text-lg uppercase tracking-wide rounded-full px-8 py-3 transition-colors"
+              className="inline-block mt-5 bg-caliper hover:bg-caliper-dark text-night font-display text-lg uppercase tracking-tight rounded-md px-8 py-3 transition-colors"
             >
               See Entry Packs
             </Link>
@@ -128,12 +128,12 @@ export default function LeadPopup() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@email.com"
                 aria-label="Email address"
-                className="w-full h-12 rounded-full bg-night border border-line focus:border-caliper outline-none px-5 text-fog placeholder:text-mist/60 transition-colors"
+                className="w-full h-12 rounded-md bg-night border border-line focus:border-caliper outline-none px-5 text-fog placeholder:text-mist/60 transition-colors"
               />
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="w-full h-12 mt-3 bg-caliper hover:bg-caliper-dark disabled:opacity-60 text-night font-display text-lg uppercase tracking-wide rounded-full transition-colors"
+                className="w-full h-12 mt-3 bg-caliper hover:bg-caliper-dark disabled:opacity-60 text-night font-display text-lg uppercase tracking-tight rounded-md transition-colors"
               >
                 {status === "loading" ? "Sending…" : "Send It →"}
               </button>

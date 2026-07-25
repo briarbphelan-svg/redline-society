@@ -31,7 +31,7 @@ export default function Gallery({ count }: { count: number }) {
 
   return (
     <div>
-      <div className="relative aspect-[4/3] max-h-[420px] w-full rounded-2xl overflow-hidden border border-line bg-panel">
+      <div className="relative aspect-[4/3] max-h-[420px] w-full rounded-md overflow-hidden border border-line bg-panel">
         <Image
           src={src(active)}
           alt={`2025 Porsche 911 GT3 RS — photo ${active + 1} of ${count}`}
@@ -44,7 +44,7 @@ export default function Gallery({ count }: { count: number }) {
           type="button"
           onClick={() => go(-1)}
           aria-label="Previous photo"
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-night/70 hover:bg-night text-fog grid place-items-center text-2xl leading-none backdrop-blur-sm transition-colors"
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-md bg-ink/70 hover:bg-ink text-fog grid place-items-center text-2xl leading-none backdrop-blur-sm transition-colors"
         >
           ‹
         </button>
@@ -52,11 +52,11 @@ export default function Gallery({ count }: { count: number }) {
           type="button"
           onClick={() => go(1)}
           aria-label="Next photo"
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-night/70 hover:bg-night text-fog grid place-items-center text-2xl leading-none backdrop-blur-sm transition-colors"
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-md bg-ink/70 hover:bg-ink text-fog grid place-items-center text-2xl leading-none backdrop-blur-sm transition-colors"
         >
           ›
         </button>
-        <span className="absolute bottom-3 right-3 bg-night/80 text-fog text-xs font-bold px-2.5 py-1 rounded-full">
+        <span className="absolute bottom-3 right-3 bg-ink/80 tnum text-xs px-2.5 py-1 rounded-sm">
           {active + 1} / {count}
         </span>
       </div>
@@ -67,8 +67,8 @@ export default function Gallery({ count }: { count: number }) {
               key={i}
               onClick={() => setActive(i)}
               aria-label={`View photo ${i + 1}`}
-              className={`relative w-16 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-colors ${
-                i === active ? "border-caliper" : "border-line hover:border-mist"
+              className={`relative w-16 h-12 rounded-md overflow-hidden shrink-0 border-2 transition-colors ${
+                i === active ? "border-signal" : "border-line hover:border-mist"
               }`}
             >
               <Image src={src(i)} alt="" fill sizes="80px" className="object-cover" />

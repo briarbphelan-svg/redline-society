@@ -82,17 +82,17 @@ function CheckoutInner() {
       <PixelInitiateCheckout />
       <h1 className="font-display text-4xl uppercase">Checkout</h1>
       <p className="text-mist text-sm mt-1">Secured by Stripe · entries added instantly after payment</p>
-      <p className="mt-3 bg-caliper/10 border border-caliper/30 text-caliper text-xs font-bold rounded-xl px-4 py-2.5">
+      <p className="mt-3 bg-caliper/10 border border-caliper/30 text-caliper text-xs font-bold rounded-md px-4 py-2.5">
         ⏱ BOOST PRICING LOCKED FOR THIS ORDER — multipliers drop to 100x when the boost timer ends.
       </p>
 
-      <div className="mt-8 bg-panel border border-line rounded-2xl p-6">
+      <div className="mt-8 bg-panel border border-line rounded-md p-6">
         <div className="flex items-baseline justify-between">
           <p className="font-display text-2xl uppercase">{pkg.name}</p>
           <p className="text-caliper text-xs font-bold tracking-widest">{pkg.multiplierLabel}</p>
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center border border-line rounded-full">
+          <div className="flex items-center border border-line rounded-md">
             <button
               type="button"
               className="px-4 py-2 text-mist hover:text-fog"
@@ -126,7 +126,7 @@ function CheckoutInner() {
               <Link
                 key={p.slug}
                 href={`/checkout?package=${p.slug}`}
-                className={`text-xs font-bold px-3 py-1.5 rounded-full border ${
+                className={`text-xs font-bold px-3 py-1.5 rounded-md border ${
                   p.slug === pkg.slug ? "border-caliper text-caliper" : "border-line text-mist hover:text-fog"
                 }`}
               >
@@ -145,7 +145,7 @@ function CheckoutInner() {
           autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full bg-panel border border-line rounded-xl px-4 py-3.5 text-sm outline-none focus:border-caliper"
+          className="w-full bg-panel border border-line rounded-md px-4 py-3.5 text-sm outline-none focus:border-caliper"
         />
         <input
           type="email"
@@ -154,14 +154,14 @@ function CheckoutInner() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-panel border border-line rounded-xl px-4 py-3.5 text-sm outline-none focus:border-caliper"
+          className="w-full bg-panel border border-line rounded-md px-4 py-3.5 text-sm outline-none focus:border-caliper"
         />
         <p className="text-xs text-mist px-1">
           If you win, we&apos;ll contact you at this name and email to arrange delivery and collect the details we need
           to get your prize to you.
         </p>
 
-        <label className="flex gap-3 items-start text-sm cursor-pointer pt-2 bg-panel border border-line rounded-xl px-4 py-3.5">
+        <label className="flex gap-3 items-start text-sm cursor-pointer pt-2 bg-panel border border-line rounded-md px-4 py-3.5">
           <input
             type="checkbox"
             checked={anonymous}
@@ -176,7 +176,7 @@ function CheckoutInner() {
           </span>
         </label>
 
-        <div className="bg-panel border border-caliper/40 rounded-2xl overflow-hidden">
+        <div className="bg-panel border border-caliper/40 rounded-md overflow-hidden">
           <Image
             src="/vipclub.png"
             alt={`${VIP_CLUB.name} — +${VIP_CLUB.monthlyEntries.toLocaleString()} entries every month`}
@@ -193,14 +193,13 @@ function CheckoutInner() {
             />
             <span>
               <span className="block text-base sm:text-lg font-bold leading-snug">
-                Join the ⭐ {VIP_CLUB.name} — {VIP_CLUB.monthlyEntries.toLocaleString()} bonus entries every month.{" "}
-                <span className="text-caliper">More entries means a higher chance of winning.</span>
+                Add {VIP_CLUB.monthlyEntries.toLocaleString()} entries to every draw — automatically, every month.{" "}
+                <span className="text-caliper">The more you hold, the better your shot. Cancel in one click, anytime.</span>
               </span>
-              <span className="block text-xs text-mist mt-2 leading-relaxed">
+              <span className="block text-[10px] text-mist mt-2 leading-relaxed">
                 <strong className="text-fog">${(VIP_CLUB.priceCents / 100).toFixed(2)}/month</strong>, charged today and
-                auto-renewing monthly until you cancel. Cancel anytime in one click from your confirmation page or{" "}
-                <Link href="/terms" className="underline hover:text-fog" target="_blank">Terms</Link>. Optional — leave
-                unchecked to skip.
+                auto-renewing until you cancel. Cancel anytime from your confirmation page or{" "}
+                <Link href="/terms" className="underline hover:text-fog" target="_blank">Terms</Link>. Optional — leave unchecked to skip.
               </span>
             </span>
           </label>
@@ -238,7 +237,7 @@ function CheckoutInner() {
         </label>
 
         {error && (
-          <p className="bg-danger/10 border border-danger/30 text-danger text-sm font-semibold rounded-xl px-4 py-3">
+          <p className="bg-danger/10 border border-danger/30 text-danger text-sm font-semibold rounded-md px-4 py-3">
             {error}
           </p>
         )}
@@ -246,12 +245,12 @@ function CheckoutInner() {
         <button
           type="submit"
           disabled={submitting || !eligible || !rules}
-          className="w-full bg-caliper hover:bg-caliper-dark disabled:opacity-40 text-night font-display text-xl uppercase tracking-wide rounded-full py-4 transition-colors"
+          className="w-full bg-caliper hover:bg-caliper-dark disabled:opacity-40 text-night font-display text-xl uppercase tracking-wide rounded-md py-4 transition-colors"
         >
           {submitting
             ? "Processing…"
             : vipClub
-              ? `Pay ${money(pkg.priceCents * qty + VIP_CLUB.priceCents)} today · then ${money(VIP_CLUB.priceCents)}/mo`
+              ? `Pay ${money(pkg.priceCents * qty + VIP_CLUB.priceCents)} today`
               : `Pay ${money(pkg.priceCents * qty)} · Get ${pkg.postersIncluded * qty} Poster${pkg.postersIncluded * qty > 1 ? "s" : ""} + ${(pkg.entries * qty).toLocaleString()} Entries`}
         </button>
         {vipClub && (

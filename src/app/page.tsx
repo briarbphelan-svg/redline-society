@@ -1,36 +1,59 @@
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { site, giveaway, secondPrize, EXTERNAL_ENTRIES_ISSUED, NPN_DISCLAIMER, boostActive, effectiveEntries, postersIncludedFor } from "@/lib/config";
+import { giveaway, secondPrize, pastWinners, site, EXTERNAL_ENTRIES_ISSUED, NPN_DISCLAIMER, boostActive, effectiveEntries, postersIncludedFor } from "@/lib/config";
 import { formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
 import Countdown from "@/components/Countdown";
 import Gallery from "@/components/Gallery";
 import Accordion from "@/components/Accordion";
-import WinnersCircle from "@/components/WinnersCircle";
+import PaymentTrust from "@/components/PaymentTrust";
 import SecondPrize from "@/components/SecondPrize";
 import StickyCTA from "@/components/StickyCTA";
 import LeadPopup from "@/components/LeadPopup";
-import AutoScrollHint from "@/components/AutoScrollHint";
 import SeoJsonLd from "@/components/SeoJsonLd";
+import CountUp from "@/components/CountUp";
+import EntryFork from "@/components/EntryFork";
+import ChristmasTree from "@/components/ChristmasTree";
+import OddsCalculator from "@/components/OddsCalculator";
 import { faq } from "@/lib/faq";
 
 export const dynamic = "force-dynamic";
+
+const drawDate = new Date(giveaway.drawDateIso);
+const drawLong = drawDate.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+const drawShort = drawDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+const drawCode = drawDate
+  .toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit" })
+  .replace(/\//g, ".");
+
+// Section marker — a broadcast "channel" tag (one coherent metaphor: you're
+// flipping through the Redline broadcast). Mono + hairline + a live dot.
+function Marker({ ch, label }: { ch: string; label: string }) {
+  return (
+    <div className="flex items-center justify-center gap-3 telemetry text-[10px] text-ash">
+      <span className="live-dot text-signal">●</span>
+      <span className="text-chalk">CH.{ch}</span>
+      <span className="h-px w-8 bg-line" />
+      <span>{label}</span>
+    </div>
+  );
+}
 
 const steps = [
   {
     n: "01",
     title: "Grab a poster pack",
-    body: "Every pack is an instant high-res GT3 RS poster download — and loads bonus entries onto your email. Bigger packs, more posters and more entries.",
+    body: "Every pack is an instant high-res GT3 RS collector poster — and drops bonus entries onto your email. Bigger packs, more posters, better odds.",
   },
   {
     n: "02",
     title: "Entries stack automatically",
-    body: "Buy as many packs as you want. Your posters download instantly and your bonus entries combine automatically under your email — check the total anytime.",
+    body: "Buy as many packs as you like. Posters download on the spot, and every entry lands in both car draws under your email. Check the running total anytime.",
   },
   {
     n: "03",
-    title: "Watch the live draws",
-    body: `Two winners are drawn at random on ${new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "long", day: "numeric" })} — the GT3 RS first, then the Charger. Keys or ${formatCents(giveaway.cashAlternativeCents)} cash — GT3 winner's choice.`,
+    title: "Watch the draws go live",
+    body: `Two winners are drawn at random on ${drawLong} — the GT3 RS first, then the Charger. Take the keys or ${formatCents(giveaway.cashAlternativeCents)} cash, GT3 winner's call.`,
   },
 ];
 
@@ -42,155 +65,138 @@ export default async function HomePage() {
   const cheapest = packages.length ? Math.min(...packages.map((p) => p.priceCents)) : 500;
   const combinedArvCents = giveaway.arvCents + secondPrize.arvCents;
   const chargerHasPhotos = secondPrize.photoCount > 0;
-  const ORANGE = "#ff6a00";
-  // public "Entries Issued" = live DB entries + real offline/mail entries logged elsewhere
   const entriesIssued = sold.total + EXTERNAL_ENTRIES_ISSUED;
+
+  // entries-per-dollar, for the value bars on the packages
+  const valueOf = (p: { priceCents: number; entries: number }) =>
+    effectiveEntries(p) / (p.priceCents / 100);
+  const maxValue = Math.max(...packages.map(valueOf), 1);
+  const winner = pastWinners[0];
 
   return (
     <div>
       <SeoJsonLd />
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        {/* backdrop car only on wider screens — a 4:3 photo cropped into a tall
-            phone hero reads as zoomed-in mush; mobile gets a contained image below */}
-        <div className="absolute inset-0 hidden sm:block">
-          <Image
-            src="/car/both-cars.jpg"
-            alt="2025 Porsche 911 GT3 RS and 1969 Dodge Charger R/T — both grand prizes"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-40"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-night via-night/80 to-night/50" />
-        </div>
-        {/* full-viewport hero (minus the 96px announcement bar + sticky header) so the
-            car photo fills the whole first screen and the scroll cue always lands at the
-            fold — on any window height. Content is vertically centered; cue is pinned bottom. */}
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-8 text-center flex flex-col sm:min-h-[calc(100svh-112px)]">
-          <div className="flex-1 flex flex-col justify-center">
-            <p className="inline-block border border-caliper/40 text-caliper text-xs font-bold tracking-[0.3em] px-4 py-1.5 rounded-full self-center">
-              GIVEAWAY {giveaway.id} · TWO GRAND PRIZES · {formatCents(combinedArvCents)} ARV
-            </p>
-            <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl leading-[0.9] mt-6 uppercase">
-              Win this <span className="text-caliper">GT3&nbsp;RS</span>
-              <span className="block text-3xl sm:text-5xl lg:text-6xl mt-2">
-                <span className="text-mist">or a </span>
-                <span style={{ color: ORANGE }}>&apos;69 Charger</span>
-              </span>
-            </h1>
-            <p className="text-fog text-lg sm:text-xl mt-4 max-w-2xl mx-auto">
-              Two cars, two winners — <strong className="text-fog">one entry puts you in both draws,
-              and you win one of the two.</strong> Take the GT3&nbsp;RS or{" "}
-              <strong className="text-caliper">{formatCents(giveaway.cashAlternativeCents)} cash</strong>.
-              Enter from just <strong className="text-caliper">{formatCents(cheapest)}</strong>.
-            </p>
-            {/* mobile: full car, uncropped */}
-            <div className="relative sm:hidden mt-6 aspect-[4/3] rounded-2xl overflow-hidden border border-line">
-              <Image
-                src="/car/both-cars.jpg"
-                alt="2025 Porsche 911 GT3 RS and 1969 Dodge Charger R/T — both grand prizes"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover"
-              />
-            </div>
-            <div className="mt-6">
-              <Countdown targetIso={giveaway.boostEndsIso} label="HIGHEST ENTRY BOOST ENDS IN" />
-              <p className="text-xs text-mist mt-3">
-                When the timer hits zero, multipliers drop to 100x —{" "}
-                <strong className="text-danger">Gold&apos;s 50,000 entries become 25,000 at the same price.</strong>
+
+      {/* ============ HERO — broadcast feed split ============ */}
+      <section className="relative overflow-hidden border-b border-line grid-field">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-6 sm:pt-12 sm:pb-8">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-8 items-center">
+            {/* Left — the thesis */}
+            <div className="lg:col-span-7 rise">
+              <div className="flex items-center gap-3 telemetry text-[10px] text-ash">
+                <span className="live-dot text-signal">●</span>
+                <span className="text-chalk">{giveaway.id} · SWEEPSTAKES LIVE</span>
+                <span className="text-dim hidden sm:inline">/ NO PURCHASE NECESSARY</span>
+              </div>
+
+              <h1 className="font-display text-[13vw] leading-[0.84] sm:text-8xl lg:text-[7.5rem] uppercase mt-4">
+                Win the
+                <br />
+                <span className="text-signal">GT3&nbsp;RS</span>
+              </h1>
+              <p className="font-display text-xl sm:text-4xl uppercase mt-2 sm:mt-3 text-ash">
+                or a &apos;69 <span className="text-flame">Charger</span>
               </p>
+
+              <p className="text-fog/90 text-base sm:text-lg mt-4 sm:mt-6 max-w-xl leading-relaxed">
+                Two cars. Two winners drawn live on {drawShort}. <strong className="text-chalk font-semibold">One
+                entry puts you in both draws</strong> — win one of the two, or take{" "}
+                <strong className="text-signal font-semibold">{formatCents(giveaway.cashAlternativeCents)} cash</strong>.
+                Entries start at <strong className="text-signal font-semibold">{formatCents(cheapest)}</strong>.
+              </p>
+
+              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                <Link
+                  href="#packages"
+                  className="group inline-flex items-center justify-center gap-3 bg-signal hover:bg-signal-dark text-ink font-display text-lg uppercase tracking-tight rounded-md px-8 py-4 transition-colors glow-signal"
+                >
+                  Claim your entries
+                  <span className="telemetry text-[11px] font-semibold bg-ink/15 rounded px-2 py-1">FROM {formatCents(cheapest)}</span>
+                </Link>
+                <a href="#prizes" className="telemetry text-[11px] text-ash hover:text-chalk transition-colors inline-flex items-center gap-2">
+                  See both cars
+                  <span aria-hidden className="animate-bounce">↓</span>
+                </a>
+              </div>
+              <p className="telemetry text-[9px] text-dim mt-4">No purchase necessary to enter or win. See Official Rules.</p>
             </div>
-            <div className="mt-6">
-              <Link
-                href="#packages"
-                className="inline-block bg-caliper hover:bg-caliper-dark text-night font-display text-xl uppercase tracking-wide rounded-full px-12 py-4 transition-colors shadow-[0_0_40px_rgba(255,204,0,0.25)]"
-              >
-                Enter Now — From {formatCents(cheapest)}
-              </Link>
-              <p className="text-xs text-mist mt-3">{NPN_DISCLAIMER.split(".")[0]}. See Official Rules.</p>
+
+            {/* Right — the car as a live broadcast tile */}
+            <div className="lg:col-span-5">
+              <figure className="relative brackets border border-line bg-panel overflow-hidden">
+                <div className="relative aspect-[4/3] lg:aspect-[5/4]">
+                  <Image
+                    src="/car/gt3rs-06.jpg"
+                    alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-panel via-transparent to-panel/30" />
+                  {/* broadcast caption bar */}
+                  <div className="absolute top-3 left-3 flex items-center gap-2 telemetry text-[9px] text-ink bg-signal px-2.5 py-1 rounded-sm">
+                    <span className="live-dot">●</span> ON THE BLOCK
+                  </div>
+                </div>
+                <figcaption className="flex items-center justify-between px-4 py-3 border-t border-line telemetry text-[9px] text-ash">
+                  <span>GT3 RS · ICE GREY</span>
+                  <span className="text-signal tnum">ARV {formatCents(giveaway.arvCents)}</span>
+                </figcaption>
+              </figure>
             </div>
           </div>
-          {/* mobile scroll affordance — centered under the CTA */}
-          <a
-            href="#prizes"
-            aria-label="Scroll down to see both prize cars"
-            className="sm:hidden mt-8 pt-2 inline-flex flex-col items-center gap-2 text-caliper hover:text-caliper-dark transition-colors"
-          >
-            <span className="text-[11px] font-bold tracking-[0.3em]">SEE BOTH CARS</span>
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
-              <path d="M6 9l6 6 6-6" />
-            </svg>
+
+          {/* Scroll cue — many visitors won't scroll unless told to. Make it obvious. */}
+          <a href="#prizes" className="mt-8 sm:mt-10 flex flex-col items-center gap-2 text-ash hover:text-signal transition-colors group">
+            <span className="telemetry text-[10px]">See the cars, the odds &amp; entry packs</span>
+            <span className="grid place-items-center w-9 h-9 rounded-full border border-line group-hover:border-signal transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </span>
           </a>
         </div>
 
-        {/* desktop: yellow diagonal arrows in the bottom corners that scroll to the car —
-            they frame the hero and pull the eye downward so it never reads as a one-pager */}
-        <a
-          href="#prizes"
-          aria-label="Scroll down to see both prize cars"
-          className="hidden sm:flex absolute bottom-8 left-8 z-10 flex-col items-start gap-2 text-caliper hover:text-caliper-dark transition-colors"
-        >
-          <span className="text-sm font-bold tracking-[0.25em]">SEE BOTH CARS</span>
-          <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
-            {/* arrow angled down-right (inward), steepened toward straight-down */}
-            <g transform="rotate(-28 12 12)">
-              <path d="M12 3v15" />
-              <path d="M5 12l7 7 7-7" />
-            </g>
-          </svg>
-        </a>
-        <a
-          href="#prizes"
-          aria-label="Scroll down to see both prize cars"
-          className="hidden sm:flex absolute bottom-8 right-8 z-10 flex-col items-end gap-2 text-right text-caliper hover:text-caliper-dark transition-colors"
-        >
-          <span className="text-sm font-bold tracking-[0.25em]">SEE BOTH CARS</span>
-          <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
-            {/* arrow angled down-left (inward), steepened toward straight-down */}
-            <g transform="rotate(28 12 12)">
-              <path d="M12 3v15" />
-              <path d="M5 12l7 7 7-7" />
-            </g>
-          </svg>
-        </a>
-      </section>
-
-      {/* STATS STRIP */}
-      <section className="border-y border-line bg-panel">
-        <div className={`mx-auto max-w-7xl px-4 sm:px-6 py-4 grid ${entriesIssued > 0 ? "grid-cols-3" : "grid-cols-2"} text-center`}>
-          {/* entries-issued = live DB entries + real offline/mail entries logged in the
-              drawing system (EXTERNAL_ENTRIES_ISSUED) — the true total, never fabricated */}
-          {entriesIssued > 0 && (
-            <div>
-              <p className="font-display text-2xl text-caliper">{formatEntries(entriesIssued)}</p>
-              <p className="text-[11px] text-mist font-bold tracking-widest">ENTRIES ISSUED</p>
+        {/* Signature: the live timing board — counts up on load */}
+        <div className="relative border-t border-line bg-ink/70 backdrop-blur-sm">
+          <div className="mx-auto max-w-7xl grid grid-cols-2 lg:grid-cols-4 divide-x divide-line">
+            <div className="px-4 sm:px-6 py-5">
+              <p className="telemetry text-[9px] text-ash">Staging · draw {drawShort}</p>
+              <ChristmasTree targetIso={giveaway.drawDateIso} />
+              <p className="text-[11px] text-dim mt-1">amber to green at the line</p>
             </div>
-          )}
-          <div>
-            <p className="font-display text-2xl">{new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
-            <p className="text-[11px] text-mist font-bold tracking-widest">DRAW DATE</p>
-          </div>
-          <div>
-            <p className="font-display text-2xl">2</p>
-            <p className="text-[11px] text-mist font-bold tracking-widest">GUARANTEED WINNERS</p>
+            <div className="px-4 sm:px-6 py-5">
+              <p className="telemetry text-[9px] text-ash">Total prize pool</p>
+              <CountUp value={Math.round(combinedArvCents / 100)} prefix="$" className="tnum text-2xl sm:text-3xl text-chalk mt-2 block" />
+              <p className="text-[11px] text-dim mt-1">GT3 RS + Charger ARV</p>
+            </div>
+            <div className="px-4 sm:px-6 py-5">
+              <p className="telemetry text-[9px] text-ash">Entries issued</p>
+              <CountUp value={entriesIssued} suffix="+" className="tnum text-2xl sm:text-3xl text-signal mt-2 block" />
+              <p className="text-[11px] text-dim mt-1">and counting</p>
+            </div>
+            <div className="px-4 sm:px-6 py-5">
+              <p className="telemetry text-[9px] text-ash">Guaranteed winners</p>
+              <p className="tnum text-2xl sm:text-3xl text-chalk mt-2">2</p>
+              <p className="text-[11px] text-dim mt-1">one per car</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* TRUST BAR — honest signals only (draws are filmed per Official Rules; RS01 paid out) */}
-      <section className="border-b border-line bg-night">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+      {/* ============ TRUST RIBBON ============ */}
+      <section className="border-b border-line bg-carbon">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
           {[
             "Every draw filmed & published",
             "Real winner paid — see RS01",
             "Secure Stripe checkout",
             "Delivered anywhere in the lower 48",
+            "Free entry always available",
           ].map((t) => (
-            <span key={t} className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold tracking-wide text-mist">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-caliper shrink-0">
+            <span key={t} className="inline-flex items-center gap-2 telemetry text-[10px] text-ash">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-signal shrink-0">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
               {t}
@@ -199,307 +205,392 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* DUAL PRIZE SHOWCASE — both cars up top, each drawing interest + its own CTA */}
-      <section id="prizes" className="mx-auto max-w-7xl px-4 sm:px-6 mt-16 scroll-mt-24">
-        <div className="text-center">
-          <h2 className="font-display text-4xl sm:text-5xl uppercase">
-            Two grand prizes. <span className="text-caliper">Two winners.</span>
-          </h2>
-          <p className="text-mist mt-3 max-w-2xl mx-auto">
-            Every entry is in the running for <strong className="text-fog">both</strong> cars — we draw a
-            separate winner for each, so you can win one of the two. One entry, two shots.
-          </p>
+      {/* ============ PRIZES ============ */}
+      <section id="prizes" className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 scroll-mt-20">
+        <Marker ch="01" label="Two grand prizes" />
+        <h2 className="font-display text-5xl sm:text-6xl uppercase text-center mt-5">
+          Two cars.<span className="text-signal"> Two winners.</span>
+        </h2>
+
+        <div className="mt-10">
+          <EntryFork />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mt-10">
-          {/* Grand Prize 1 — GT3 RS */}
-          <div className="group relative rounded-3xl overflow-hidden border border-line bg-panel flex flex-col">
+        <div className="grid md:grid-cols-2 gap-5 mt-14">
+          {/* GT3 RS */}
+          <article className="group relative brackets border border-line bg-panel overflow-hidden flex flex-col">
             <div className="relative aspect-[16/10] overflow-hidden">
               <Image
-                src="/car/porsche.jpg"
-                alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
+                src="/car/gt3rs-02.jpg"
+                alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic — rear three-quarter"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-night via-night/20 to-transparent" />
-              <span className="absolute top-4 left-4 bg-caliper text-night text-[11px] font-bold tracking-widest px-3 py-1 rounded-full">
-                GRAND PRIZE 1
-              </span>
-              <span className="absolute bottom-4 right-4 bg-night/80 text-caliper text-xs font-bold tracking-widest px-3 py-1 rounded-full">
-                ARV {formatCents(giveaway.arvCents)}
-              </span>
+              <div className="absolute inset-0 bg-gradient-to-t from-panel via-transparent to-transparent" />
+              <span className="absolute top-4 left-4 telemetry text-[9px] bg-signal text-ink px-2.5 py-1 rounded-sm">GRAND PRIZE 01</span>
+              <span className="absolute top-4 right-4 tnum text-xs text-signal bg-ink/80 px-2.5 py-1 rounded-sm">ARV {formatCents(giveaway.arvCents)}</span>
             </div>
             <div className="p-6 flex-1 flex flex-col">
-              <p className="font-display text-2xl sm:text-3xl uppercase">
-                {giveaway.car.year} <span className="text-caliper">GT3 RS</span>
+              <p className="font-display text-3xl uppercase">{giveaway.car.year} <span className="text-signal">GT3 RS</span></p>
+              <p className="text-ash text-sm mt-3 flex-1 leading-relaxed">
+                518 hp naturally-aspirated flat-six to 9,000 rpm, PCCB carbon-ceramics, Ice Grey Metallic —
+                or take <strong className="text-chalk">{formatCents(giveaway.cashAlternativeCents)} cash</strong>.
               </p>
-              <p className="text-mist text-sm mt-2 flex-1">
-                518 hp, 9,000 rpm flat-six, PCCB carbon-ceramics, Ice Grey Metallic — or take{" "}
-                <strong className="text-fog">{formatCents(giveaway.cashAlternativeCents)} cash</strong> instead.
-              </p>
-              <div className="flex items-center gap-3 mt-5">
-                <Link
-                  href="#packages"
-                  className="flex-1 text-center bg-caliper hover:bg-caliper-dark text-night font-bold rounded-full py-3 transition-colors"
-                >
-                  Enter to Win →
-                </Link>
-                <a
-                  href="#the-car"
-                  className="text-sm font-bold text-caliper hover:text-caliper-dark whitespace-nowrap px-2"
-                >
-                  See it ↓
-                </a>
+              <div className="flex items-center gap-3 mt-6">
+                <Link href="#packages" className="flex-1 text-center bg-signal hover:bg-signal-dark text-ink font-bold rounded-md py-3 transition-colors">Enter to win →</Link>
+                <a href="#the-car" className="telemetry text-[10px] text-signal hover:text-chalk transition-colors px-2 whitespace-nowrap">Spec ↓</a>
               </div>
             </div>
-          </div>
+          </article>
 
-          {/* Grand Prize 2 — '69 Charger */}
-          <div className="group relative rounded-3xl overflow-hidden border flex flex-col" style={{ borderColor: `${ORANGE}44` }}>
-            <div className="relative aspect-[16/10] overflow-hidden" style={{ background: `${ORANGE}0d` }}>
+          {/* Charger */}
+          <article className="group relative border overflow-hidden flex flex-col" style={{ borderColor: "rgba(255,91,35,0.35)" }}>
+            <div className="relative aspect-[16/10] overflow-hidden bg-panel">
               {chargerHasPhotos ? (
-                <>
-                  <Image
-                    src="/charger/charger-00.jpg"
-                    alt="1969 Dodge Charger R/T in Hemi Orange"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-night via-night/20 to-transparent" />
-                </>
+                <Image
+                  src="/charger/charger-00.jpg"
+                  alt="1969 Dodge Charger R/T in Hemi Orange"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
               ) : (
                 <div className="absolute inset-0 grid place-items-center text-center px-6">
-                  <div>
-                    <p className="text-5xl">🏁</p>
-                    <p className="font-display text-xl uppercase mt-2" style={{ color: ORANGE }}>
-                      Real photos dropping soon
-                    </p>
-                  </div>
+                  <p className="telemetry text-xs text-flame">Real photos dropping soon</p>
                 </div>
               )}
-              <span className="absolute top-4 left-4 text-night text-[11px] font-bold tracking-widest px-3 py-1 rounded-full" style={{ background: ORANGE }}>
-                GRAND PRIZE 2
-              </span>
-              <span className="absolute bottom-4 right-4 bg-night/80 text-xs font-bold tracking-widest px-3 py-1 rounded-full" style={{ color: ORANGE }}>
-                ARV {formatCents(secondPrize.arvCents)}
-              </span>
+              <div className="absolute inset-0 bg-gradient-to-t from-panel via-transparent to-transparent" />
+              <span className="absolute top-4 left-4 telemetry text-[9px] text-ink px-2.5 py-1 rounded-sm" style={{ background: "#ff5b23" }}>GRAND PRIZE 02</span>
+              <span className="absolute top-4 right-4 tnum text-xs text-flame bg-ink/80 px-2.5 py-1 rounded-sm">ARV {formatCents(secondPrize.arvCents)}</span>
             </div>
             <div className="p-6 flex-1 flex flex-col bg-panel">
-              <p className="font-display text-2xl sm:text-3xl uppercase">
-                1969 <span style={{ color: ORANGE }}>Charger R/T</span>
-              </p>
-              <p className="text-mist text-sm mt-2 flex-1">
-                472ci HEMI V8, 4-speed manual, 2,801 miles, Hemi Orange with black stripes — a real
+              <p className="font-display text-3xl uppercase">1969 <span className="text-flame">Charger R/T</span></p>
+              <p className="text-ash text-sm mt-3 flex-1 leading-relaxed">
+                472ci HEMI V8, 4-speed manual, 2,801 miles, Hemi Orange with black stripes — a genuine
                 muscle-car icon.
               </p>
-              <div className="flex items-center gap-3 mt-5">
-                <Link
-                  href="#packages"
-                  className="flex-1 text-center font-bold rounded-full py-3 transition-colors text-night hover:brightness-110"
-                  style={{ background: ORANGE }}
-                >
-                  Enter to Win →
-                </Link>
-                <a
-                  href="#second-prize"
-                  className="text-sm font-bold whitespace-nowrap px-2 hover:brightness-110"
-                  style={{ color: ORANGE }}
-                >
-                  See it ↓
-                </a>
+              <div className="flex items-center gap-3 mt-6">
+                <Link href="#packages" className="flex-1 text-center text-ink font-bold rounded-md py-3 transition-transform hover:brightness-110" style={{ background: "#ff5b23" }}>Enter to win →</Link>
+                <a href="#second-prize" className="telemetry text-[10px] text-flame hover:brightness-125 transition px-2 whitespace-nowrap">Spec ↓</a>
               </div>
             </div>
+          </article>
+        </div>
+      </section>
+
+      {/* ============ THE FLAG — bold full-bleed value moment ============ */}
+      <section className="relative mt-24 bg-signal text-ink overflow-hidden">
+        {/* hazard strips top & bottom */}
+        <div className="h-2.5 w-full" style={{ backgroundImage: "repeating-linear-gradient(-45deg, #07080b 0 14px, transparent 14px 28px)" }} />
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20 text-center">
+          <p className="telemetry text-[11px] text-ink/70">◢ Do the math ◣</p>
+          <h2 className="font-display text-5xl sm:text-7xl uppercase mt-5 leading-[0.9] text-ink">
+            <span className="tnum">{formatCents(combinedArvCents)}</span> of dream cars.
+            <br className="hidden sm:block" /> Your way in from <span className="tnum">{formatCents(cheapest)}</span>.
+          </h2>
+          <p className="text-ink/80 mt-5 max-w-xl mx-auto leading-relaxed font-medium">
+            Two guaranteed winners. Somebody drives these home on {drawLong}. It might as well be you.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-10 text-left">
+            {[
+              { t: "2 winners guaranteed", s: "Someone wins each car." },
+              { t: "Drawn live on film", s: "Every draw published." },
+              { t: `Or ${formatCents(giveaway.cashAlternativeCents)} cash`, s: "GT3 winner's choice." },
+              { t: "Free entry too", s: "No purchase to win." },
+            ].map((r) => (
+              <div key={r.t} className="bg-ink text-chalk p-4">
+                <p className="flex items-start gap-2 font-semibold text-sm">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-signal shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5" /></svg>
+                  {r.t}
+                </p>
+                <p className="text-ash text-xs mt-1.5 leading-relaxed">{r.s}</p>
+              </div>
+            ))}
+          </div>
+          <Link href="#packages" className="inline-block mt-11 bg-ink hover:bg-carbon text-signal font-display text-lg sm:text-xl uppercase tracking-tight rounded-md px-11 py-4 transition-colors">
+            Pick your pack — from {formatCents(cheapest)}
+          </Link>
+        </div>
+        <div className="h-2.5 w-full" style={{ backgroundImage: "repeating-linear-gradient(-45deg, #07080b 0 14px, transparent 14px 28px)" }} />
+      </section>
+
+      {/* ============ PROOF — this is real ============ */}
+      <section id="proof" className="mx-auto max-w-7xl px-4 sm:px-6 mt-24 scroll-mt-20">
+        <Marker ch="02" label="Receipts · why this is real" />
+        <h2 className="font-display text-4xl sm:text-6xl uppercase text-center mt-5">
+          Real cars. Real draws. <span className="text-signal">Real winners.</span>
+        </h2>
+        <p className="text-ash text-center mt-4 max-w-2xl mx-auto leading-relaxed">
+          The internet is full of fake giveaways. Here&apos;s the proof this one pays out — every draw is
+          filmed and archived, and the last one already handed over the keys.
+        </p>
+
+        <div className="grid lg:grid-cols-2 gap-5 mt-12 items-stretch">
+          {/* Winner feature */}
+          {winner && (
+            <Link href="/winner" className="group relative brackets border border-line bg-panel overflow-hidden block">
+              <div className="relative aspect-[4/3]">
+                <Image src={winner.photo} alt={`${winner.name}, ${winner.giveawayId} winner`} fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-panel via-panel/10 to-transparent" />
+                <span className="absolute top-4 left-4 telemetry text-[9px] bg-signal text-ink px-2.5 py-1 rounded-sm">{winner.giveawayId} · WINNER PAID</span>
+                <div className="absolute bottom-0 inset-x-0 p-5">
+                  <p className="font-display text-2xl uppercase">{winner.name}</p>
+                  <p className="text-ash text-sm">{winner.location} · {winner.date}</p>
+                  <p className="text-signal text-sm font-semibold mt-1">Won a {winner.prize}</p>
+                  <span className="telemetry text-[10px] text-chalk mt-3 inline-flex items-center gap-2 group-hover:text-signal transition-colors">See the full story →</span>
+                </div>
+              </div>
+            </Link>
+          )}
+
+          {/* Credibility grid */}
+          <div className="grid sm:grid-cols-2 gap-4">
+            {[
+              { t: "Every draw is filmed", s: "Livestreamed, then archived. Watch any past draw start to finish before you ever enter." },
+              { t: "We actually own the cars", s: "Owner-shot photos and a clean title — the real GT3 RS and Charger, never stock images." },
+              { t: "Secure Stripe checkout", s: "Apple Pay & Google Pay supported. Your card details never touch our servers." },
+              { t: "Free entry, always", s: "No purchase necessary to enter or win — the mail-in method is right there in the Official Rules." },
+            ].map((c) => (
+              <div key={c.t} className="border border-line bg-panel p-5 flex flex-col">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-signal"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 10 4.6-.6 8-5 8-10V5l-8-3z" /><path d="m9 12 2 2 4-4" /></svg>
+                <p className="font-display text-lg uppercase mt-3">{c.t}</p>
+                <p className="text-ash text-sm leading-relaxed mt-1.5">{c.s}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="telemetry text-[9px] text-dim text-center mt-6">
+          {site.legalName} · {site.address} · {site.phone}
+        </p>
+      </section>
+
+      {/* ============ PACKAGES ============ */}
+      <section id="packages" className="mx-auto max-w-7xl px-4 sm:px-6 mt-24 scroll-mt-20">
+        <Marker ch="03" label="Entry packs" />
+        <h2 className="font-display text-5xl sm:text-6xl uppercase text-center mt-5">
+          Collector <span className="text-signal">poster packs</span>
+        </h2>
+        <p className="text-ash text-center mt-4 max-w-xl mx-auto leading-relaxed">
+          Every pack is an instant high-res collector poster — and loads bonus entries into
+          <strong className="text-chalk"> both car draws</strong>. No shipping, no waiting.
+        </p>
+
+        {boostActive() && (
+          <div className="max-w-md mx-auto mt-8">
+            <Countdown targetIso={giveaway.boostEndsIso} label="Highest-entry boost ends in" />
+            <p className="telemetry text-[9px] text-dim text-center mt-3">
+              At zero, multipliers drop to 100× — Gold&apos;s 50,000 entries become 25,000 at the same price.
+            </p>
+          </div>
+        )}
+
+        <div className="mt-10">
+          <OddsCalculator
+            packs={packages.map((p) => ({ slug: p.slug, name: p.name, priceCents: p.priceCents, entries: effectiveEntries(p) }))}
+            entriesIssued={entriesIssued}
+          />
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-8">
+          {packages.map((p) => {
+            const featured = !!p.badge;
+            const entries = effectiveEntries(p);
+            const perDollar = Math.round(valueOf(p));
+            const fill = Math.round((valueOf(p) / maxValue) * 100);
+            return (
+              <div
+                key={p.id}
+                className={`relative flex flex-col border p-6 transition-colors ${
+                  featured ? "border-signal bg-signal/[0.06]" : "border-line bg-panel hover:border-ash/40"
+                }`}
+              >
+                {p.badge && (
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 telemetry text-[9px] bg-signal text-ink px-3 py-1 whitespace-nowrap">
+                    {p.badge}
+                  </span>
+                )}
+                <p className="font-display text-2xl uppercase">{p.name}</p>
+                <p className="telemetry text-[9px] text-signal mt-1.5">
+                  {postersIncludedFor(p.slug)} POSTER{postersIncludedFor(p.slug) > 1 ? "S" : ""}
+                </p>
+                <p className="tnum text-4xl mt-6 text-chalk">{formatCents(p.priceCents)}</p>
+                <p className="text-sm mt-2 text-ash">
+                  <strong className="tnum text-chalk">{formatEntries(entries)}</strong> entries
+                </p>
+
+                {/* value bar — entries per dollar, honest relative fill */}
+                <div className="mt-4">
+                  <div className="h-1 bg-line overflow-hidden rounded-full">
+                    <div className={`h-full ${featured ? "bg-signal" : "bg-ash"}`} style={{ width: `${fill}%` }} />
+                  </div>
+                  <p className="telemetry text-[8px] text-dim mt-1.5 tnum">{perDollar} entries / $1</p>
+                </div>
+
+                <Link
+                  href={`/checkout?package=${p.slug}`}
+                  className={`mt-6 text-center font-bold rounded-md py-3 transition-colors ${
+                    featured
+                      ? "bg-signal hover:bg-signal-dark text-ink"
+                      : "border border-ash/30 text-chalk hover:border-signal hover:text-signal"
+                  }`}
+                >
+                  Get pack →
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+        <div className="max-w-2xl mx-auto mt-8">
+          <PaymentTrust />
+        </div>
+        <p className="telemetry text-[9px] text-dim text-center mt-6">
+          No purchase necessary to enter or win — see Official Rules.
+        </p>
+      </section>
+
+      {/* ============ HOW IT WORKS ============ */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 mt-24">
+        <Marker ch="04" label="How it runs" />
+        <h2 className="font-display text-4xl sm:text-5xl uppercase text-center mt-5">
+          Three laps to the <span className="text-signal">grid</span>
+        </h2>
+        <div className="grid md:grid-cols-3 gap-4 mt-12">
+          {steps.map((s) => (
+            <div key={s.n} className="relative border border-line bg-panel p-7">
+              <p className="tnum text-5xl text-signal/25">{s.n}</p>
+              <p className="font-display text-xl uppercase mt-3">{s.title}</p>
+              <p className="text-ash text-sm leading-relaxed mt-2">{s.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ============ GARAGE REVEAL — the one warm, in-person moment ============ */}
+      <section className="relative mt-24 bg-[#ece5d6] text-[#17130c] overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24 grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div>
+            <div className="flex items-center gap-3 telemetry text-[10px] text-[#17130c]/70">
+              <span className="text-[#17130c]">CH.05</span>
+              <span className="h-px w-8 bg-[#17130c]/25" />
+              <span>In the flesh · GT3 RS</span>
+            </div>
+            <h2 className="font-display text-5xl sm:text-7xl uppercase mt-5 leading-[0.88] text-[#17130c]">
+              Stand in <span className="bg-signal text-ink px-1.5">front</span> of it.
+            </h2>
+            <p className="text-[#17130c]/75 text-lg mt-6 max-w-lg leading-relaxed">
+              Not a render. Not a promo car. The actual {giveaway.car.year} GT3 RS — {formatEntries(3129)} miles,
+              518 hp waiting behind your right foot, and a clean title with a blank line where your name goes.
+              On {drawShort}, somebody folds into that seat and drives it home.
+            </p>
+            <p className="text-[#17130c] font-semibold text-xl mt-5">It might as well be you.</p>
+            <Link href="#packages" className="inline-block mt-8 bg-[#17130c] hover:bg-black text-[#ece5d6] font-display text-lg uppercase tracking-tight rounded-md px-9 py-4 transition-colors">
+              Take your shot — from {formatCents(cheapest)}
+            </Link>
+          </div>
+          <div className="relative aspect-[4/3] rounded-md overflow-hidden shadow-2xl">
+            <Image src="/car/gt3rs-05.jpg" alt="2025 Porsche 911 GT3 RS — head-on" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover" />
           </div>
         </div>
       </section>
 
-      {/* THE CAR */}
-      <section id="the-car" className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 scroll-mt-24">
-        <h2 className="font-display text-4xl sm:text-5xl uppercase text-center">
-          Grand Prize 1 · The <span className="text-caliper">GT3 RS</span>
+      {/* ============ THE CAR (gallery + spec) ============ */}
+      <section id="the-car" className="mx-auto max-w-7xl px-4 sm:px-6 mt-24 scroll-mt-20">
+        <Marker ch="06" label="The GT3 RS · in detail" />
+        <h2 className="font-display text-4xl sm:text-5xl uppercase text-center mt-5">
+          {giveaway.car.year} <span className="text-signal">992.1 GT3 RS</span>
         </h2>
-        <p className="text-mist text-center mt-2 max-w-2xl mx-auto">
-          {giveaway.car.headline} — {formatEntries(3129)} miles, PCCB carbon-ceramics, satin blue
-          magnesium-style wheels, GT3 RS livery. Delivered to your door, or take {formatCents(giveaway.cashAlternativeCents)} cash.
+        <p className="text-ash text-center mt-4 max-w-2xl mx-auto leading-relaxed">
+          {formatEntries(3129)} miles, PCCB carbon-ceramics, satin blue wheels, full GT3 RS livery. Delivered
+          to your door — or take {formatCents(giveaway.cashAlternativeCents)} cash.
         </p>
-        <div className="grid lg:grid-cols-2 gap-8 mt-10 items-start max-w-5xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-8 mt-12 items-start max-w-5xl mx-auto">
           <div className="min-w-0">
             <Gallery count={25} />
           </div>
-          <div className="bg-panel border border-line rounded-2xl p-6 min-w-0">
-            <p className="font-display text-xl uppercase mb-4">Spec sheet</p>
-            <dl className="divide-y divide-line">
+          <div className="border border-line bg-panel p-6 min-w-0">
+            <p className="telemetry text-[10px] text-ash">Spec sheet</p>
+            <dl className="divide-y divide-line mt-4">
               {giveaway.car.specs.map((s) => (
-                <div key={s.label} className="flex justify-between gap-6 py-2.5 text-sm">
-                  <dt className="text-mist">{s.label}</dt>
-                  <dd className="font-semibold text-right">{s.value}</dd>
+                <div key={s.label} className="flex justify-between gap-6 py-3 text-sm">
+                  <dt className="text-ash">{s.label}</dt>
+                  <dd className="font-semibold text-right text-chalk">{s.value}</dd>
                 </div>
               ))}
             </dl>
-            <div className="checker rounded-xl mt-5 p-4 text-center">
-              <p className="font-display text-lg uppercase">
-                + {formatCents(giveaway.taxContributionCents)} toward taxes
-              </p>
-              <p className="text-mist text-xs mt-1">Because winning shouldn&apos;t hurt in April.</p>
+            <div className="checker mt-5 p-4 text-center border border-line">
+              <p className="font-display text-lg uppercase">+ {formatCents(giveaway.taxContributionCents)} toward taxes</p>
+              <p className="text-dim text-xs mt-1">Because winning shouldn&apos;t hurt in April.</p>
             </div>
-            <Link
-              href="#packages"
-              className="mt-4 block text-center bg-caliper hover:bg-caliper-dark text-night font-display uppercase tracking-wide rounded-full py-3 transition-colors"
-            >
-              Enter to Win the GT3 RS →
+            <Link href="#packages" className="mt-4 block text-center bg-signal hover:bg-signal-dark text-ink font-display uppercase tracking-tight rounded-md py-3 transition-colors">
+              Enter to win the GT3 RS →
             </Link>
           </div>
         </div>
       </section>
 
-      {/* SECOND PRIZE — 1969 Dodge Charger */}
+      {/* ============ GARAGE REVEAL — the Charger (parity with the GT3) ============ */}
+      <section className="relative mt-24 bg-[#ece5d6] text-[#17130c] overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24 grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div>
+            <div className="flex items-center gap-3 telemetry text-[10px] text-[#17130c]/70">
+              <span className="text-[#17130c]">CH.07</span>
+              <span className="h-px w-8 bg-[#17130c]/25" />
+              <span>In the flesh · the Charger</span>
+            </div>
+            <h2 className="font-display text-5xl sm:text-7xl uppercase mt-5 leading-[0.88] text-[#17130c]">
+              Hear it before <span className="text-ink px-1.5" style={{ background: "#ff5b23" }}>you see it.</span>
+            </h2>
+            <p className="text-[#17130c]/75 text-lg mt-6 max-w-lg leading-relaxed">
+              472 cubic inches of HEMI V8, a four-speed you row yourself, and {formatEntries(2801)} miles on a
+              Hemi-Orange body that turns every head on the block. Same entry, second shot — the ticket that could
+              hand you the GT3 RS could park this in your driveway instead.
+            </p>
+            <p className="text-[#17130c] font-semibold text-xl mt-5">Either one changes your week.</p>
+            <Link href="#packages" className="inline-block mt-8 bg-[#17130c] hover:bg-black text-[#ece5d6] font-display text-lg uppercase tracking-tight rounded-md px-9 py-4 transition-colors">
+              Take your shot — from {formatCents(cheapest)}
+            </Link>
+          </div>
+          <div className="relative aspect-[4/3] rounded-md overflow-hidden shadow-2xl lg:order-first">
+            <Image src="/charger/charger-00.jpg" alt="1969 Dodge Charger R/T in Hemi Orange" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover" />
+          </div>
+        </div>
+      </section>
+
+      {/* ============ SECOND PRIZE (Charger deep-dive) ============ */}
       <SecondPrize />
 
-      {/* CONVERSION BAND — value anchor + objection knockdown, right before the packages */}
-      <section className="mx-auto max-w-5xl px-4 sm:px-6 mt-20">
-        <div className="rounded-3xl border border-line bg-panel p-8 sm:p-12 text-center">
-          <p className="text-caliper text-xs font-bold tracking-[0.3em]">DO THE MATH</p>
-          <h2 className="font-display text-3xl sm:text-5xl uppercase mt-4 leading-[1.02]">
-            <span className="text-caliper">{formatCents(combinedArvCents)}</span> in dream cars.<br />
-            Your way in: from <span className="text-caliper">{formatCents(cheapest)}</span>.
-          </h2>
-          <p className="text-mist mt-4 max-w-2xl mx-auto">
-            Two cars, <strong className="text-fog">two guaranteed winners</strong> — every entry runs for both
-            draws. Somebody drives these home on {new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "long", day: "numeric" })}. It might as well be you.
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8 text-left">
-            {[
-              { t: "2 winners guaranteed", s: "Someone WILL win each car." },
-              { t: "Drawn live on film", s: "Every draw published — see RS01." },
-              { t: `Or take ${formatCents(giveaway.cashAlternativeCents)} cash`, s: "GT3 winner's choice." },
-              { t: "Free entry too", s: "No purchase necessary to win." },
-            ].map((r) => (
-              <div key={r.t} className="rounded-2xl border border-line bg-night p-4">
-                <p className="flex items-start gap-2 font-bold text-sm text-fog">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-caliper shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5" /></svg>
-                  {r.t}
-                </p>
-                <p className="text-mist text-xs mt-1.5 leading-relaxed">{r.s}</p>
-              </div>
-            ))}
-          </div>
-          <Link
-            href="#packages"
-            className="inline-block mt-8 bg-caliper hover:bg-caliper-dark text-night font-display text-lg sm:text-xl uppercase tracking-wide rounded-full px-10 py-4 transition-colors shadow-[0_0_40px_rgba(255,204,0,0.22)]"
-          >
-            Pick Your Pack — From {formatCents(cheapest)}
-          </Link>
-        </div>
-      </section>
-
-      {/* PACKAGES */}
-      <section id="packages" className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 scroll-mt-24">
-        <h2 className="font-display text-4xl sm:text-5xl uppercase text-center">
-          Collector <span className="text-caliper">Poster Packs</span>
-        </h2>
-        <p className="text-mist text-center mt-2 max-w-xl mx-auto">
-          Every pack is an instant high-res collector poster download — and loads bonus entries into
-          <strong className="text-fog"> both car draws</strong>. No shipping, no waiting.
-        </p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-10">
-          {packages.map((p) => (
-            <div
-              key={p.id}
-              className={`relative rounded-2xl border p-6 flex flex-col ${
-                p.badge ? "border-caliper bg-caliper/5" : "border-line bg-panel"
-              }`}
-            >
-              {p.badge && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-caliper text-night text-[11px] font-bold tracking-widest px-3 py-1 rounded-full whitespace-nowrap">
-                  {p.badge}
-                </span>
-              )}
-              <p className="font-display text-2xl uppercase">{p.name}</p>
-              <p className="text-caliper text-xs font-bold tracking-widest mt-1">
-                {postersIncludedFor(p.slug)} COLLECTOR POSTER{postersIncludedFor(p.slug) > 1 ? "S" : ""}
-              </p>
-              <p className="font-display text-5xl mt-6">{formatCents(p.priceCents)}</p>
-              <p className="text-mist text-sm mt-1">
-                + <strong className="text-fog">{formatEntries(effectiveEntries(p))}</strong> bonus entries
-              </p>
-              <p className="text-[11px] font-bold mt-1 text-caliper">
-                {boostActive() ? p.multiplierLabel : "100x ENTRIES"}
-                {p.slug === "gold" ? " — best odds on the board" : ""}
-              </p>
-              <Link
-                href={`/checkout?package=${p.slug}`}
-                className={`mt-6 text-center font-bold rounded-full py-3 transition-colors ${
-                  p.badge
-                    ? "bg-caliper hover:bg-caliper-dark text-night"
-                    : "border-2 border-fog/30 hover:border-caliper hover:text-caliper"
-                }`}
-              >
-                Get Pack →
-              </Link>
-            </div>
-          ))}
-        </div>
-        <p className="text-xs text-mist text-center mt-4">
-          No purchase necessary to enter or win — see Official Rules.
-        </p>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 mt-20">
-        <h2 className="font-display text-4xl uppercase text-center">
-          How it <span className="text-caliper">works</span>
-        </h2>
-        <div className="grid md:grid-cols-3 gap-5 mt-10">
-          {steps.map((s) => (
-            <div key={s.n} className="bg-panel border border-line rounded-2xl p-7">
-              <p className="font-display text-caliper text-4xl">{s.n}</p>
-              <p className="font-display text-xl uppercase mt-3">{s.title}</p>
-              <p className="text-mist text-sm leading-relaxed mt-2">{s.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <WinnersCircle />
-
-      {/* TRACK BAND */}
-      <section className="relative mt-20 h-64 sm:h-80 overflow-hidden">
-        <Image
-          src="/media/track.jpg"
-          alt="Porsche 911 GT3 RS cornering at speed on a race circuit"
-          fill
-          sizes="100vw"
-          className="object-cover opacity-50"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-night via-transparent to-night" />
-        <div className="relative h-full flex items-center justify-center px-4">
-          <p className="font-display text-3xl sm:text-5xl uppercase text-center max-w-3xl">
-            518 hp. 9,000 rpm. <span className="text-caliper">Your name on the title.</span>
+      {/* ============ TRACK BAND ============ */}
+      <section className="relative mt-24 h-64 sm:h-80 overflow-hidden border-y border-line">
+        <Image src="/media/track.jpg" alt="Porsche 911 GT3 RS cornering at speed" fill sizes="100vw" className="object-cover opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/40 to-ink" />
+        <div className="absolute inset-0 grid-field opacity-50" />
+        <div className="relative h-full flex flex-col items-center justify-center px-4 text-center">
+          <p className="telemetry text-[10px] text-signal">518 HP · 9000 RPM · 3.0S 0–60</p>
+          <p className="font-display text-3xl sm:text-5xl uppercase mt-4 max-w-3xl">
+            Your name on the <span className="text-signal">title</span>.
           </p>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="mx-auto max-w-3xl px-4 sm:px-6 mt-20">
-        <h2 className="font-display text-4xl uppercase text-center mb-8">
-          Questions? <span className="text-caliper">Answered.</span>
+      {/* ============ FAQ ============ */}
+      <section className="mx-auto max-w-3xl px-4 sm:px-6 mt-24">
+        <Marker ch="08" label="Questions, answered" />
+        <h2 className="font-display text-4xl sm:text-5xl uppercase text-center mt-5 mb-10">
+          The <span className="text-signal">fine print</span>, in plain English
         </h2>
         <Accordion items={faq} />
-        <div className="text-center mt-10">
-          <Link
-            href="#packages"
-            className="inline-block bg-caliper hover:bg-caliper-dark text-night font-display text-xl uppercase tracking-wide rounded-full px-12 py-4 transition-colors"
-          >
-            I&apos;m In — Get Entries
+        <div className="text-center mt-12">
+          <Link href="#packages" className="inline-block bg-signal hover:bg-signal-dark text-ink font-display text-xl uppercase tracking-tight rounded-md px-12 py-4 transition-colors glow-signal">
+            I&apos;m in — get entries
           </Link>
+          <p className="telemetry text-[9px] text-dim mt-4">{NPN_DISCLAIMER.split(".")[0]}. See Official Rules.</p>
         </div>
       </section>
 
       <StickyCTA />
       <LeadPopup />
-      <AutoScrollHint />
     </div>
   );
 }

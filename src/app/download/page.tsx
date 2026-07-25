@@ -42,7 +42,7 @@ export default async function DownloadPage({
       </h1>
       <p className="text-mist mt-2">
         {posters.length} high-resolution GT3 RS {posters.length === 1 ? "print" : "prints"} (2800×4200) — yours to
-        download and keep. Thanks for entering {giveaway.id}. 🏁
+        download and keep. Thanks for entering {giveaway.id}.
       </p>
       <div className="mt-8">
         <PosterDownloads posters={posters} />

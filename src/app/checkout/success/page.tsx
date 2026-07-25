@@ -52,7 +52,9 @@ export default async function SuccessPage({
       {order.status === "PAID" && (
         <PixelPurchase value={order.totalCents / 100} orderNumber={order.number} />
       )}
-      <p className="text-6xl">🏁</p>
+      <div className="mx-auto w-16 h-16 grid place-items-center rounded-full bg-caliper text-night">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M20 6 9 17l-5-5" /></svg>
+      </div>
       <h1 className="font-display text-4xl sm:text-5xl uppercase mt-4">
         You&apos;re <span className="text-caliper">in</span>
       </h1>
@@ -61,7 +63,7 @@ export default async function SuccessPage({
         added to <strong className="text-fog">{order.email}</strong>.
       </p>
 
-      <div className="bg-panel border border-caliper/40 rounded-2xl p-8 mt-8">
+      <div className="bg-panel border border-caliper/40 rounded-md p-8 mt-8">
         <p className="text-xs text-mist font-bold tracking-widest">YOUR TOTAL ENTRIES FOR {giveaway.id}</p>
         <p className="font-display text-6xl text-caliper mt-2">{formatEntries(totals.total)}</p>
         <p className="text-mist text-sm mt-2">
@@ -71,7 +73,7 @@ export default async function SuccessPage({
             month: "long",
             day: "numeric",
           })}
-          . Good luck. 🍀
+          . Good luck.
         </p>
       </div>
 
@@ -97,13 +99,13 @@ export default async function SuccessPage({
       <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
         <Link
           href="/checkout?package=gold"
-          className="bg-caliper hover:bg-caliper-dark text-night font-bold rounded-full px-8 py-3.5 transition-colors"
+          className="bg-caliper hover:bg-caliper-dark text-night font-bold rounded-md px-8 py-3.5 transition-colors"
         >
           Boost My Odds Again
         </Link>
         <Link
           href="/entries"
-          className="border-2 border-line hover:border-caliper rounded-full px-8 py-3.5 font-bold transition-colors"
+          className="border-2 border-line hover:border-caliper rounded-md px-8 py-3.5 font-bold transition-colors"
         >
           Track My Entries
         </Link>

@@ -32,7 +32,7 @@ export default function VipManage({ orderNumber }: { orderNumber: string }) {
 
   return (
     <div className="bg-panel border border-line rounded-2xl p-6 mt-6 text-left">
-      <p className="font-display text-lg uppercase">⭐ {VIP_CLUB.name} active</p>
+      <p className="font-display text-lg uppercase">{VIP_CLUB.name} active</p>
       <p className="text-mist text-sm mt-1">
         You&apos;re a member — {VIP_CLUB.monthlyEntries.toLocaleString()} bonus entries every month. You were charged{" "}
         {price} today, and it renews {price}/month until you cancel.

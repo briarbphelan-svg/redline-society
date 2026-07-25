@@ -19,7 +19,7 @@ export default function FreeEntryPage() {
         same per-entry odds as any purchased entry.
       </p>
 
-      <div className="bg-panel border border-line rounded-2xl p-6 mt-8">
+      <div className="bg-panel border border-line rounded-md p-6 mt-8">
         <p className="font-display text-lg uppercase mb-4">How to enter by mail</p>
         <ol className="list-decimal pl-5 space-y-3 text-sm text-mist leading-relaxed">
           <li>
