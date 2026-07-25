@@ -12,11 +12,9 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], weight: ["600", "700", "800", "900"] });
 const plexMono = IBM_Plex_Mono({ variable: "--font-plex-mono", subsets: ["latin"], weight: ["400", "500", "600"] });
 
-// Whole days until the draw — powers the live "DRAW IN Nd" telemetry chip.
-function daysToDraw(): number {
-  const ms = new Date(giveaway.drawDateIso).getTime() - Date.now();
-  return Math.max(0, Math.ceil(ms / 86_400_000));
-}
+// The draw date, shown as a plain date (e.g. "Sep 6") — never a countdown, so it
+// can't be confused with the entry-boost timer.
+const drawShort = new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3100";
 
@@ -55,7 +53,6 @@ const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const TIKTOK_PIXEL_ID = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const days = daysToDraw();
   return (
     <html lang="en" className={`${inter.variable} ${archivo.variable} ${plexMono.variable} antialiased scroll-smooth`}>
       <body className="min-h-screen flex flex-col">
@@ -68,7 +65,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <span className="text-dim">/</span>
             <span>WIN 1 OF 2 · GT3 RS <span className="hidden sm:inline">+ &apos;69 CHARGER</span></span>
             <span className="text-dim hidden sm:inline">/</span>
-            <span className="hidden sm:inline text-signal">DRAW IN {days}D</span>
+            <span className="hidden sm:inline text-signal">DRAW {drawShort.toUpperCase()}</span>
           </div>
         </div>
 
@@ -83,7 +80,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <Link href="/winner" className="hover:text-chalk transition-colors hidden lg:block">Winner</Link>
               <Link href="/entries" className="hover:text-chalk transition-colors hidden lg:block">My Entries</Link>
               <span className="hidden md:flex items-center gap-2 telemetry text-[10px] text-ash border border-line rounded-full px-3 py-1.5">
-                <span className="live-dot text-signal">●</span> DRAW IN {days}D
+                <span className="live-dot text-signal">●</span> DRAW {drawShort.toUpperCase()}
               </span>
               <Link
                 href="/#packages"
