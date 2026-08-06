@@ -10,24 +10,26 @@ import { useState } from "react";
    more people enter — which is also the real, non-fabricated reason to enter
    early. Renders as a screenshot-worthy "ticket stub." */
 
-type Pack = { slug: string; name: string; priceCents: number; entries: number };
+/* shareLabel is computed on the SERVER (see page.tsx) and passed in already
+   formatted. The raw pool size deliberately never crosses to the client — it
+   would sit in the RSC payload in plain sight of anyone reading page source,
+   which is exactly what we don't publish. */
+type Pack = {
+  slug: string;
+  name: string;
+  priceCents: number;
+  entries: number;
+  shareLabel: string;
+};
 
 const money = (c: number) => `$${Math.round(c / 100).toLocaleString("en-US")}`;
 
-export default function OddsCalculator({
-  packs,
-  entriesIssued,
-}: {
-  packs: Pack[];
-  entriesIssued: number;
-}) {
+export default function OddsCalculator({ packs }: { packs: Pack[] }) {
   const [sel, setSel] = useState<Pack>(
     packs.find((p) => p.slug === "silver") ?? packs[Math.min(3, packs.length - 1)]
   );
 
-  const pool = entriesIssued + sel.entries;
-  const sharePct = Math.max(0.1, (sel.entries / pool) * 100);
-  const shareLabel = sharePct >= 10 ? Math.round(sharePct).toString() : sharePct.toFixed(1);
+  const shareLabel = sel.shareLabel;
 
   return (
     <div className="max-w-3xl mx-auto border border-signal/40 bg-panel rounded-md overflow-hidden">

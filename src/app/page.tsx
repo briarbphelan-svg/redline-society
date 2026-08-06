@@ -67,6 +67,21 @@ export default async function HomePage() {
   const chargerHasPhotos = secondPrize.photoCount > 0;
   const entriesIssued = sold.total + EXTERNAL_ENTRIES_ISSUED;
 
+  // Odds ticket: the share is worked out here, server-side, and shipped as a
+  // formatted string. entriesIssued must not be handed to the client component —
+  // it would be readable in the page source even though nothing renders it.
+  const oddsPack = (p: { slug: string; name: string; priceCents: number; entries: number }) => {
+    const entries = effectiveEntries(p);
+    const pct = Math.max(0.1, (entries / (entriesIssued + entries)) * 100);
+    return {
+      slug: p.slug,
+      name: p.name,
+      priceCents: p.priceCents,
+      entries,
+      shareLabel: pct >= 10 ? Math.round(pct).toString() : pct.toFixed(1),
+    };
+  };
+
   // entries-per-dollar, for the value bars on the packages
   const valueOf = (p: { priceCents: number; entries: number }) =>
     effectiveEntries(p) / (p.priceCents / 100);
@@ -382,10 +397,7 @@ export default async function HomePage() {
         )}
 
         <div className="mt-10">
-          <OddsCalculator
-            packs={packages.map((p) => ({ slug: p.slug, name: p.name, priceCents: p.priceCents, entries: effectiveEntries(p) }))}
-            entriesIssued={entriesIssued}
-          />
+          <OddsCalculator packs={packages.map(oddsPack)} />
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-8">
