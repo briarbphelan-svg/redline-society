@@ -69,7 +69,7 @@ export default function OddsCalculator({
             <div className="text-right">
               <p className="telemetry text-[9px] text-dim">Your share today</p>
               <p className="tnum text-4xl text-signal mt-1">{shareLabel}%</p>
-              <p className="text-[11px] text-dim mt-0.5">of {entriesIssued.toLocaleString()}+ issued</p>
+              <p className="text-[11px] text-dim mt-0.5">of the entries issued so far</p>
             </div>
           </div>
         </div>

@@ -160,7 +160,7 @@ export default async function HomePage() {
 
         {/* Signature: the live timing board — counts up on load */}
         <div className="relative border-t border-line bg-ink/70 backdrop-blur-sm">
-          <div className="mx-auto max-w-7xl grid grid-cols-2 lg:grid-cols-4 divide-x divide-line">
+          <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-line">
             <div className="px-4 sm:px-6 py-5">
               <p className="telemetry text-[9px] text-ash">Staging · draw {drawShort}</p>
               <ChristmasTree targetIso={giveaway.drawDateIso} />
@@ -170,11 +170,6 @@ export default async function HomePage() {
               <p className="telemetry text-[9px] text-ash">Total prize pool</p>
               <CountUp value={Math.round(combinedArvCents / 100)} prefix="$" className="tnum text-2xl sm:text-3xl text-chalk mt-2 block" />
               <p className="text-[11px] text-dim mt-1">GT3 RS + Charger ARV</p>
-            </div>
-            <div className="px-4 sm:px-6 py-5">
-              <p className="telemetry text-[9px] text-ash">Entries issued</p>
-              <CountUp value={entriesIssued} suffix="+" className="tnum text-2xl sm:text-3xl text-signal mt-2 block" />
-              <p className="text-[11px] text-dim mt-1">and counting</p>
             </div>
             <div className="px-4 sm:px-6 py-5">
               <p className="telemetry text-[9px] text-ash">Guaranteed winners</p>
