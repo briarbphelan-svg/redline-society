@@ -8,7 +8,10 @@ const schema = z.object({
   packageSlug: z.string(),
   quantity: z.number().int().min(1).max(10),
   email: z.string().email(),
-  name: z.string().min(1).max(120),
+  /* Optional: checkout no longer asks for a name. Stripe collects the cardholder
+     name on its hosted page and the webhook backfills it onto the order, so the
+     only cost of omitting it here is that it's absent until payment completes. */
+  name: z.string().max(120).optional().default(""),
   anonymousWinner: z.boolean().optional().default(false),
   vipClub: z.boolean().optional().default(false), // OPT-IN recurring membership — never defaulted true on the client
   ref: z.string().max(40).optional(), // referrer's order number, if arrived via a referral link

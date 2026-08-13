@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import PaymentTrust from "@/components/PaymentTrust";
 import { PixelInitiateCheckout, trackAddPaymentInfo } from "@/components/PixelEvents";
-import { VIP_CLUB } from "@/lib/config";
 
 type Pkg = {
   slug: string;
@@ -27,11 +25,9 @@ function CheckoutInner() {
   const [packages, setPackages] = useState<Pkg[]>([]);
   const [qty, setQty] = useState(1);
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [eligible, setEligible] = useState(false);
-  const [rules, setRules] = useState(false);
+  // Single consent covering eligibility + Official Rules (was two checkboxes).
+  const [agreed, setAgreed] = useState(false);
   const [anonymous, setAnonymous] = useState(false);
-  const [vipClub, setVipClub] = useState(false); // OPT-IN, unchecked by default (never pre-checked)
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -50,12 +46,11 @@ function CheckoutInner() {
     setError("");
     setSubmitting(true);
 
-    /* Value must match what the Pay button says, VIP included, so the pixel's
-       reported value reconciles with the Stripe session amount. Wrapped because
-       a pixel must never be able to block a purchase. */
+    /* Value must match what the Pay button says so the pixel's reported value
+       reconciles with the Stripe session amount. Wrapped because a pixel must
+       never be able to block a purchase. */
     try {
-      const totalCents = pkg.priceCents * qty + (vipClub ? VIP_CLUB.priceCents : 0);
-      trackAddPaymentInfo(totalCents / 100);
+      trackAddPaymentInfo((pkg.priceCents * qty) / 100);
     } catch {}
 
     const ref = document.cookie.match(/(?:^|;\s*)rl_ref=([^;]+)/)?.[1];
@@ -67,9 +62,7 @@ function CheckoutInner() {
           packageSlug: pkg.slug,
           quantity: qty,
           email,
-          name,
           anonymousWinner: anonymous,
-          vipClub,
           ref: ref ? decodeURIComponent(ref) : undefined,
         }),
       });
@@ -147,27 +140,22 @@ function CheckoutInner() {
       </div>
 
       <form onSubmit={submit} className="mt-6 space-y-3">
-        <input
-          type="text"
-          required
-          placeholder="Full name"
-          autoComplete="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full bg-panel border border-line rounded-md px-4 py-3.5 text-sm outline-none focus:border-caliper"
-        />
+        {/* Email is the ONLY thing asked for here. Name used to be collected too,
+            but Stripe already captures the cardholder name on its own page and the
+            webhook backfills it onto the order — so asking was pure friction. */}
         <input
           type="email"
           required
           placeholder="Email — posters + entries go here"
           autoComplete="email"
+          inputMode="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-panel border border-line rounded-md px-4 py-3.5 text-sm outline-none focus:border-caliper"
+          className="w-full bg-panel border border-line rounded-md px-4 py-3.5 text-base sm:text-sm outline-none focus:border-caliper"
         />
         <p className="text-xs text-mist px-1">
-          If you win, we&apos;ll contact you at this name and email to arrange delivery and collect the details we need
-          to get your prize to you.
+          Your posters and entry confirmation go here, and it&apos;s how we reach you if you win.{" "}
+          <strong className="text-fog">We never sell or share your email</strong> — no third parties, ever.
         </p>
 
         <label className="flex gap-3 items-start text-sm cursor-pointer pt-2 bg-panel border border-line rounded-md px-4 py-3.5">
@@ -185,55 +173,24 @@ function CheckoutInner() {
           </span>
         </label>
 
-        <div className="bg-panel border border-caliper/40 rounded-md overflow-hidden">
-          <Image
-            src="/vipclub.png"
-            alt={`${VIP_CLUB.name} — +${VIP_CLUB.monthlyEntries.toLocaleString()} entries every month`}
-            width={1000}
-            height={666}
-            className="w-full h-auto block"
-          />
-          <label className="flex gap-3 items-start cursor-pointer p-4">
-            <input
-              type="checkbox"
-              checked={vipClub}
-              onChange={(e) => setVipClub(e.target.checked)}
-              className="accent-caliper mt-1 w-9 h-9 shrink-0 cursor-pointer"
-            />
-            <span>
-              <span className="block text-base sm:text-lg font-bold leading-snug">
-                Add {VIP_CLUB.monthlyEntries.toLocaleString()} entries to every draw — automatically, every month.{" "}
-                <span className="text-caliper">The more you hold, the better your shot. Cancel in one click, anytime.</span>
-              </span>
-              <span className="block text-[10px] text-mist mt-2 leading-relaxed">
-                <strong className="text-fog">${(VIP_CLUB.priceCents / 100).toFixed(2)}/month</strong>, charged today and
-                auto-renewing until you cancel. Cancel anytime from your confirmation page or{" "}
-                <Link href="/terms" className="underline hover:text-fog" target="_blank">Terms</Link>. Optional — leave unchecked to skip.
-              </span>
-            </span>
-          </label>
-        </div>
+        {/* The VIP Club upsell used to sit here — a photo plus ~80 words between the
+            buyer and the Pay button. Removed from the critical path; it belongs on
+            the success page, where the sale is already banked. The subscription code
+            path in /api/checkout is untouched and still works. */}
 
-        <label className="flex gap-3 items-start text-sm text-mist cursor-pointer pt-2">
+        {/* One affirmative consent covering eligibility AND the Official Rules.
+            Previously two separate required checkboxes; a single tap is still an
+            affirmative opt-in, which is what the sweepstakes rules require. */}
+        <label className="flex gap-3 items-start text-sm text-mist cursor-pointer pt-2 bg-panel border border-line rounded-md px-4 py-3.5">
           <input
             type="checkbox"
             required
-            checked={eligible}
-            onChange={(e) => setEligible(e.target.checked)}
-            className="accent-caliper mt-0.5 w-4 h-4"
-          />
-          I am 18+ and a legal resident of an eligible US state (not NY, FL, or RI).
-        </label>
-        <label className="flex gap-3 items-start text-sm text-mist cursor-pointer">
-          <input
-            type="checkbox"
-            required
-            checked={rules}
-            onChange={(e) => setRules(e.target.checked)}
-            className="accent-caliper mt-0.5 w-4 h-4"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="accent-caliper mt-0.5 w-5 h-5 shrink-0"
           />
           <span>
-            I agree to the{" "}
+            I&apos;m 18+ and a legal resident of an eligible US state (not NY, FL, or RI), and I agree to the{" "}
             <Link href="/rules" className="underline hover:text-fog" target="_blank">
               Official Rules
             </Link>{" "}
@@ -241,7 +198,7 @@ function CheckoutInner() {
             <Link href="/terms" className="underline hover:text-fog" target="_blank">
               Terms
             </Link>
-            . I understand entries are non-refundable.
+            . Entries are non-refundable.
           </span>
         </label>
 
@@ -253,20 +210,13 @@ function CheckoutInner() {
 
         <button
           type="submit"
-          disabled={submitting || !eligible || !rules}
+          disabled={submitting || !agreed}
           className="w-full bg-caliper hover:bg-caliper-dark disabled:opacity-40 text-night font-display text-xl uppercase tracking-wide rounded-md py-4 transition-colors"
         >
           {submitting
             ? "Processing…"
-            : vipClub
-              ? `Pay ${money(pkg.priceCents * qty + VIP_CLUB.priceCents)} today`
-              : `Pay ${money(pkg.priceCents * qty)} · Get ${pkg.postersIncluded * qty} Poster${pkg.postersIncluded * qty > 1 ? "s" : ""} + ${(pkg.entries * qty).toLocaleString()} Entries`}
+            : `Pay ${money(pkg.priceCents * qty)} · Get ${pkg.postersIncluded * qty} Poster${pkg.postersIncluded * qty > 1 ? "s" : ""} + ${(pkg.entries * qty).toLocaleString()} Entries`}
         </button>
-        {vipClub && (
-          <p className="text-center text-xs text-mist -mt-1">
-            Includes {VIP_CLUB.name}: {money(VIP_CLUB.priceCents)}/month, auto-renews until cancelled.
-          </p>
-        )}
         <PaymentTrust />
         <p className="text-center text-xs text-mist">
           No purchase necessary to enter or win — see{" "}

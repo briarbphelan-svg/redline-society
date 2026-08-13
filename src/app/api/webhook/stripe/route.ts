@@ -29,9 +29,19 @@ export async function POST(req: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     const orderId = session.metadata?.orderId;
     if (orderId && session.payment_status === "paid") {
+      /* Checkout doesn't ask for a name any more, so take the one Stripe collected
+         from the payer. Only overwrites when Stripe actually supplied one, and it
+         lands before the Meta CAPI Purchase below, which hashes the name for
+         match quality. */
+      const payerName = session.customer_details?.name?.trim();
+
       const order = await db.order.update({
         where: { id: orderId },
-        data: { status: "PAID", stripePaymentIntentId: String(session.payment_intent ?? "") },
+        data: {
+          status: "PAID",
+          stripePaymentIntentId: String(session.payment_intent ?? ""),
+          ...(payerName ? { name: payerName } : {}),
+        },
       });
 
       // Referral reward — grant bonus entries to BOTH the referrer and this buyer.
