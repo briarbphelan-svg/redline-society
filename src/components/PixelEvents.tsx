@@ -50,3 +50,23 @@ export function PixelInitiateCheckout({ value }: { value?: number }) {
 
   return null;
 }
+
+/* Fired imperatively when the buyer submits the checkout form — i.e. they filled
+   in name/email, ticked eligibility + rules, and pressed Pay. InitiateCheckout
+   only says the page loaded, so without this there is no way to tell a browser
+   that bounced off the form from one that actually tried to buy.
+
+   Deliberately fired BEFORE the /api/checkout request rather than after: the
+   success path ends in `window.location.href = …`, and a navigation started in
+   the same tick can abort the pixel's in-flight beacon. Firing first costs
+   nothing and never delays the redirect. The trade-off is that this counts pay
+   attempts, not sessions created — a server-side failure still counts here, but
+   those are visible as non-200s in the Stripe request logs.
+
+   Not deduped: two submits after a card error really are two attempts. */
+export function trackAddPaymentInfo(value?: number) {
+  if (typeof window === "undefined") return;
+  const payload = value ? { value, currency: "USD" } : {};
+  if (typeof window.fbq === "function") window.fbq("track", "AddPaymentInfo", payload);
+  window.ttq?.track("AddPaymentInfo", payload);
+}

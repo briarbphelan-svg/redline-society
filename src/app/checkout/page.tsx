@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import PaymentTrust from "@/components/PaymentTrust";
-import { PixelInitiateCheckout } from "@/components/PixelEvents";
+import { PixelInitiateCheckout, trackAddPaymentInfo } from "@/components/PixelEvents";
 import { VIP_CLUB } from "@/lib/config";
 
 type Pkg = {
@@ -49,6 +49,15 @@ function CheckoutInner() {
     if (!pkg) return;
     setError("");
     setSubmitting(true);
+
+    /* Value must match what the Pay button says, VIP included, so the pixel's
+       reported value reconciles with the Stripe session amount. Wrapped because
+       a pixel must never be able to block a purchase. */
+    try {
+      const totalCents = pkg.priceCents * qty + (vipClub ? VIP_CLUB.priceCents : 0);
+      trackAddPaymentInfo(totalCents / 100);
+    } catch {}
+
     const ref = document.cookie.match(/(?:^|;\s*)rl_ref=([^;]+)/)?.[1];
     try {
       const res = await fetch("/api/checkout", {
