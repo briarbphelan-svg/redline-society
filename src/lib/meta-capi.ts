@@ -70,7 +70,7 @@ export async function sendMetaCapiEvent(e: MetaCapiEvent): Promise<void> {
       ...(TEST_EVENT_CODE ? { test_event_code: TEST_EVENT_CODE } : {}),
     };
 
-    await fetch(
+    const res = await fetch(
       `https://graph.facebook.com/${GRAPH_VERSION}/${PIXEL_ID}/events?access_token=${encodeURIComponent(CAPI_TOKEN)}`,
       {
         method: "POST",
@@ -78,7 +78,28 @@ export async function sendMetaCapiEvent(e: MetaCapiEvent): Promise<void> {
         body: JSON.stringify(payload),
       }
     );
-  } catch {
+
+    /* Surface rejections. This call used to discard the response entirely, which
+       meant an expired token or a malformed payload was indistinguishable from
+       success — conversions would just quietly stop arriving. Log loudly instead;
+       CAPI is load-bearing for ad optimisation now.
+
+       NEVER log the request URL: the access token rides in its query string. */
+    if (!res.ok) {
+      const body = await res.text().catch(() => "<unreadable>");
+      console.error(
+        `[meta-capi] ${e.eventName} ${e.eventId} rejected: HTTP ${res.status} ${body.slice(0, 500)}`
+      );
+    } else {
+      console.log(`[meta-capi] ${e.eventName} ${e.eventId} accepted`);
+    }
+  } catch (err) {
+    // Message only — a thrown fetch error can carry the tokenised URL in `cause`.
+    console.error(
+      `[meta-capi] ${e.eventName} ${e.eventId} failed to send: ${
+        err instanceof Error ? err.message : String(err)
+      }`
+    );
     // Conversions API must never affect the request that triggered it.
   }
 }
