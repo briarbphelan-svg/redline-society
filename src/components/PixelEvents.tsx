@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /* Meta Pixel + TikTok Pixel standard events. Each call no-ops unless that
    platform's base code loaded (NEXT_PUBLIC_META_PIXEL_ID / NEXT_PUBLIC_TIKTOK_PIXEL_ID
@@ -36,16 +36,32 @@ export function PixelPurchase({ value, orderNumber }: { value: number; orderNumb
   return null;
 }
 
-/** Upper-funnel signal fired when the checkout page opens. */
+/* Upper-funnel signal fired when the checkout page opens.
+
+   `value` + `currency` are REQUIRED, not decorative: the live ad set bids on
+   InitiateCheckout, and Events Manager flagged 100% of these as missing price
+   info, which blocks value-based optimization.
+
+   Fires exactly ONCE per mount. The value tracks the cart, so without the ref
+   guard every quantity tweak would re-fire the effect and inflate the very
+   metric delivery is optimized against. A page reload is a genuinely new
+   checkout open, so a per-mount ref (not sessionStorage) is the right scope. */
 export function PixelInitiateCheckout({ value }: { value?: number }) {
+  const fbSent = useRef(false);
+  const ttSent = useRef(false);
+
   useEffect(() => {
+    if (fbSent.current) return;
     if (typeof window === "undefined" || typeof window.fbq !== "function") return;
-    window.fbq("track", "InitiateCheckout", value ? { value, currency: "USD" } : {});
+    fbSent.current = true;
+    window.fbq("track", "InitiateCheckout", value != null ? { value, currency: "USD" } : {});
   }, [value]);
 
   useEffect(() => {
+    if (ttSent.current) return;
     if (typeof window === "undefined" || !window.ttq) return;
-    window.ttq.track("InitiateCheckout", value ? { value, currency: "USD" } : {});
+    ttSent.current = true;
+    window.ttq.track("InitiateCheckout", value != null ? { value, currency: "USD" } : {});
   }, [value]);
 
   return null;

@@ -81,7 +81,10 @@ function CheckoutInner() {
 
   return (
     <div className="mx-auto max-w-lg px-4 sm:px-6 py-12">
-      <PixelInitiateCheckout />
+      {/* Value must match the Pay button and the Stripe session amount, the same
+          way trackAddPaymentInfo does — Meta reconciles the two. Rendered below
+          the `!pkg` guard, so the price is always known by the time this mounts. */}
+      <PixelInitiateCheckout value={(pkg.priceCents * qty) / 100} />
       <h1 className="font-display text-4xl uppercase">Checkout</h1>
       <p className="text-mist text-sm mt-1">Secured by Stripe · entries added instantly after payment</p>
       <p className="mt-3 bg-caliper/10 border border-caliper/30 text-caliper text-xs font-bold rounded-md px-4 py-2.5">
