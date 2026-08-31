@@ -1,4 +1,5 @@
 import { site, giveaway } from "@/lib/config";
+import { REVEAL_AT_ISO } from "@/lib/reveal";
 import { faq } from "@/lib/faq";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redlinesociety.org";
@@ -35,13 +36,13 @@ export default function SeoJsonLd() {
   const event = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: `${site.name} ${giveaway.id} Drawing — ${giveaway.car.year} Porsche 911 GT3 RS Giveaway`,
-    startDate: giveaway.drawDateIso,
+    name: `${site.name} ${giveaway.id} Winners Announcement — ${giveaway.car.year} Porsche 911 GT3 RS Giveaway`,
+    startDate: REVEAL_AT_ISO,
     eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
     eventStatus: "https://schema.org/EventScheduled",
     location: { "@type": "VirtualLocation", url: `${siteUrl}/winner` },
     image: [`${siteUrl}/car/gt3rs-00.jpg`],
-    description: `Random drawing for a ${giveaway.car.headline} (ARV $415,000) or $300,000 cash. No purchase necessary — see Official Rules.`,
+    description: `Winners announcement for the ${giveaway.car.headline} (ARV $415,000) and 1969 Dodge Charger R/T. Drawings conducted by an independent third-party raffle administrator. No purchase necessary — see Official Rules.`,
     organizer: { "@type": "Organization", name: site.name, url: siteUrl },
   };
 

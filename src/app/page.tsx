@@ -1,30 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import { db } from "@/lib/db";
-import { giveaway, secondPrize, pastWinners, site, EXTERNAL_ENTRIES_ISSUED, NPN_DISCLAIMER, boostActive, effectiveEntries, postersIncludedFor } from "@/lib/config";
-import { formatCents, formatEntries, totalEntriesSold } from "@/lib/entries";
-import Countdown from "@/components/Countdown";
+import { giveaway, secondPrize, pastWinners, site, NPN_DISCLAIMER } from "@/lib/config";
+import { formatCents, formatEntries } from "@/lib/entries";
 import Gallery from "@/components/Gallery";
 import Accordion from "@/components/Accordion";
-import PaymentTrust from "@/components/PaymentTrust";
 import SecondPrize from "@/components/SecondPrize";
-import StickyCTA from "@/components/StickyCTA";
-import LeadPopup from "@/components/LeadPopup";
 import SeoJsonLd from "@/components/SeoJsonLd";
 import CountUp from "@/components/CountUp";
 import EntryFork from "@/components/EntryFork";
-import ChristmasTree from "@/components/ChristmasTree";
-import OddsCalculator from "@/components/OddsCalculator";
 import { faq } from "@/lib/faq";
+import { REVEAL_AT_ISO, isRevealed, revealedWinners, revealPreviewEnabled } from "@/lib/reveal";
+import WinnerReveal from "@/components/WinnerReveal";
 
 export const dynamic = "force-dynamic";
 
-const drawDate = new Date(giveaway.drawDateIso);
-const drawLong = drawDate.toLocaleDateString("en-US", { month: "long", day: "numeric" });
-const drawShort = drawDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-const drawCode = drawDate
-  .toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit" })
-  .replace(/\//g, ".");
 
 // Section marker — a broadcast "channel" tag (one coherent metaphor: you're
 // flipping through the Redline broadcast). Mono + hairline + a live dot.
@@ -53,133 +42,80 @@ const steps = [
   {
     n: "03",
     title: "Watch the draws go live",
-    body: `Two winners are drawn at random on ${drawLong} — the GT3 RS first, then the Charger. Take the keys or ${formatCents(giveaway.cashAlternativeCents)} cash, GT3 winner's call.`,
+    body: `Two winners are drawn at random by an independent third-party raffle administrator — the GT3 RS first, then the Charger. Take the keys or ${formatCents(giveaway.cashAlternativeCents)} cash, GT3 winner's call.`,
   },
 ];
 
-export default async function HomePage() {
-  const [packages, sold] = await Promise.all([
-    db.package.findMany({ where: { active: true }, orderBy: { position: "asc" } }),
-    totalEntriesSold(),
-  ]);
-  const cheapest = packages.length ? Math.min(...packages.map((p) => p.priceCents)) : 500;
+export default function HomePage() {
+  const preview = revealPreviewEnabled();
+  const winners = revealedWinners(preview);
+  const revealed = isRevealed() || preview;
   const combinedArvCents = giveaway.arvCents + secondPrize.arvCents;
   const chargerHasPhotos = secondPrize.photoCount > 0;
-  const entriesIssued = sold.total + EXTERNAL_ENTRIES_ISSUED;
-
-  // Odds ticket: the share is worked out here, server-side, and shipped as a
-  // formatted string. entriesIssued must not be handed to the client component —
-  // it would be readable in the page source even though nothing renders it.
-  const oddsPack = (p: { slug: string; name: string; priceCents: number; entries: number }) => {
-    const entries = effectiveEntries(p);
-    const pct = Math.max(0.1, (entries / (entriesIssued + entries)) * 100);
-    return {
-      slug: p.slug,
-      name: p.name,
-      priceCents: p.priceCents,
-      entries,
-      shareLabel: pct >= 10 ? Math.round(pct).toString() : pct.toFixed(1),
-    };
-  };
-
-  // entries-per-dollar, for the value bars on the packages
-  const valueOf = (p: { priceCents: number; entries: number }) =>
-    effectiveEntries(p) / (p.priceCents / 100);
-  const maxValue = Math.max(...packages.map(valueOf), 1);
   const winner = pastWinners[0];
 
   return (
     <div>
       <SeoJsonLd />
 
-      {/* ============ HERO — broadcast feed split ============ */}
-      <section className="relative overflow-hidden border-b border-line grid-field">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-6 sm:pt-12 sm:pb-8">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-8 items-center">
-            {/* Left — the thesis */}
-            <div className="lg:col-span-7 rise">
-              <div className="flex items-center gap-3 telemetry text-[10px] text-ash">
-                <span className="live-dot text-signal">●</span>
-                <span className="text-chalk">{giveaway.id} · SWEEPSTAKES LIVE</span>
-                <span className="text-dim hidden sm:inline">/ NO PURCHASE NECESSARY</span>
-              </div>
+      {/* ============ HERO — the reveal IS the hero ============ */}
+      <section id="winners" className="relative overflow-hidden border-b border-line scroll-mt-16">
+        {/* the car, pushed right back so the countdown/names own the frame */}
+        <Image
+          src="/car/gt3rs-06.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-[0.14]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/85 to-ink" />
+        <div className="absolute inset-0 grid-field opacity-70" />
 
-              <h1 className="font-display text-[13vw] leading-[0.84] sm:text-8xl lg:text-[7.5rem] uppercase mt-4">
-                Win the
-                <br />
-                <span className="text-signal">GT3&nbsp;RS</span>
-              </h1>
-              <p className="font-display text-xl sm:text-4xl uppercase mt-2 sm:mt-3 text-ash">
-                or a &apos;69 <span className="text-flame">Charger</span>
-              </p>
-
-              <p className="text-fog/90 text-base sm:text-lg mt-4 sm:mt-6 max-w-xl leading-relaxed">
-                Two cars. Two winners drawn live on {drawShort}. <strong className="text-chalk font-semibold">One
-                entry puts you in both draws</strong> — win one of the two, or take{" "}
-                <strong className="text-signal font-semibold">{formatCents(giveaway.cashAlternativeCents)} cash</strong>.
-                Entries start at <strong className="text-signal font-semibold">{formatCents(cheapest)}</strong>.
-              </p>
-
-              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                <Link
-                  href="#packages"
-                  className="group inline-flex items-center justify-center gap-3 bg-signal hover:bg-signal-dark text-ink font-display text-lg uppercase tracking-tight rounded-md px-8 py-4 transition-colors glow-signal"
-                >
-                  Claim your entries
-                  <span className="telemetry text-[11px] font-semibold bg-ink/15 rounded px-2 py-1">FROM {formatCents(cheapest)}</span>
-                </Link>
-                <a href="#prizes" className="telemetry text-[11px] text-ash hover:text-chalk transition-colors inline-flex items-center gap-2">
-                  See both cars
-                  <span aria-hidden className="animate-bounce">↓</span>
-                </a>
-              </div>
-              <p className="telemetry text-[9px] text-dim mt-4">No purchase necessary to enter or win. See Official Rules.</p>
-            </div>
-
-            {/* Right — the car as a live broadcast tile */}
-            <div className="lg:col-span-5">
-              <figure className="relative brackets border border-line bg-panel overflow-hidden">
-                <div className="relative aspect-[4/3] lg:aspect-[5/4]">
-                  <Image
-                    src="/car/gt3rs-06.jpg"
-                    alt="2025 Porsche 911 GT3 RS in Ice Grey Metallic"
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 40vw"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-panel via-transparent to-panel/30" />
-                  {/* broadcast caption bar */}
-                  <div className="absolute top-3 left-3 flex items-center gap-2 telemetry text-[9px] text-ink bg-signal px-2.5 py-1 rounded-sm">
-                    <span className="live-dot">●</span> ON THE BLOCK
-                  </div>
-                </div>
-                <figcaption className="flex items-center justify-between px-4 py-3 border-t border-line telemetry text-[9px] text-ash">
-                  <span>GT3 RS · ICE GREY</span>
-                  <span className="text-signal tnum">ARV {formatCents(giveaway.arvCents)}</span>
-                </figcaption>
-              </figure>
-            </div>
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 pt-10 pb-12 sm:pt-14 sm:pb-16 rise">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 telemetry text-[10px] text-ash">
+            <span className="live-dot text-signal">●</span>
+            <span className="text-chalk">
+              {giveaway.id} · {revealed ? "WINNERS ANNOUNCED" : "COUNTDOWN"}
+            </span>
+            <span className="text-dim">/ NO PURCHASE NECESSARY</span>
           </div>
 
-          {/* Scroll cue — many visitors won't scroll unless told to. Make it obvious. */}
-          <a href="#prizes" className="mt-8 sm:mt-10 flex flex-col items-center gap-2 text-ash hover:text-signal transition-colors group">
-            <span className="telemetry text-[10px]">See the cars, the odds &amp; entry packs</span>
-            <span className="grid place-items-center w-9 h-9 rounded-full border border-line group-hover:border-signal transition-colors">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="animate-bounce">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </span>
-          </a>
+          <div className="mt-6">
+            <WinnerReveal revealAtIso={REVEAL_AT_ISO} initialWinners={winners} variant="hero" />
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/winner"
+              className="telemetry text-[10px] text-ash border border-line hover:border-signal hover:text-signal rounded-full px-5 py-2.5 transition-colors"
+            >
+              FULL WINNER&apos;S PAGE →
+            </Link>
+            <a
+              href="#prizes"
+              className="telemetry text-[10px] text-ash hover:text-chalk transition-colors inline-flex items-center gap-2 px-2"
+            >
+              See both cars <span aria-hidden className="animate-bounce">↓</span>
+            </a>
+          </div>
+
+          <p className="telemetry text-[9px] text-dim text-center mt-6">
+            Entries are closed. No purchase was ever necessary to enter or win — see Official Rules.
+          </p>
         </div>
 
         {/* Signature: the live timing board — counts up on load */}
         <div className="relative border-t border-line bg-ink/70 backdrop-blur-sm">
           <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-line">
             <div className="px-4 sm:px-6 py-5">
-              <p className="telemetry text-[9px] text-ash">Staging · draw {drawShort}</p>
-              <ChristmasTree targetIso={giveaway.drawDateIso} />
-              <p className="text-[11px] text-dim mt-1">amber to green at the line</p>
+              <p className="telemetry text-[9px] text-ash">Winners</p>
+              <p className="font-display text-2xl sm:text-3xl uppercase text-signal mt-2">
+                {revealed ? "Announced" : "Countdown"}
+              </p>
+              <p className="text-[11px] text-dim mt-1">
+                {revealed ? "both names published" : "announced when the clock hits zero"}
+              </p>
             </div>
             <div className="px-4 sm:px-6 py-5">
               <p className="telemetry text-[9px] text-ash">Total prize pool</p>
@@ -201,9 +137,8 @@ export default async function HomePage() {
           {[
             "Every draw filmed & published",
             "Real winner paid — see RS01",
-            "Secure Stripe checkout",
             "Delivered anywhere in the lower 48",
-            "Free entry always available",
+            "Free entry was always available",
           ].map((t) => (
             <span key={t} className="inline-flex items-center gap-2 telemetry text-[10px] text-ash">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-signal shrink-0">
@@ -248,7 +183,7 @@ export default async function HomePage() {
                 or take <strong className="text-chalk">{formatCents(giveaway.cashAlternativeCents)} cash</strong>.
               </p>
               <div className="flex items-center gap-3 mt-6">
-                <Link href="#packages" className="flex-1 text-center bg-signal hover:bg-signal-dark text-ink font-bold rounded-md py-3 transition-colors">Enter to win →</Link>
+                <Link href="#winners" className="flex-1 text-center bg-signal hover:bg-signal-dark text-ink font-bold rounded-md py-3 transition-colors">See the winners →</Link>
                 <a href="#the-car" className="telemetry text-[10px] text-signal hover:text-chalk transition-colors px-2 whitespace-nowrap">Spec ↓</a>
               </div>
             </div>
@@ -281,7 +216,7 @@ export default async function HomePage() {
                 muscle-car icon.
               </p>
               <div className="flex items-center gap-3 mt-6">
-                <Link href="#packages" className="flex-1 text-center text-ink font-bold rounded-md py-3 transition-transform hover:brightness-110" style={{ background: "#ff5b23" }}>Enter to win →</Link>
+                <Link href="#winners" className="flex-1 text-center text-ink font-bold rounded-md py-3 transition-transform hover:brightness-110" style={{ background: "#ff5b23" }}>See the winners →</Link>
                 <a href="#second-prize" className="telemetry text-[10px] text-flame hover:brightness-125 transition px-2 whitespace-nowrap">Spec ↓</a>
               </div>
             </div>
@@ -297,10 +232,10 @@ export default async function HomePage() {
           <p className="telemetry text-[11px] text-ink/70">◢ Do the math ◣</p>
           <h2 className="font-display text-5xl sm:text-7xl uppercase mt-5 leading-[0.9] text-ink">
             <span className="tnum">{formatCents(combinedArvCents)}</span> of dream cars.
-            <br className="hidden sm:block" /> Your way in from <span className="tnum">{formatCents(cheapest)}</span>.
+            <br className="hidden sm:block" /> Entries are closed.
           </h2>
           <p className="text-ink/80 mt-5 max-w-xl mx-auto leading-relaxed font-medium">
-            Two guaranteed winners. Somebody drives these home on {drawLong}. It might as well be you.
+            Two guaranteed winners. One name per car, announced when the countdown hits zero.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-10 text-left">
             {[
@@ -318,8 +253,8 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          <Link href="#packages" className="inline-block mt-11 bg-ink hover:bg-carbon text-signal font-display text-lg sm:text-xl uppercase tracking-tight rounded-md px-11 py-4 transition-colors">
-            Pick your pack — from {formatCents(cheapest)}
+          <Link href="#winners" className="inline-block mt-11 bg-ink hover:bg-carbon text-signal font-display text-lg sm:text-xl uppercase tracking-tight rounded-md px-11 py-4 transition-colors">
+            See the winners
           </Link>
         </div>
         <div className="h-2.5 w-full" style={{ backgroundImage: "repeating-linear-gradient(-45deg, #07080b 0 14px, transparent 14px 28px)" }} />
@@ -359,8 +294,7 @@ export default async function HomePage() {
             {[
               { t: "Every draw is filmed", s: "Livestreamed, then archived. Watch any past draw start to finish before you ever enter." },
               { t: "We actually own the cars", s: "Owner-shot photos and a clean title — the real GT3 RS and Charger, never stock images." },
-              { t: "Secure Stripe checkout", s: "Apple Pay & Google Pay supported. Your card details never touch our servers." },
-              { t: "Free entry, always", s: "No purchase necessary to enter or win — the mail-in method is right there in the Official Rules." },
+              { t: "Free entry, always", s: "No purchase was ever necessary to enter or win — the mail-in method is right there in the Official Rules." },
             ].map((c) => (
               <div key={c.t} className="border border-line bg-panel p-5 flex flex-col">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-signal"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 10 4.6-.6 8-5 8-10V5l-8-3z" /><path d="m9 12 2 2 4-4" /></svg>
@@ -373,87 +307,6 @@ export default async function HomePage() {
 
         <p className="telemetry text-[9px] text-dim text-center mt-6">
           {site.legalName} · {site.address} · {site.phone}
-        </p>
-      </section>
-
-      {/* ============ PACKAGES ============ */}
-      <section id="packages" className="mx-auto max-w-7xl px-4 sm:px-6 mt-24 scroll-mt-20">
-        <Marker ch="03" label="Entry packs" />
-        <h2 className="font-display text-5xl sm:text-6xl uppercase text-center mt-5">
-          Collector <span className="text-signal">poster packs</span>
-        </h2>
-        <p className="text-ash text-center mt-4 max-w-xl mx-auto leading-relaxed">
-          Every pack is an instant high-res collector poster — and loads bonus entries into
-          <strong className="text-chalk"> both car draws</strong>. No shipping, no waiting.
-        </p>
-
-        {boostActive() && (
-          <div className="max-w-md mx-auto mt-8">
-            <Countdown targetIso={giveaway.boostEndsIso} label="Highest-entry boost ends in" />
-            <p className="telemetry text-[9px] text-dim text-center mt-3">
-              At zero, multipliers drop to 100× — Gold&apos;s 50,000 entries become 25,000 at the same price.
-            </p>
-          </div>
-        )}
-
-        <div className="mt-10">
-          <OddsCalculator packs={packages.map(oddsPack)} />
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-8">
-          {packages.map((p) => {
-            const featured = !!p.badge;
-            const entries = effectiveEntries(p);
-            const perDollar = Math.round(valueOf(p));
-            const fill = Math.round((valueOf(p) / maxValue) * 100);
-            return (
-              <div
-                key={p.id}
-                className={`relative flex flex-col border p-6 transition-colors ${
-                  featured ? "border-signal bg-signal/[0.06]" : "border-line bg-panel hover:border-ash/40"
-                }`}
-              >
-                {p.badge && (
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 telemetry text-[9px] bg-signal text-ink px-3 py-1 whitespace-nowrap">
-                    {p.badge}
-                  </span>
-                )}
-                <p className="font-display text-2xl uppercase">{p.name}</p>
-                <p className="telemetry text-[9px] text-signal mt-1.5">
-                  {postersIncludedFor(p.slug)} POSTER{postersIncludedFor(p.slug) > 1 ? "S" : ""}
-                </p>
-                <p className="tnum text-4xl mt-6 text-chalk">{formatCents(p.priceCents)}</p>
-                <p className="text-sm mt-2 text-ash">
-                  <strong className="tnum text-chalk">{formatEntries(entries)}</strong> entries
-                </p>
-
-                {/* value bar — entries per dollar, honest relative fill */}
-                <div className="mt-4">
-                  <div className="h-1 bg-line overflow-hidden rounded-full">
-                    <div className={`h-full ${featured ? "bg-signal" : "bg-ash"}`} style={{ width: `${fill}%` }} />
-                  </div>
-                  <p className="telemetry text-[8px] text-dim mt-1.5 tnum">{perDollar} entries / $1</p>
-                </div>
-
-                <Link
-                  href={`/checkout?package=${p.slug}`}
-                  className={`mt-6 text-center font-bold rounded-md py-3 transition-colors ${
-                    featured
-                      ? "bg-signal hover:bg-signal-dark text-ink"
-                      : "border border-ash/30 text-chalk hover:border-signal hover:text-signal"
-                  }`}
-                >
-                  Get pack →
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-        <div className="max-w-2xl mx-auto mt-8">
-          <PaymentTrust />
-        </div>
-        <p className="telemetry text-[9px] text-dim text-center mt-6">
-          No purchase necessary to enter or win — see Official Rules.
         </p>
       </section>
 
@@ -489,11 +342,11 @@ export default async function HomePage() {
             <p className="text-[#17130c]/75 text-lg mt-6 max-w-lg leading-relaxed">
               Not a render. Not a promo car. The actual {giveaway.car.year} GT3 RS — {formatEntries(3129)} miles,
               518 hp waiting behind your right foot, and a clean title with a blank line where your name goes.
-              On {drawShort}, somebody folds into that seat and drives it home.
+              Somebody folds into that seat and drives it home.
             </p>
             <p className="text-[#17130c] font-semibold text-xl mt-5">It might as well be you.</p>
-            <Link href="#packages" className="inline-block mt-8 bg-[#17130c] hover:bg-black text-[#ece5d6] font-display text-lg uppercase tracking-tight rounded-md px-9 py-4 transition-colors">
-              Take your shot — from {formatCents(cheapest)}
+            <Link href="#winners" className="inline-block mt-8 bg-[#17130c] hover:bg-black text-[#ece5d6] font-display text-lg uppercase tracking-tight rounded-md px-9 py-4 transition-colors">
+              See the winners
             </Link>
           </div>
           <div className="relative aspect-[4/3] rounded-md overflow-hidden shadow-2xl">
@@ -530,8 +383,8 @@ export default async function HomePage() {
               <p className="font-display text-lg uppercase">+ {formatCents(giveaway.taxContributionCents)} toward taxes</p>
               <p className="text-dim text-xs mt-1">Because winning shouldn&apos;t hurt in April.</p>
             </div>
-            <Link href="#packages" className="mt-4 block text-center bg-signal hover:bg-signal-dark text-ink font-display uppercase tracking-tight rounded-md py-3 transition-colors">
-              Enter to win the GT3 RS →
+            <Link href="#winners" className="mt-4 block text-center bg-signal hover:bg-signal-dark text-ink font-display uppercase tracking-tight rounded-md py-3 transition-colors">
+              See the winners
             </Link>
           </div>
         </div>
@@ -555,8 +408,8 @@ export default async function HomePage() {
               hand you the GT3 RS could park this in your driveway instead.
             </p>
             <p className="text-[#17130c] font-semibold text-xl mt-5">Either one changes your week.</p>
-            <Link href="#packages" className="inline-block mt-8 bg-[#17130c] hover:bg-black text-[#ece5d6] font-display text-lg uppercase tracking-tight rounded-md px-9 py-4 transition-colors">
-              Take your shot — from {formatCents(cheapest)}
+            <Link href="#winners" className="inline-block mt-8 bg-[#17130c] hover:bg-black text-[#ece5d6] font-display text-lg uppercase tracking-tight rounded-md px-9 py-4 transition-colors">
+              See the winners
             </Link>
           </div>
           <div className="relative aspect-[4/3] rounded-md overflow-hidden shadow-2xl lg:order-first">
@@ -589,15 +442,13 @@ export default async function HomePage() {
         </h2>
         <Accordion items={faq} />
         <div className="text-center mt-12">
-          <Link href="#packages" className="inline-block bg-signal hover:bg-signal-dark text-ink font-display text-xl uppercase tracking-tight rounded-md px-12 py-4 transition-colors glow-signal">
-            I&apos;m in — get entries
+          <Link href="#winners" className="inline-block bg-signal hover:bg-signal-dark text-ink font-display text-xl uppercase tracking-tight rounded-md px-12 py-4 transition-colors glow-signal">
+            See the winners
           </Link>
           <p className="telemetry text-[9px] text-dim mt-4">{NPN_DISCLAIMER.split(".")[0]}. See Official Rules.</p>
         </div>
       </section>
 
-      <StickyCTA />
-      <LeadPopup />
     </div>
   );
 }

@@ -1,12 +1,6 @@
 import { site, giveaway, secondPrize, VIP_CLUB } from "@/lib/config";
 import { formatCents } from "@/lib/entries";
 
-const drawDate = new Date(giveaway.drawDateIso).toLocaleDateString("en-US", {
-  month: "long",
-  day: "numeric",
-  year: "numeric",
-});
-
 export type LegalPage = { title: string; body: string };
 
 export const legalPages: Record<string, LegalPage> = {
@@ -25,10 +19,12 @@ ${site.legalName}, ${site.address}. Contact: ${site.supportEmail} · ${site.phon
 Open only to legal residents of the 48 contiguous United States and the District of Columbia who are 18 years of age or older at the time of entry. Void in New York, Florida, Rhode Island, and where prohibited by law. Employees, officers, and directors of the Sponsor, and members of their immediate families or households, are not eligible.
 
 ## 3. Promotion Period
-The promotion begins upon public launch and ends at 11:59 PM ET on the day before the drawing. The drawing will be held on or about **${drawDate}**.
+**ENTRIES ARE CLOSED.** The entry period for this promotion has ended and no further entries — purchased or mail-in — are being accepted or issued. Both Grand Prize drawings are conducted by an independent third-party raffle administrator and the winners are announced on the Sponsor\u2019s website.
 
-## 4. How to Enter
-**(a) Purchase entry packages.** Entry packages are available on the Sponsor's website. Each package grants the number of sweepstakes entries stated at the time of purchase, recorded automatically against the purchaser's email address.
+## 4. How to Enter (closed)
+Entries are closed; the methods below are stated for the record and are no longer available.
+
+**(a) Purchase entry packages.** Entry packages were available on the Sponsor's website. Each package grants the number of sweepstakes entries stated at the time of purchase, recorded automatically against the purchaser's email address.
 
 **(b) Free mail-in entry (AMOE).** Hand-print your full name, email address, mailing address, phone number, and date of birth on a 3"×5" card and mail it in a #10 envelope with proper postage to: ${site.legalName}, Attn: ${giveaway.id} Free Entry, ${site.address}. Each mailed card received by the entry deadline grants ${giveaway.amoeEntries.toLocaleString()} entries, with the same per-entry odds of winning as purchased entries. Limit one card per envelope, one mail-in entry per person per day. Photocopied or mechanically reproduced cards are void. Mailed entries are recorded within five (5) business days of receipt.
 
@@ -44,7 +40,7 @@ Every valid entry is automatically entered into the drawing for **both** Grand P
 For each vehicle prize, transport within the 48 contiguous US states is included, and title transfer, registration, insurance, and all taxes are the winner's responsibility. Odds of winning depend on the total number of entries received.
 
 ## 6. Winner Selection & Notification
-Two potential winners will be selected in random drawings from all valid entries received, conducted by [SWEEPSTAKES ADMINISTRATOR — required, e.g. a bonded independent administrator] on or about ${drawDate}. The Grand Prize A winner is drawn first from all valid entries; the Grand Prize B winner is then drawn from all valid entries **excluding** the Grand Prize A winner and their entries, so that no entrant wins both prizes. Each potential winner will be notified by email and/or phone within 48 hours and must respond within seven (7) days and complete an affidavit of eligibility, liability release, and (where lawful) publicity release, plus IRS Form W-9. If a potential winner does not respond, is ineligible, or declines, an alternate will be drawn for that prize (an alternate for Grand Prize B is likewise drawn from entries excluding any confirmed winner).
+Two potential winners are selected in random drawings from all valid entries received, conducted by an independent third-party raffle administrator. The Grand Prize A winner is drawn first from all valid entries; the Grand Prize B winner is then drawn from all valid entries **excluding** the Grand Prize A winner and their entries, so that no entrant wins both prizes. Each potential winner will be notified by email and/or phone within 48 hours and must respond within seven (7) days and complete an affidavit of eligibility, liability release, and (where lawful) publicity release, plus IRS Form W-9. If a potential winner does not respond, is ineligible, or declines, an alternate will be drawn for that prize (an alternate for Grand Prize B is likewise drawn from entries excluding any confirmed winner).
 
 ## 7. Taxes
 The prize's fair market value is taxable income to the winner. Sponsor will issue IRS Form 1099-MISC. The ${formatCents(giveaway.taxContributionCents)} tax contribution is itself taxable.
@@ -64,13 +60,13 @@ For the winner's name and city, email ${site.supportEmail} with the subject "${g
     body: `_Last updated: July 2026_
 
 ## Purchases
-Entry package purchases are payments for sweepstakes entries in the active ${site.name} promotion, governed by the Official Rules. Entries are digital and delivered instantly to the email provided; purchases are final and non-refundable once entries are issued, except where required by law or where an order was made in error — email ${site.supportEmail} within 24 hours and we'll make it right.
+Entries are closed. Entry packages are no longer offered for sale and no payments are accepted through this site. Purchases made while entries were open were payments for sweepstakes entries in the ${site.name} promotion, governed by the Official Rules. Entries are digital and delivered instantly to the email provided; purchases are final and non-refundable once entries are issued, except where required by law or where an order was made in error — email ${site.supportEmail} within 24 hours and we'll make it right.
 
 ## No purchase necessary
 Purchasing does not improve per-entry odds. Free entry methods with identical per-entry odds are described in the Official Rules.
 
 ## ${VIP_CLUB.name} (optional recurring membership)
-The ${VIP_CLUB.name} is an **optional** paid membership you may add at checkout. It is **off by default** — you only join if you check the box yourself. If you join, you are charged **$${(VIP_CLUB.priceCents / 100).toFixed(2)} per month**, beginning on the day you join and **automatically renewing every month until you cancel**. Each month your membership is active, ${VIP_CLUB.monthlyEntries.toLocaleString()} bonus sweepstakes entries are added to the then-current ${site.name} promotion. Membership entries carry the same per-entry odds and are subject to the Official Rules. **Cancel anytime** with one click from your order confirmation page (which opens a self-serve billing portal), or by emailing ${site.supportEmail} — cancellation stops all future monthly charges; the current month is not prorated. Membership is separate from any single sweepstakes and continues across promotions until cancelled.
+The ${VIP_CLUB.name} was an **optional** paid membership that could be added at checkout while entries were open. It is **off by default** — you only join if you check the box yourself. If you join, you are charged **$${(VIP_CLUB.priceCents / 100).toFixed(2)} per month**, beginning on the day you join and **automatically renewing every month until you cancel**. Each month your membership is active, ${VIP_CLUB.monthlyEntries.toLocaleString()} bonus sweepstakes entries are added to the then-current ${site.name} promotion. Membership entries carry the same per-entry odds and are subject to the Official Rules. The ${VIP_CLUB.name} is no longer offered and is not being sold. **Cancel anytime** by emailing ${site.supportEmail} — cancellation stops all future monthly charges; the current month is not prorated. Membership is separate from any single sweepstakes and continues across promotions until cancelled.
 
 ## Eligibility & accuracy
 You are responsible for the accuracy of the name and email on your order — entries attach to that email. Entries made ineligible by false eligibility statements are void without refund.
@@ -90,7 +86,7 @@ ${site.supportEmail}`,
     body: `_Last updated: July 2026_
 
 ## What we collect
-Order and entry information (name, email, mailing address), payment processing handled entirely by Stripe (we never see or store card numbers), and anonymous analytics (Google Analytics, Meta Pixel).
+Order and entry information (name, email, mailing address) and anonymous analytics (Google Analytics). We do not run advertising pixels — the Meta and TikTok pixels previously used on this site have been removed. Entries are closed and no payments are processed through this site.
 
 ## How we use it
 To record and administer sweepstakes entries, deliver order confirmations, notify winners, comply with sweepstakes law (including state registration and winners-list obligations), and — only if you opt in — send promotional email you can unsubscribe from at any time.

@@ -4,7 +4,7 @@ import { formatCents } from "@/lib/entries";
 export const faq = [
   {
     q: "Is this legit? How do I know the car gets given away?",
-    a: `The drawing is conducted under our Official Rules on ${new Date(giveaway.drawDateIso).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} using a certified random selection, and the winner is announced publicly (with their permission) on this site and our socials. The prize — the ${giveaway.car.year} ${giveaway.car.name} or the ${formatCents(giveaway.cashAlternativeCents)} cash alternative — is guaranteed to be awarded. The full legal framework is in the Official Rules.`,
+    a: `The drawings are conducted under our Official Rules by an independent third-party raffle administrator using certified random selection, and the winners are announced publicly on this site and our socials. The prize — the ${giveaway.car.year} ${giveaway.car.name} or the ${formatCents(giveaway.cashAlternativeCents)} cash alternative — is guaranteed to be awarded. The full legal framework is in the Official Rules.`,
   },
   {
     q: "How do entries work?",

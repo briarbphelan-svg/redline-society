@@ -43,12 +43,7 @@ export default function WinnersCircle() {
               This seat is <span className="text-caliper">empty</span>
             </p>
             <p className="text-mist max-w-xl mx-auto mt-4">
-              On{" "}
-              {new Date(giveaway.drawDateIso).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-              })}
-              , one name goes here — photographed with the keys, on camera, delivered anywhere in the
+              One name goes here — photographed with the keys, on camera, delivered anywhere in the
               lower 48. Every draw is filmed and published. No fine-print heroes, no stock-photo
               winners. The first name in this circle could be yours.
             </p>

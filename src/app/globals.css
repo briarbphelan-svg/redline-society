@@ -187,3 +187,68 @@ h3,
   .fork-line { transition: none; }
   html { scroll-behavior: auto; }
 }
+
+/* ===================== RS02 WINNER REVEAL ===================== */
+
+/* A bright line sweeping down a sealed card while the result "decrypts". */
+@keyframes reveal-scan {
+  0% { transform: translateY(-110%); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(110%); opacity: 0; }
+}
+.reveal-scan { animation: reveal-scan 1.15s linear infinite; }
+
+/* Progress of the decrypt phase — honest 0→100 over its real duration. */
+@keyframes reveal-bar { from { width: 0%; } to { width: 100%; } }
+.reveal-bar { animation: reveal-bar var(--reveal-dur, 2.2s) linear both; }
+
+/* The moment a name locks in: a quick settle plus a flare of the accent. */
+@keyframes reveal-lock {
+  0% { transform: scale(0.985); }
+  45% { transform: scale(1.022); }
+  100% { transform: scale(1); }
+}
+@keyframes reveal-flare {
+  0% { box-shadow: 0 0 0 0 var(--reveal-accent), 0 0 60px 0 var(--reveal-accent); }
+  100% { box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent; }
+}
+.reveal-locked {
+  animation: reveal-lock 0.7s cubic-bezier(0.22, 1, 0.36, 1) both,
+             reveal-flare 1.6s ease-out both;
+}
+
+/* Checkered flag wiping across the card at the lock. */
+@keyframes flag-sweep {
+  0% { transform: translateX(-115%) skewX(-12deg); opacity: 0; }
+  15% { opacity: 0.9; }
+  100% { transform: translateX(115%) skewX(-12deg); opacity: 0; }
+}
+.flag-sweep {
+  background-image:
+    repeating-conic-gradient(var(--reveal-accent) 0% 25%, transparent 0% 50%);
+  background-size: 14px 14px;
+  animation: flag-sweep 0.85s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Confetti — each piece gets its own drift/spin via inline custom properties. */
+@keyframes confetti-fall {
+  0% { transform: translate3d(0, -12%, 0) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  100% { transform: translate3d(var(--cx, 0px), 118%, 0) rotate(var(--cr, 540deg)); opacity: 0; }
+}
+.confetti-piece { animation: confetti-fall var(--cd, 2.4s) cubic-bezier(0.25, 0.6, 0.4, 1) var(--cdelay, 0s) both; }
+
+/* Slow breathing glow on the sealed panel. */
+@keyframes seal-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.85; }
+}
+.seal-pulse { animation: seal-pulse 2.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-scan, .reveal-bar, .reveal-locked, .flag-sweep, .confetti-piece, .seal-pulse {
+    animation: none !important;
+  }
+  .confetti-piece, .flag-sweep { display: none; }
+}

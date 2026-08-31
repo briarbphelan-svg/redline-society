@@ -9,6 +9,15 @@ export default function FreeEntryPage() {
       <h1 className="font-display text-4xl uppercase">
         Free entry <span className="text-caliper">by mail</span>
       </h1>
+
+      <div className="border border-line bg-panel rounded-md p-5 mt-5">
+        <p className="font-display text-lg uppercase text-signal">Entries are closed</p>
+        <p className="text-mist text-sm mt-2 leading-relaxed">
+          Entries for {giveaway.id} are no longer available. Mailed cards are no longer being
+          accepted, and no entries — free or purchased — are being issued. The method below is kept
+          on file for reference only.
+        </p>
+      </div>
       <p className="text-mist text-sm mt-3 leading-relaxed">
         No purchase is necessary to enter or win. Free entry is available by mail as described in
         the{" "}
@@ -20,7 +29,7 @@ export default function FreeEntryPage() {
       </p>
 
       <div className="bg-panel border border-line rounded-md p-6 mt-8">
-        <p className="font-display text-lg uppercase mb-4">How to enter by mail</p>
+        <p className="font-display text-lg uppercase mb-4">How free entry worked (closed)</p>
         <ol className="list-decimal pl-5 space-y-3 text-sm text-mist leading-relaxed">
           <li>
             <strong className="text-fog">Hand-print</strong> on a 3&quot;×5&quot; card: your full

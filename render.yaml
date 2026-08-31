@@ -21,9 +21,3 @@ services:
         value: https://redlinesociety.org
       - key: ADMIN_PASSCODE
         generateValue: true
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
