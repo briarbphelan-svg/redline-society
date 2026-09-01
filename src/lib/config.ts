@@ -1,7 +1,7 @@
 // Single source of truth for the giveaway. Update before launch (see LAUNCH.md).
 export const site = {
   name: "Redline Society",
-  legalName: "Redline Society LLC", // TODO: your real entity — form one before launch
+  legalName: "redlinesociety.org",
   domain: "redlinesociety.org",
   supportEmail: "support@redlinesociety.org",
   tagline: "One car. One winner. The best odds in the game.",
@@ -96,11 +96,10 @@ export const EXTERNAL_ENTRIES_ISSUED = 10000;
 // the new buyer get this many bonus entries (granted once, on paid conversion).
 export const REFERRAL_BONUS_ENTRIES = 1000;
 
-/* Redline VIP Club — an OPT-IN (never pre-checked) recurring membership offered at
-   checkout. Legal note: this is a negative-option/recurring charge, so under ROSCA
-   it MUST be affirmatively opted into (unchecked by default), clearly disclosed
-   before payment, and cancellable via a simple mechanism (Stripe billing portal).
-   Members get real value each month (monthlyEntries) so the charge is honest. */
+/* Redline VIP Club — retired. It was an OPT-IN (never pre-checked) recurring
+   membership offered at checkout while entries were open. No longer sold, and no
+   payment processing remains on this site; kept only because the Terms still
+   describe it for anyone who joined while it was running. */
 export const VIP_CLUB = {
   name: "Redline VIP Club",
   priceCents: 2699, // $26.99 / month

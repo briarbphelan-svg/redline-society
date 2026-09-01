@@ -9,7 +9,6 @@ export default function SeoJsonLd() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: site.name,
-    legalName: site.legalName,
     url: siteUrl,
     email: site.supportEmail,
     telephone: site.phone,
